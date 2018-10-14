@@ -1,0 +1,66 @@
+#!/bin/sh
+
+try_dbm() {
+    dbmdef="$1"
+    link_possible="$2"
+    
+    bak_CPPFLAGS="$CPPFLAGS"
+    CPPFLAGS="$CPPFLAGS -D$dbmdef"
+
+    if conftest_compile; then
+	CPPFLAGS="$bak_CPPFLAGS"
+
+	for flag in "" $link_possible; do
+	    flag="`echo $flag|sed 's/./-l&/'`"
+	    echo "trying to link with flags [$flag]" >&5
+	    
+	    bak_LDFLAGS="$LDFLAGS"
+	    LDFLAGS="$LDFLAGS $flag"
+	    if conftest_link; then
+		# we found it!
+		LDFLAGS="$bak_LDFLAGS"
+		DBM_LDFLAGS="$flag"
+		env_vars="$env_vars DBM_LDFLAGS"
+		echo "#define $dbmdef" >> config.h
+		echo "#define HAVE_NDBM" >> config.h
+		return 0
+	    else
+		LDFLAGS="$bak_LDFLAGS"
+	    fi
+	done
+	
+	return 1
+    else
+	CPPFLAGS="$bak_CPPFLAGS"
+	return 1
+    fi
+}
+
+find_ndbm() {
+    try_dbm DBM_H_UNIX "db db1 gdbm gdbm_compat ndbm" && return 0
+    try_dbm DBM_H_GDBM "gdbm gdbm_compat"             && return 0
+    try_dbm DBM_H_DB1  "db1 db"                       && return 0
+    try_dbm DBM_H_DB   "db db1 gdbm gdbm_compat ndbm" && return 0
+
+    return 1
+}
+
+cat > conftest.c << EOF
+#include <fcntl.h>
+#include "find_dbm.h"
+int main() {
+    DBM *db = dbm_open(".", O_RDONLY, 0); /* will fail at run-time */
+    datum my_datum;
+    my_datum.dptr = 0;
+    my_datum.dsize = (my_datum.dptr == 0 && db == 0);
+    return 0;
+}
+EOF
+
+echo1 "Checking for ndbm.h..."
+if find_ndbm; then
+    echo2 "yes"
+else
+    echo2 "no"
+fi
+

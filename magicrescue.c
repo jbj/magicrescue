@@ -18,21 +18,25 @@
  */
 #define _FILE_OFFSET_BITS 64
 #define _LARGEFILE_SOURCE
+#define _LARGEFILE64_SOURCE
 
-#define _XOPEN_SOURCE 600
+#ifdef HAVE_GETRLIMIT
+# include <sys/time.h>
+# include <sys/resource.h>
+#endif /* HAVE_GETRLIMIT */
+
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-
-#include <sys/resource.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <sys/wait.h>
 
 #include "config.h"
 
@@ -83,6 +87,7 @@ struct recipe {
     char extension[64];
     char *command;
     char *postextract;
+    char *rename;
     long min_output_file;
     char *name;
     int allow_overlap;
@@ -93,7 +98,9 @@ static struct recipe *recipes;
 static int recipe_count;
 
 static char *output_dir = NULL;
-static int machine_output = 0;
+static enum { OUT_HUMAN = 0, OUT_I = 1, OUT_O = 2, OUT_IO = 3 }
+    machine_output = OUT_HUMAN;
+static enum { MODE_DEVICE, MODE_FILES } name_mode = MODE_DEVICE;
 
 static ssize_t overlap = 0;
 static const size_t blocksize = 102400;
@@ -102,6 +109,7 @@ static unsigned char *buf;
 static struct {
     off_t position;
     char device[PATH_MAX];
+    char device_basename[PATH_MAX];
 } progress;
 
 static const unsigned char *scanner_string(const unsigned char *scanbuf,
@@ -113,9 +121,13 @@ static const unsigned char *scanner_string(const unsigned char *scanbuf,
 static void signal_beforedeath(int signo)
 {
     fprintf(stderr,
-"\nmagicrescue: killed by signal %d at offset 0x%llX in file %s\n"
-"See the README for instructions on resuming from this offset later\n",
+"\nmagicrescue: killed by signal %d at offset 0x%llX in file %s\n",
 	    signo, (long long)progress.position, progress.device);
+
+    if (progress.position)
+	fprintf(stderr,
+"See the manual for instructions on resuming from this offset later\n");
+
     exit(0);
 }
 
@@ -219,6 +231,7 @@ static void recipe_new(struct recipe *r)
     r->extension[0]      = '\0';
     r->command           = NULL;
     r->postextract       = NULL;
+    r->rename            = NULL;
     r->min_output_file   = 100;
     r->name              = NULL;
     r->allow_overlap     = 0;
@@ -235,6 +248,7 @@ static void recipe_destroy(struct recipe *r)
     free(r->ops);
     free(r->command);
     free(r->postextract);
+    free(r->rename);
     free(r->name);
 }
 
@@ -309,8 +323,25 @@ static void scanner_string_init(union scan_param *param)
     param->scanstring.magicoff  = winner_off;
 }
 
+static void compose_name(char *name, off_t offset, const char *extension)
+{
+    struct stat st;
+    long i = 0;
+
+    do {
+	if (name_mode == MODE_DEVICE) {
+	    snprintf(name, PATH_MAX, "%s/%012llX-%ld.%s", 
+		    output_dir, (long long)offset, i++, extension);
+
+	} else /*if (name_mode == MODE_FILES)*/ {
+	    snprintf(name, PATH_MAX, "%s/%s-%ld.%s", 
+		    output_dir, progress.device_basename, i++, extension);
+	}
+    } while (lstat(name, &st) == 0);
+}
+
 static int run_shell(int fd, off_t offset, const char *command,
-	const char *argument)
+	const char *argument, int stdout_fd)
 {
     pid_t pid;
     int status = -1;
@@ -322,19 +353,65 @@ static int run_shell(int fd, off_t offset, const char *command,
 
     pid = fork();
     if (pid == 0) {
+
 	dup2(fd, 0);
-	if (machine_output)
+	if (stdout_fd >= 0)
+	    dup2(stdout_fd, 1);
+	else if (machine_output)
 	    dup2(2, 1); /* send program's stdout to stderr */
 	
-	execl("/bin/sh", "/bin/sh", "-c", command, argument,
-		NULL);
+	execl("/bin/sh", "/bin/sh", "-c", command, "sh", argument, NULL);
 	perror("Executing /bin/sh");
 	exit(1);
 
+    } else if (stdout_fd >= 0) {
+	return 0;
     } else if (pid > 0) {
 	wait(&status);
     }
     return status;
+}
+
+static void rename_output(int fd, off_t offset, const char *command,
+	char *origname)
+{
+    int pipes[2];
+    char mvbuf[2*PATH_MAX]; /* it has to be semi-large */
+    ssize_t got, has = 0;
+    char *rename_pos = mvbuf;
+
+    if (pipe(pipes) != 0 ||
+	   run_shell(fd, offset, command, origname, pipes[1]) != 0)
+	return;
+
+    close(pipes[1]);
+    while ((got = read(pipes[0], mvbuf + has, sizeof(mvbuf)-has - 1)) > 0) {
+	has += got;
+    }
+    close(pipes[0]);
+    wait(NULL);
+
+    mvbuf[has] = '\0';
+
+    if (has > 7 &&
+	    (strncmp(rename_pos, "RENAME ", 7) == 0 ||
+	     (fprintf(stderr, "Warning: garbage on rename stdout\n"), 0) ||
+	     ((rename_pos = strstr(mvbuf, "\nRENAME ")) && rename_pos++)||
+	     (rename_pos = strstr(mvbuf, "RENAME ")))
+       ) {
+	char *nlpos;
+	rename_pos += 7;
+	if ((nlpos = strchr(rename_pos, '\n')))
+	    *nlpos = '\0';
+
+	if (strlen(rename_pos) < 128) {
+	    char newname[PATH_MAX];
+	    compose_name(newname, offset, rename_pos);
+
+	    rename(origname, newname);
+	    strcpy(origname, newname);
+	}
+    }
 }
 
 /** Calls an external program to extract a file from fd */
@@ -342,12 +419,10 @@ static off_t extract(int fd, struct recipe *r, off_t offset)
 {
     char outfile[PATH_MAX];
     struct stat st;
-    static int i = 0;
 
-    snprintf(outfile, sizeof outfile, "%s/%012llX-%08d.%s", 
-	    output_dir, (long long)offset, i++, r->extension);
+    compose_name(outfile, offset, r->extension);
 
-    if (run_shell(fd, offset, r->command, outfile) == -1)
+    if (run_shell(fd, offset, r->command, outfile, -1) == -1)
 	return -1;
 
     if (stat(outfile, &st) == 0) {
@@ -356,20 +431,21 @@ static off_t extract(int fd, struct recipe *r, off_t offset)
 	    unlink(outfile);
 
 	} else {
-	    if (machine_output)
-		printf("o %lld %s\n", (long long int)st.st_size, outfile);
+	    if (r->rename) {
+		rename_output(fd, offset, r->rename, outfile);
+	    }
+
+	    if (r->postextract) {
+		run_shell(fd, offset, r->postextract, outfile, -1);
+	    }
+
+	    if ((machine_output & OUT_IO) == OUT_IO)
+		printf("o %s\n", outfile);
+	    else if (machine_output & OUT_O)
+		printf("%s\n", outfile);
 	    else
 		fprintf(stderr, "%s: %lld bytes\n", outfile, 
 			(long long int)st.st_size);
-
-	    if (r->postextract) {
-		/* For commands that rename files we lose track of the file name
-		 * here. If that becomes a problem we should add a better way to
-		 * rename files.
-		 */
-		if (run_shell(fd, offset, r->postextract, outfile) == -1)
-		    return -1;
-	    }
 
 	    return st.st_size;
 	}
@@ -468,9 +544,16 @@ static void scan_disk(const char *device)
     }
 
     snprintf(progress.device, sizeof progress.device, "%s", device);
+    {
+	char *tmp = strrchr(device, '/');
+	snprintf(progress.device_basename, sizeof progress.device_basename, 
+		"%s", tmp ? tmp+1 : device);
+    }
 
-    if (machine_output)
+    if ((machine_output & OUT_IO) == OUT_IO)
 	printf("i %s\n", device);
+    else if (machine_output & OUT_I)
+	printf("%s\n", device);
 
     /* In the first iteration, the scan buffer and read buffer overlap like
      * this:
@@ -669,6 +752,9 @@ static int parse_recipe(const char *recipefile)
 	    } else if (strncmp(buf, "postextract ", 12) == 0) {
 		r->postextract = strdup(buf + 12);
 
+	    } else if (strncmp(buf, "rename ", 7) == 0) {
+		r->rename = strdup(buf + 7);
+
 	    } else if (sscanf(buf, "min_output_file %ld", &r->min_output_file)
 		    == 1) {
 		/* do nothing */
@@ -703,7 +789,7 @@ static void usage(void)
 {
     printf(
 "Usage: magicrescue -d OUTPUT_DIR -r RECIPE1 [-r RECIPE2 [...]] \n"
-"\t[-M] DEVICE1 [DEVICE2 [...]]\n"
+"\t[-M MODE] DEVICE1 [DEVICE2 [...]]\n"
 "\n"
 "  -d  Output directory for found files. Mandatory.\n"
 "  -r  Recipe name or file. At least one must be specified.\n"
@@ -716,9 +802,9 @@ int main(int argc, char **argv)
     int c;
 
     /* Some recipes depend on parsing error messages from various programs */
-    setenv("LC_ALL", "C", 1);
+    putenv("LC_ALL=C");
 
-#ifdef HAS_GETRLIMIT
+#ifdef HAVE_GETRLIMIT
     /* Some helper programs will segfault or exhaust memory on malformed
      * input. This should prevent core files and swap storms */
     {
@@ -734,18 +820,20 @@ int main(int argc, char **argv)
 	    setrlimit(RLIMIT_AS, &rlp);
 	}
     }
-#endif /* HAS_GETRLIMIT */
+#endif /* HAVE_GETRLIMIT */
+
+    progress.position = 0;
+    progress.device[0] = progress.device_basename[0] = '\0';
 
     buf = malloc(blocksize);
 
-    sprintf(buf, "%s:%s", getenv("PATH"), "tools");
+    sprintf(buf, "PATH=%s:%s", getenv("PATH"), "tools");
 #ifdef COMMAND_PATH
-    strcat(buf, ":");
-    strcat(buf, COMMAND_PATH);
+    sprintf(buf + strlen(buf), ":%s", COMMAND_PATH);
 #endif
-    setenv("PATH", buf, 1);
+    putenv(strdup(buf));
 
-    while ((c = getopt(argc, argv, "d:r:M")) >= 0) {
+    while ((c = getopt(argc, argv, "d:r:M:")) >= 0) {
 	switch (c) {
 	case 'd': {
 	    struct stat dirstat;
@@ -763,7 +851,10 @@ int main(int argc, char **argv)
 	    }
 
 	break; case 'M':
-	    machine_output = 1;
+	    if (strchr(optarg, 'i'))
+		machine_output |= OUT_I;
+	    if (strchr(optarg, 'o'))
+		machine_output |= OUT_O;
 	    setvbuf(stdout, NULL, _IOLBF, 0);
 
 	break; default:
@@ -777,6 +868,8 @@ int main(int argc, char **argv)
 	usage();
 	return 1;
     }
+
+    name_mode = argc - optind < 10 ? MODE_DEVICE : MODE_FILES;
 
     signal(SIGINT,  signal_beforedeath);
     signal(SIGTERM, signal_beforedeath);

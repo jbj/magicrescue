@@ -2,5 +2,5 @@
 # Depends on perl: http://perl.com
 0 string \x89PNG\x0d\x0a\x1a\x0a
 extension png
-command pngextract.pl > $0
+command pngextract.pl > "$1"
 min_output_file 20

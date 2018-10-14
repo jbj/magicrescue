@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # These checks are warnings only
-echo1 "Checking for perl... "
+echo1 "Checking for perl..."
 
 lf="`perl -V:uselargefiles 2>/dev/null`"
 
@@ -15,7 +15,7 @@ and tools require it.
 
 EOF
 else
-    if echo "$lf"|grep -q define; then
+    if echo "$lf"|grep define >/dev/null; then
 	if /usr/bin/env perl </dev/null >/dev/null 2>&1; then
 	    echo2 "ok"
 	else

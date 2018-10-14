@@ -16,92 +16,13 @@ Find the latest version at http://jbj.rapanden.dk/magicrescue/
 Building
 --------
 
-./configure && make
+./configure && make && make install
 
-You can also do "make install" if you want, or you can just run it from the
-source directory.
+Don't worry about it if all the files don't build, the most important thing is
+that the magicrescue binary builds. You may want to run "make -k" and come back
+later to build the problematic files only if you need them.
 
 Using
 -----
 
-Say you have destroyed the file system on /dev/hdb1 and you want to extract
-all the jpeg files you lost.
-
-Make sure DMA and other optimizations are enabled on your disk, or it will take
-hours.
-$ hdparm -d 1 -c 1 -u 1 /dev/hdb
-
-Choose your output directory, somewhere with lots of disk space.
-$ mkdir ~/output
-
-Look in the recipes/ directory of the source for the recipes you want. Magic
-Rescue somes with recipes for some common file types, and you can make your own
-too (see the next section).
-Open the recipes you want to use in a text editor and read their comments. Most
-recipes require 3rd party software to work, and you may want to modify some
-parameters (such as min_output_file) to suit your needs.
-
-Then invoke magicrescue
-$ ./magicrescue -r jpeg-jfif -r jpeg-exif -d ~/output /dev/hdb1
-
-It will scan through your entire hard disk, so it may take a while. You can
-stop it and resume later of you want to. Interrupt it (with CTRL+C) and note
-the progress information saying what address it got to. Then restart it later
-with:
-$ tools/inputseek 0x2F3A94BE0 ./magicrescue -r jpeg-jfif -r jpeg-exif \
-    -d ~/output - < /dev/hdb1
-
-When it has finished you will probably find thousands of .jpg files in
-~/output, including things you never knew was in your browser cache. Sorting
-through all those files can be a huge task, so you may want to use software or
-scripts to do it. You can use use magicsort to get a better overview:
-$ ./magicsort ~/output
-
-Extending
----------
-
-A recipe file is a relatively simple file of 3-5 lines of text. It describes
-how to recognise the beginning of the file and what to do when a file is
-recognised. For example, all jfif images start with the bytes 0xff 0xd8. At the
-6th byte will be the string "JFIF". Look at recipes/jpeg-jfif in the source
-distribution to follow this example.
-
-Matching magic data is done with a "match operation" that looks like this:
-<offset> <operation> <parameter>
-where <offset> is a decimal integer saying how many bytes from the beginning of
-the file this data is located, <operation> refers to a built-in match operation
-in magicrescue, and <parameter> is specific to that operation.
-
-The "string" operation matches a string of any length. In the jfif example this
-is four bytes. You can use escape characters, like \n or \xA7.
-The "int32" operation matches 4 bytes ANDed with a bit mask. To match all four
-bytes, use the bit mask ffffffff. If you have no idea what a bit mask is, just
-use the "string" operation instead. The mask ffff0000 in the jfif example
-matches the first two bytes.
-The "char" operation is like "string", except it only matches a single
-character.
-
-To learn these patterns for a given file type, look at files of the desired
-type in a hex editor, search through the resource files for the "file" utility
-(http://freshmeat.net/projects/file) and/or search Google for a reference on
-the format.
-
-If all the operations match, we have found the start of the file. Finding the
-end of the file is a much harder problem, and therefore it is delegated to an
-external shell command, which is named by the "command" directive. This command
-receives the block device's file descriptor on stdin and must write to the file
-given to it in the $0 variable. Apart from that, the command can do anything it
-wants to try and extract the file.
-For some file types (such as jpeg), a tool already exists that can do this.
-However, many programs misbehave when told to read from the middle of a huge
-block device. Some seek to byte 0 before reading (can be fixed by prefixing
-cat|, but some refuse to work on a file they can't seek in). Others try to read
-the whole file into memory before doing anything, which will of course fail on
-a muti-gigabyte block device. And some fail completely to parse a partially
-corrupted file.
-This means that you may have to write your own tool or wrap an existing program
-in some scripts that make it behave better. For example, this could be to
-extract the first 10MB into a temporary file and let the program work on that.
-Or perhaps you can use tools/safecat if the file may be very large.
-
-For a full reference on creating recipes, read README.recipes
+man magicrescue

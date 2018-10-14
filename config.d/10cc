@@ -1,0 +1,44 @@
+#!/bin/sh
+
+try_cc() {
+    echo1 "Checking whether the C compiler ($CC $CPPFLAGS $CFLAGS) works..."
+    if conftest; then
+	echo2 yes
+	return 0
+    else
+	echo2 no
+	return 1
+    fi
+}
+
+# Try to sense what flags the compiler will accept
+all_tries() {
+    try_cc && return 0
+
+    CFLAGS="-O"
+    try_cc && return 0
+
+    CFLAGS=
+    try_cc && return 0
+
+    CPPFLAGS=
+    try_cc && return 0
+
+    return 1
+}
+
+cat > conftest.c << EOF
+#include <stdlib.h>
+int main() {
+    return 0;
+}
+EOF
+
+if all_tries; then true; else
+    cat << EOF
+configure: Aborting. Your C compiler ($CC $CPPFLAGS $CFLAGS) does not seem to work.
+See config.log for details.
+EOF
+    rm -f conftest conftest.c
+    exit 1
+fi

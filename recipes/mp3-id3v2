@@ -1,5 +1,10 @@
-# Extracts mp3 files.
+# Extracts mp3 files with the ID3v2 tag.
 # Depends on perl and mpg123 from http://www.mpg123.de/ 
+#
+# If you use this together with the mp3-id3v1 recipe, each ID3v2 file will be
+# extracted twice. With a tricky command line to dupemap(1) you can eliminate
+# these duplicates later, see the dupemap(1) manual for a related example.
+
 # From http://www.id3.org/id3v2.4.0-structure.txt:
 #   An ID3v2 tag can be detected with the following pattern:
 #   49 44 33 yy yy xx zz zz zz zz
@@ -10,5 +15,5 @@
 2 int32 00000000 00f8F80f
 6 int32 00000000 80808080
 extension mp3
-command mp3extract.pl $0
+command mp3extract.pl "$1"
 min_output_file 51200

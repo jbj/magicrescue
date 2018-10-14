@@ -5,5 +5,5 @@
 # mencoder will keep reading after the avi ends, so we use tools/safecat to
 # stop it when it's not outputting useful things anymore.
 extension avi
-command safecat -d 30M -u 2M -t 200M $0|mencoder -nocache -o $0 -ovc copy -oac copy -
+command safecat -d 30M -u 2M -t 200M "$1"|mencoder -nocache -o "$1" -ovc copy -oac copy -
 min_output_file 102400

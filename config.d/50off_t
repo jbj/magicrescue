@@ -4,7 +4,7 @@
 cat > conftest.c << EOF
 #define _FILE_OFFSET_BITS 64
 #define _LARGEFILE_SOURCE
-#define _XOPEN_SOURCE 600
+#define _LARGEFILE64_SOURCE
 
 #include <stdio.h>
 #include <sys/types.h>
@@ -17,7 +17,7 @@ int main() {
     }
 }
 EOF
-echo1 "Checking the size of off_t... "
+echo1 "Checking the size of off_t..."
 if conftest; then
     echo
 else

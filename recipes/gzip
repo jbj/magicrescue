@@ -14,5 +14,5 @@
 extension unzipped
 allow_overlap
 
-command gzip -d > $0
-postextract gzip_rename.pl $0
+command gzip -d > "$1"
+rename gzip_rename.pl "$1"

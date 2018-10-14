@@ -14,8 +14,8 @@
 
 0 string \xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1
 extension ole
-command oleextract.pl > $0
-postextract ole_rename.pl $0
+command oleextract.pl > "$1"
+rename ole_rename.pl "$1"
 
 # There must be at least 4 512-byte blocks: the header, a big block depot, the
 # root entry, and something useful. Files around 4KB are usually embedded OLE

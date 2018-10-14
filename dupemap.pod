@@ -1,0 +1,319 @@
+=head1 NAME
+
+dupemap - Creates a database of file checksums and uses it to eliminate
+duplicates
+
+=head1 SYNOPSIS
+
+B<dupemap> [ I<options> ] [ B<-d> I<database> ] I<operation> I<path...>
+
+=head1 DESCRIPTION
+
+B<dupemap> recursively scans each I<path> to find checksums of file contents.
+Directories are searched through in no particular order.  Its actions depend on
+whether the B<-d> option is given, and on the I<operation> parameter, which
+must be a comma-seperated list of B<scan>, B<report>, B<delete>:
+
+=head2 Without B<-d>
+
+B<dupemap> will take action when it sees the same checksum repeated more than
+once, i.e. it simply finds duplicates recursively. The action depends on
+I<operation>:
+
+=over 7
+
+=item B<report>
+
+Report what files are encountered more than once, printing their names to
+standard output.
+
+=item B<delete>[B<,report>]
+
+Delete files that are encountered more than once. Print their names if
+B<report> is also given.
+
+=back
+
+=head2 With B<-d>
+
+The I<database> argument to B<-d> will denote a database file (see the
+L</DATABASE> section in this manual for details) to read from or write to. In
+this mode, the B<scan> operation should be run on one I<path>, followed by the
+B<report> or B<delete> operation on another (I<not the same!>) I<path>.
+
+=over 7
+
+=item B<scan>
+
+Add the checksum of each file to I<database>. This operation must be run
+initially to create the database. To start over, the user must manually delete
+the database file.
+
+=item B<report>
+
+Print each file name if its checksum is found in I<database>.
+
+=item B<delete>[B<,report>]
+
+Delete each file if its checksum is found in I<database>. If B<report> is also
+present, print the name of each deleted file.
+
+I<WARNING:> use the B<report> operation first to see what will be deleted.
+
+I<WARNING:> if you run B<dupemap delete> on the same I<path> you just ran
+B<dupemap scan> on, it will I<delete every file!> The idea of these options is
+to scan one I<path> and delete files in a second I<path>.
+
+=back
+
+=head1 OPTIONS
+
+=over 7
+
+=item B<-d> I<database>
+
+Use I<database> as an on-disk database to read from or write to. See the
+L</DESCRIPTION> section above about how this influences the operation of
+B<dupemap>.
+
+=item B<-m> I<minsize>
+
+Ignore files below this size.
+
+=item B<-M> I<maxsize>
+
+Ignore files above this size.
+
+=back
+
+
+=head1 USAGE
+
+=head2 General usage
+
+The easiest operations to understand is when the B<-d> option is not given. To
+delete all duplicate files in F</tmp/recovered-files>, do:
+
+    $ dupemap delete /tmp/recovered files
+
+Often, B<dupemap scan> is run to produce a checksum database of all files in a
+directory tree. Then B<dupemap delete> is run on another directory, possibly 
+following B<dupemap report>. For example, to delete all files in
+F</tmp/recovered-files> that already exist in F<$HOME>, do this:
+
+    $ dupemap -d homedir.map scan $HOME
+    $ dupemap -d homedir.map delete,report /tmp/recovered-files
+
+=head2 Usage with magicrescue
+
+The main application for B<dupemap> is to take some pain out of performing
+undelete operations with B<magicrescue>(1). The reason is that B<magicrescue>
+will extract every single file of the specified type on the block device, so
+undeleting files requires you to find a few files out of hundreds, which can
+take a long time if done manually. What we want to do is to only extract the
+documents that don't exist on the file system already.
+
+In the following scenario, you have accidentally deleted some important Word
+documents in Windows. You boot into Linux and change to a directory with lots
+of space.
+
+Mount the Windows partition, preferably read-only (especially with NTFS), and
+create the directories we will use.
+
+    $ mount -o ro /dev/hda1 /mnt/windows
+    $ mkdir healthy_docs rescued_docs
+
+Extract all the healthy Word documents with B<magicrescue> and build a database
+of their checksums. It may seem a little redundant to send all the documents
+through B<magicrescue> first, but the reason is that this process may modify
+them (e.g. stripping trailing garbage), and therefore their checksum will not
+be the same as the original documents.  That is quite rare with Word documents,
+but this step is critical for formats like mp3, gzip and jpeg, which will often
+look very different after passing through magicrescue.
+
+    $ find /mnt/windows -type f -iname "*.doc" -print0 \
+      |xargs -0 magicrescue -r msoffice -d healthy_docs
+    $ dupemap -d healthy_docs.map scan healthy_docs
+    $ rm -rf healthy_docs
+
+This can be done more efficiently, albeit with a more complicated command line.
+The following pipeline will do the same thing as the commands above, but it's
+faster (especially for multi-CPU machines) and will use very little temporary
+disk space.
+
+    $ find /mnt/windows -type f -iname "*.doc" -print0 \
+      |xargs -0 magicrescue -Mo -r msoffice -d healthy_docs \
+      |sed "s/['\"\\[:blank:]]/\\\\&/g" \
+      |xargs sh -c 'dupemap -d healthy_docs.map scan "$@"; rm -f "$@"' sh
+
+Now rescue all C<msoffice> documents from the block device and get rid of
+everything that's not a *.doc.
+
+    $ magicrescue -Mo -r msoffice -d rescued_docs /dev/hda1 \
+      |grep -v '.doc$'|xargs rm -f
+
+Remove all the rescued documents that also appear on the file system, and
+remove duplicates.
+
+    $ dupemap -d healthy_docs.map delete,report rescued_docs
+    $ dupemap delete,report rescued_docs
+
+The F<rescued_docs> folder should now contain only a few files. This will be
+the undeleted files and some documents that were not stored in contiguous
+blocks (use that defragger ;-)).
+
+For the record, the two commands for rescueing files and removing duplicates
+can also be expressed with one pipeline.
+
+    $ magicrescue -Mo -r msoffice -d rescued_docs /dev/hda1 \
+      |xargs sh -c 'for f in "$@"; do echo "$f"; done|grep -v "\.doc$" \
+             |xargs rm -f; \
+             dupemap -v delete healthy_docs.map "$@" 2>/dev/null' sh
+
+=head2 Usage with fsck
+
+In this scenario (based on a true story), you have a hard disk that's gone bad.
+You have managed to F<dd> about 80% of the contents into the file F<diskimage>,
+and you have an old backup from a few months ago. The disk is using reiserfs on
+Linux.
+
+First, use fsck to make the file system usable again. It will find many
+nameless files and put them in F<lost+found>. You need to make sure there is
+some free space on the disk image, so fsck has something to work with.
+
+    $ cp diskimage diskimage.bak
+    $ dd if=/dev/zero bs=1M count=2048 >> diskimage
+    $ reiserfsck --rebuild-tree diskimage
+    $ mount -o loop diskimage /mnt
+    $ ls /mnt/lost+found
+    (tons of files)
+
+Our strategy will be to restore the system with the old backup as a base and
+merge the two other sets of files (F</mnt/lost+found> and F</mnt>) into the
+backup after eliminating duplicates. Therefore we create a checksum database
+of the directory we have unpacked the backup in.
+
+    $ dupemap -d backup.map scan ~/backup
+
+Next, we eliminate all the files from the rescued image that are also present
+in the backup.
+
+    $ dupemap -d backup.map delete,report /mnt
+
+We also want to remove duplicates from F<lost+found>, and we want to get rid of
+any files that are also present in the other directories in F</mnt>.
+
+    $ dupemap delete,report /mnt/lost+found
+    $ ls /mnt|grep -v lost+found|xargs dupemap -d mnt.map scan
+    $ dupemap -d mnt.map delete,report /mnt/lost+found
+
+This should leave only the files in F</mnt> that have changed since the last
+backup or got corrupted. Particularly, the contents of F</mnt/lost+found>
+should now be reduced enough to manually sort through them (or perhaps use
+B<magicsort>(1)).
+
+=head2 Primitive intrusion detection
+
+You can use B<dupemap> to see what files change on your system. This is one of
+the more exotic uses, and it's only included for inspiration.
+
+First, you map the whole file system.
+
+    $ dupemap -d old.map scan /
+
+Then you come back a few days/weeks later and run B<dupemap report>. This will
+give you a view of what I<has not> changed. To see what I<has> changed, you
+need a list of the whole file system. You can get this list along with
+preparing a new map easily. Both lists need to be sorted to be compared.
+
+    $ dupemap -d old.map report /|sort > unchanged_files
+    $ dupemap -d current.map scan /|sort > current_files
+
+All that's left to do is comparing these files and preparing for next week.
+This assumes that the dbm appends the C<.db> extension to database files.
+
+    $ diff unchanged_files current_files > changed_files
+    $ mv current.map.db old.map.db
+
+=head2 Usage with find
+
+Sometimes you want to index only files meeting certain criteria. Your system's
+B<find>(1) and B<xargs>(1) utilities can help with this, but usage varies with
+each UNIX implementation. The other examples in this manual are for the GNU
+system.
+
+The basic command is:
+
+    $ find ARGS|xargs dupemap ARGS
+
+but this will fail when encountering a file with quotes or spaces in the file
+name. The GNU utilities have non-standard options to work around this:
+
+    $ find ARGS -print0|xargs -0 dupemap ARGS
+
+If you are not on a GNU system, try escaping the output of find. This will work
+for everything except file names containing newlines, but it's not very
+readable.
+
+    $ find ARGS|sed "s/['\"\\[:blank:]]/\\\\&/g"|xargs dupemap ARGS
+
+If you're lucky enough to be on a system where B<find> conforms to the latest
+POSIX.1-2001 standard, the solution is very simple. I haven't seen such a
+system, though.
+
+    $ find ARGS -exec dupemap ARGS {} +
+
+A useful application of this could be to update your database of mp3 file
+checksums with only the files that have been changed/added since the last time.
+This assumes that the dbm appends the C<.db> extension to database files.
+
+    $ find ~/music ARGS -newer mp3s.map.db -name "*.mp3" -print0 \
+      |xargs -0 dupemap -d mp3s.map scan
+
+=head1 DATABASE
+
+The current checksum algorithm is the file's CRC32 combined with its size. Both
+values are stored in native byte order, and because of varying type sizes the
+database is I<not> portable across architectures, compilers and operating
+systems.
+
+B<dupecheck> depends on a database library for storing the checksums. It
+currently requires the POSIX-standardized B<ndbm> library, which must be
+present on XSI-compliant UNIXes. Implementations are not required to handle
+hash key collisions, and a faliure to do that could make B<dupecheck> delete
+too many files. I haven't heard of such an implementation, though.
+
+The actual database file(s) written by B<dupecheck> will have some relation to
+the I<database> argument, but most implementations append an extension. For
+example, Berkeley DB names the files I<database>B<.db>, while Solaris and GDBM
+creates both a I<database>B<.dir> and I<database>B<.pag> file.
+
+=head1 SEE ALSO
+
+B<magicrescue>(1), B<weeder>(1)
+
+This tool does the same thing B<weeder> does, except that B<weeder> cannot seem
+to handle many files without crashing, and it has no largefile support.
+
+=head1 BUGS
+
+There is a tiny chance that two different files can have the same checksum and
+size. The probability of this happening is around 1 to 10^14, and since
+B<dupemap> is part of the Magic Rescue package, which deals with disaster
+recovery, that chance becomes an insignificant part of the game. You should
+consider this if you apply B<dupemap> to other applications, especially if they
+are security-related (see next paragraph).
+
+It is possible to craft a file to have a known CRC32. You need to keep this in
+mind if you use B<dupemap> on untrusted data. A solution to this could be to
+implement an option for using MD5 checksums instead.
+
+=head1 AUTHOR
+
+Jonas Jensen <jbj@knef.dk>
+
+=head1 LATEST VERSION
+
+This tools is part of Magic Rescue. You can find the latest version at
+L<http://jbj.rapanden.dk/magicrescue/>
+

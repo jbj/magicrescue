@@ -18,8 +18,7 @@
  */
 #define _FILE_OFFSET_BITS 64
 #define _LARGEFILE_SOURCE
-
-#define _XOPEN_SOURCE 600
+#define _LARGEFILE64_SOURCE
 
 #include <stdio.h>
 #include <stdlib.h>

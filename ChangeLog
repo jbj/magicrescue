@@ -1,6 +1,439 @@
 For less detailed change information, see the NEWS file
 
 ------------------------------------------------------------------------
+r186 | jbj | 2004-04-13 13:21:34 +0200 (Tue, 13 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.pod
+   M /magicrescue/trunk/tools/checkrecipe
+
+Correct dupemap usage and sed script
+------------------------------------------------------------------------
+r184 | jbj | 2004-04-13 13:12:47 +0200 (Tue, 13 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/NEWS
+   M /magicrescue/trunk/new_NEWS
+
+Release 1.1.0
+------------------------------------------------------------------------
+r183 | jbj | 2004-04-13 12:22:14 +0200 (Tue, 13 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+
+update usage info for -M
+------------------------------------------------------------------------
+r182 | jbj | 2004-04-13 12:20:33 +0200 (Tue, 13 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+
+include sys headers before others
+------------------------------------------------------------------------
+r181 | jbj | 2004-04-13 12:18:35 +0200 (Tue, 13 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/dupemap.c
+
+Fix the trailing slash fix
+------------------------------------------------------------------------
+r180 | jbj | 2004-04-13 12:10:00 +0200 (Tue, 13 Apr 2004) | 4 lines
+Changed paths:
+   M /magicrescue/trunk/config.d/50getrlimit
+   D /magicrescue/trunk/config.d/50lstat
+   M /magicrescue/trunk/config.d/50off_t
+   M /magicrescue/trunk/dupemap.c
+   M /magicrescue/trunk/magicrescue.c
+   M /magicrescue/trunk/tools/inputseek.c
+   M /magicrescue/trunk/tools/safecat.c
+
+- Solaris lstat test didn't work
+- Removed _XOPEN_SOURCE define, it caused too many problems
+- Added the _LARGEFILE64_SOURCE define to the last two C programs
+
+------------------------------------------------------------------------
+r179 | jbj | 2004-04-13 11:15:56 +0200 (Tue, 13 Apr 2004) | 1 line
+Changed paths:
+   A /magicrescue/trunk/config.d/50lstat
+   M /magicrescue/trunk/dupemap.c
+
+Workaround for Solaris lstat
+------------------------------------------------------------------------
+r178 | jbj | 2004-04-13 11:09:10 +0200 (Tue, 13 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/config.d/10cc
+   M /magicrescue/trunk/config.d/50atoll
+   M /magicrescue/trunk/config.d/50cygwin
+   M /magicrescue/trunk/config.d/50dbm
+   M /magicrescue/trunk/config.d/50getrlimit
+   M /magicrescue/trunk/config.d/50off_t
+   M /magicrescue/trunk/config.d/50perl
+   M /magicrescue/trunk/configure
+
+Change spacing in configure's echo1
+------------------------------------------------------------------------
+r177 | jbj | 2004-04-12 23:53:16 +0200 (Mon, 12 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/dupemap.c
+
+Solaris S_ISREG doesn't work
+------------------------------------------------------------------------
+r176 | jbj | 2004-04-12 23:52:29 +0200 (Mon, 12 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/tools/gzip_rename.pl
+
+Support perl 5.6.1
+------------------------------------------------------------------------
+r175 | jbj | 2004-04-12 22:43:03 +0200 (Mon, 12 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/Makefile.in
+   M /magicrescue/trunk/release.sh
+
+Update all docs for release
+------------------------------------------------------------------------
+r174 | jbj | 2004-04-12 22:27:15 +0200 (Mon, 12 Apr 2004) | 14 lines
+Changed paths:
+   M /magicrescue/trunk/dupemap.c
+   M /magicrescue/trunk/dupemap.pod
+
+Major overhaul of dupemap, including:
+- remove the 1pass operation in favor of the -d option, turning everything
+  backwards
+- make creation/removal of temporary db invisible to the user
+- install signal handler to leave db in a good state on interrupt
+- remove -v option, just use report operation
+- handle the special case of the "/" path
+- store a 0-length, but valid, pointer to make gdbm happy
+- fix bug where each file was scanned twice in 1pass mode
+- turn all appickable functions static
+- update the documentation to reflect the new way of doing things
+- Put F<> instead of C<> around pathnames in pod
+
+
+------------------------------------------------------------------------
+r173 | jbj | 2004-04-12 22:23:24 +0200 (Mon, 12 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.pod
+
+Put F<> instead of C<> around pathnames
+------------------------------------------------------------------------
+r172 | jbj | 2004-04-12 21:55:39 +0200 (Mon, 12 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/new_NEWS
+
+news
+------------------------------------------------------------------------
+r171 | jbj | 2004-04-12 21:55:29 +0200 (Mon, 12 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/config.d/50dbm
+
+Make gdbm preferred over Berkeley DB when configuring
+------------------------------------------------------------------------
+r170 | jbj | 2004-04-12 16:10:08 +0200 (Mon, 12 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.pod
+
+Usage example now assumes 'make install' has completed
+------------------------------------------------------------------------
+r169 | jbj | 2004-04-10 19:32:00 +0200 (Sat, 10 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/new_NEWS
+
+news
+------------------------------------------------------------------------
+r168 | jbj | 2004-04-10 18:34:15 +0200 (Sat, 10 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/release.sh
+
+Include dupemap.1 in release
+------------------------------------------------------------------------
+r167 | jbj | 2004-04-10 18:33:59 +0200 (Sat, 10 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/config.d/50dbm
+
+Newer gdbm versions have libgdbm_compat for ndbm
+------------------------------------------------------------------------
+r166 | jbj | 2004-04-10 17:39:48 +0200 (Sat, 10 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/Makefile.in
+   M /magicrescue/trunk/configure
+   M /magicrescue/trunk/dupemap.c
+   M /magicrescue/trunk/find_dbm.h
+   M /magicrescue/trunk/magicrescue.c
+   M /magicrescue/trunk/release.sh
+
+Solaris fixes and minor bugfixes
+------------------------------------------------------------------------
+r165 | jbj | 2004-04-08 21:43:13 +0200 (Thu, 08 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/Makefile.in
+
+GNU-isms for the Makefile
+------------------------------------------------------------------------
+r164 | jbj | 2004-04-08 21:42:55 +0200 (Thu, 08 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+
+oops again, == has higher precedense than &
+------------------------------------------------------------------------
+r163 | jbj | 2004-04-08 20:21:04 +0200 (Thu, 08 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/dupemap.pod
+   M /magicrescue/trunk/magicrescue.pod
+
+Docs: wording and addition of hideously complicated pipelines
+------------------------------------------------------------------------
+r162 | jbj | 2004-04-08 19:41:46 +0200 (Thu, 08 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+
+Oops, flags to -M weren't properly interpreted
+------------------------------------------------------------------------
+r161 | jbj | 2004-04-08 19:34:20 +0200 (Thu, 08 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/tools/laola.pl
+
+Oops, laola.pl didn't get installed because it wasn't executable
+------------------------------------------------------------------------
+r160 | jbj | 2004-04-08 00:52:53 +0200 (Thu, 08 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+   M /magicrescue/trunk/magicrescue.pod
+   M /magicrescue/trunk/tools/checkrecipe
+
+Change -M option to take an argument
+------------------------------------------------------------------------
+r159 | jbj | 2004-04-07 23:45:17 +0200 (Wed, 07 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/tools/checkrecipe
+
+Make checkrecipe read from stdin instead of invoking magicrescue itself
+------------------------------------------------------------------------
+r158 | jbj | 2004-04-07 23:28:46 +0200 (Wed, 07 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/recipes/mp3-id3v1
+   M /magicrescue/trunk/recipes/mp3-id3v2
+
+Improved documentation for mp3 recipes
+------------------------------------------------------------------------
+r157 | jbj | 2004-04-07 23:11:17 +0200 (Wed, 07 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+
+Rename output file before printing its name
+------------------------------------------------------------------------
+r156 | jbj | 2004-04-07 22:37:05 +0200 (Wed, 07 Apr 2004) | 5 lines
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+   M /magicrescue/trunk/magicrescue.pod
+   M /magicrescue/trunk/new_NEWS
+   M /magicrescue/trunk/recipes/avi
+   M /magicrescue/trunk/recipes/elf
+   M /magicrescue/trunk/recipes/gzip
+   M /magicrescue/trunk/recipes/jpeg-exif
+   M /magicrescue/trunk/recipes/jpeg-jfif
+   M /magicrescue/trunk/recipes/mp3-id3v1
+   M /magicrescue/trunk/recipes/mp3-id3v2
+   M /magicrescue/trunk/recipes/msoffice
+   M /magicrescue/trunk/recipes/png
+   M /magicrescue/trunk/tools/gzip_rename.pl
+   M /magicrescue/trunk/tools/ole_rename.pl
+
+- Use sh -c properly, changing $0 to $1 in recipe commands
+- Quote "$1", allowing output directories with funny characters in them
+- Implement proper renaming of output files, now magicrescue performs the
+  actual rename itself, making sure nothing is overwritten.
+
+------------------------------------------------------------------------
+r155 | jbj | 2004-04-07 20:09:47 +0200 (Wed, 07 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/dupemap.c
+   M /magicrescue/trunk/dupemap.pod
+
+use O_EXCL on the database for 1pass
+------------------------------------------------------------------------
+r154 | jbj | 2004-04-07 17:15:23 +0200 (Wed, 07 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/dupemap.pod
+   M /magicrescue/trunk/magicrescue.pod
+
+dupemap docs
+------------------------------------------------------------------------
+r153 | jbj | 2004-04-07 00:19:21 +0200 (Wed, 07 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+
+New naming conventions for output file names: print basename instead of offset when there are over 10 input files
+------------------------------------------------------------------------
+r152 | jbj | 2004-04-07 00:17:13 +0200 (Wed, 07 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/tools/gzip_rename.pl
+
+regex fix
+------------------------------------------------------------------------
+r151 | jbj | 2004-04-06 22:57:03 +0200 (Tue, 06 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/dupemap.c
+   M /magicrescue/trunk/dupemap.pod
+
+Better 1pass operation for dupemap
+------------------------------------------------------------------------
+r150 | jbj | 2004-04-06 20:34:41 +0200 (Tue, 06 Apr 2004) | 4 lines
+Changed paths:
+   M /magicrescue/trunk/dupemap.c
+
+- Allow running with no path operands
+- Add 1pass mode for scanning and deleting dupes. I'm not happy with it,
+  though.
+
+------------------------------------------------------------------------
+r149 | jbj | 2004-04-06 19:04:59 +0200 (Tue, 06 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/Makefile.in
+   M /magicrescue/trunk/configure
+   M /magicrescue/trunk/magicrescue.pod
+
+make clean after configuring; install dupemap; refer to dupemap in magicrescue.pod
+------------------------------------------------------------------------
+r148 | jbj | 2004-04-06 17:54:05 +0200 (Tue, 06 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk
+
+svn:ignore dupemap
+------------------------------------------------------------------------
+r147 | jbj | 2004-04-06 17:44:46 +0200 (Tue, 06 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/Makefile.in
+   A /magicrescue/trunk/config.d/50dbm
+   A /magicrescue/trunk/dupemap.c
+   A /magicrescue/trunk/dupemap.pod
+   A /magicrescue/trunk/find_dbm.h
+   M /magicrescue/trunk/new_NEWS
+
+Added dupemap and related configure checks
+------------------------------------------------------------------------
+r146 | jbj | 2004-04-06 17:30:48 +0200 (Tue, 06 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk
+
+ignore manpages
+------------------------------------------------------------------------
+r145 | jbj | 2004-04-06 17:27:33 +0200 (Tue, 06 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/configure
+   M /magicrescue/trunk/magicrescue.pod
+
+configure fixes, magicrescue -d documentation
+------------------------------------------------------------------------
+r144 | jbj | 2004-04-06 12:55:16 +0200 (Tue, 06 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/configure
+
+Seperate compilation and linking step in conftest
+------------------------------------------------------------------------
+r143 | jbj | 2004-04-06 12:39:11 +0200 (Tue, 06 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/config.d/10cc
+   M /magicrescue/trunk/configure
+
+Don't export variables when we don't have to
+------------------------------------------------------------------------
+r142 | jbj | 2004-04-05 20:21:43 +0200 (Mon, 05 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/recipes/mp3-id3v1
+   M /magicrescue/trunk/recipes/mp3-id3v2
+
+info about mp3 recipe order
+------------------------------------------------------------------------
+r141 | jbj | 2004-04-04 14:10:17 +0200 (Sun, 04 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/README
+   M /magicrescue/trunk/magicrescue.pod
+
+doc fixes
+------------------------------------------------------------------------
+r140 | jbj | 2004-04-03 21:05:24 +0200 (Sat, 03 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.pod
+
+manpage typo
+------------------------------------------------------------------------
+r139 | jbj | 2004-04-03 21:03:39 +0200 (Sat, 03 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/release.sh
+
+Makefile needs to be up to date before remaking manpage
+------------------------------------------------------------------------
+r138 | jbj | 2004-04-03 20:16:23 +0200 (Sat, 03 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/Makefile.in
+   M /magicrescue/trunk/README
+   D /magicrescue/trunk/README.recipes
+   M /magicrescue/trunk/magicrescue.c
+   A /magicrescue/trunk/magicrescue.pod
+   M /magicrescue/trunk/new_NEWS
+   M /magicrescue/trunk/release.sh
+
+Replace README files with manpage
+------------------------------------------------------------------------
+r137 | jbj | 2004-04-03 20:01:13 +0200 (Sat, 03 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/config.d/50off_t
+   M /magicrescue/trunk/magicrescue.c
+
+Add another LARGEFILE define, documented for Solaris
+------------------------------------------------------------------------
+r136 | jbj | 2004-04-03 17:56:10 +0200 (Sat, 03 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/tools/pngextract.pl
+
+Set executable bit on pngextract.pl
+------------------------------------------------------------------------
+r135 | jbj | 2004-04-03 17:50:32 +0200 (Sat, 03 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/config.d/10cc
+   M /magicrescue/trunk/configure
+
+More workarounds for the non-POSIXness of /bin/sh on Solaris
+------------------------------------------------------------------------
+r134 | jbj | 2004-04-03 16:00:45 +0200 (Sat, 03 Apr 2004) | 1 line
+Changed paths:
+   D /magicrescue/trunk/config.d/00cc
+   A /magicrescue/trunk/config.d/10cc (from /magicrescue/trunk/config.d/00cc:131)
+   M /magicrescue/trunk/configure
+
+Workarounds for buggy Solaris shell and compiler
+------------------------------------------------------------------------
+r133 | jbj | 2004-04-02 10:37:26 +0200 (Fri, 02 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+
+putenv keeps its argument, so we duplicate it
+------------------------------------------------------------------------
+r132 | jbj | 2004-04-02 10:11:25 +0200 (Fri, 02 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+
+setenv -> putenv for Solaris
+------------------------------------------------------------------------
+r127 | jbj | 2004-03-27 12:30:21 +0100 (Sat, 27 Mar 2004) | 3 lines
+Changed paths:
+   M /magicrescue/trunk
+   M /magicrescue/trunk/config.d/50atoll
+   M /magicrescue/trunk/config.d/50getrlimit
+   M /magicrescue/trunk/config.d/50perl
+   M /magicrescue/trunk/configure
+   M /magicrescue/trunk/magicrescue.c
+   M /magicrescue/trunk/release.sh
+   M /magicrescue/trunk/tools/inputseek.c
+
+- Solaris fixes
+- generation of config.log
+
+------------------------------------------------------------------------
+r125 | jbj | 2004-03-26 18:17:33 +0100 (Fri, 26 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/NEWS
+   M /magicrescue/trunk/new_NEWS
+
+Release 1.0.4
+------------------------------------------------------------------------
 r124 | jbj | 2004-03-26 18:14:10 +0100 (Fri, 26 Mar 2004) | 3 lines
 Changed paths:
    M /magicrescue/trunk/magicrescue.c

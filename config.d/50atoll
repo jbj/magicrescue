@@ -1,7 +1,8 @@
 #!/bin/sh
+
 # the atoll function appeared in C99
 cat > conftest.c << EOF
 #include <stdlib.h>
 int main() { return (int)atoll("0"); }
 EOF
-conftest_define HAS_ATOLL "Checking for atoll... "
+conftest_define HAVE_ATOLL "Checking for atoll..."

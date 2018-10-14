@@ -1,9 +1,19 @@
-PROGRAMS = magicrescue tools/inputseek tools/safecat
+SHELL = /bin/sh
+PROGRAMS = magicrescue tools/inputseek tools/safecat dupemap
+DOCS = magicrescue.1 dupemap.1
 
-all: $(PROGRAMS)
+all: $(PROGRAMS) docs
+
+docs: $(DOCS)
+
+dupemap: dupemap.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $(LDFLAGS) $(DBM_LDFLAGS) dupemap.c
  
 .c:
 	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $(LDFLAGS) $<
+
+.pod.1:
+	pod2man --release "$(RELEASE)" --center "Magic Rescue" $< $@
 
 clean:
 	rm -f $(PROGRAMS)
@@ -11,17 +21,22 @@ clean:
 distclean: clean
 	rm -f Makefile config.h
 
+docs-clean:
+	rm -f $(DOCS)
+
+maintainer-clean: distclean docs-clean
+
 install: all
 	[ -d $(PREFIX) ]
 	
 	mkdir -p $(PREFIX)/share/magicrescue/tools \
 	    $(PREFIX)/share/magicrescue/recipes \
-	    $(PREFIX)/share/doc/magicrescue \
+	    $(PREFIX)/man/man1 \
 	    $(PREFIX)/bin
 	
-	cp magicrescue$(EXE) magicsort $(PREFIX)/bin/
+	cp magicrescue$(EXE) dupemap$(EXE) magicsort $(PREFIX)/bin/
 	cp recipes/* $(PREFIX)/share/magicrescue/recipes/
-	cp README* $(PREFIX)/share/doc/magicrescue/
+	cp $(DOCS) $(PREFIX)/man/man1
 	
 	for f in tools/*; do \
 	  if [ -x "$$f" ]; then \
@@ -33,10 +48,16 @@ uninstall:
 	[ -d $(PREFIX) ]
 	rm -f $(PREFIX)/bin/magicrescue$(EXE)
 	rm -f $(PREFIX)/bin/magicsort
+	rm -f $(PREFIX)/bin/dupemap$(EXE)
+	for f in $(DOCS); do \
+	   rm -f "$(PREFIX)/man/man1/$$f" \
+	done
 	rm -rf $(PREFIX)/share/magicrescue/tools
 	rm -rf $(PREFIX)/share/magicrescue/recipes
 	-rmdir $(PREFIX)/share/magicrescue
 
-.PHONY: clean distclean install uninstall all
+.PHONY: all clean distclean maintainerclean install uninstall docs
+
+.SUFFIXES: .1 .pod
 
 .POSIX:

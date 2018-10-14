@@ -1,5 +1,6 @@
 # Extracts mp3 files.
-
+# Depends on perl and mpg123 from http://www.mpg123.de/ 
+#
 # Currently this recipe is very slow because the header to match against is
 # way too small. Therefore the command is executed very often, and it could
 # take a whole day to complete.
@@ -8,16 +9,15 @@
 # one frame where each split happens). Putting the pieces together won't be an
 # easy puzzle, though.
 
-# Depends on perl and mpg123 from http://www.mpg123.de/ 
 0 char \xff
 0 int32 FFfa0000 FFfe0000
 extension mp3
 
 # The command below is a bit hairy, here's how it works:
 # We copy out a 100KB sample. If mpg123 can decode the sample without spitting
-# out errors we try to let it play those 100KB into $0.pcm. Then we call the
-# extractor, which first sees if $0.pcm is big enough, and then tries to
+# out errors we try to let it play those 100KB into "$1.pcm". Then we call the
+# extractor, which first sees if "$1.pcm" is big enough, and then tries to
 # extract the file.
-command dd bs=102400 count=1 of=$0 2>/dev/null; if mpg123 -t $0 2>&1|egrep -q 'Illegal|too large|not allowed|Giving up'; then rm -f $0; else mpg123 -s $0 > $0.pcm 2>/dev/null; mp3extract.pl $0; rm -f $0.pcm; fi
+command dd bs=102400 count=1 of="$1" 2>/dev/null; if mpg123 -t "$1" 2>&1|egrep -q 'Illegal|too large|not allowed|Giving up'; then rm -f "$1"; else mpg123 -s "$1" > "$1.pcm" 2>/dev/null; mp3extract.pl "$1"; rm -f "$1.pcm"; fi
 
 min_output_file 102401

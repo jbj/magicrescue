@@ -9,7 +9,7 @@ int main() {
 #endif
 }
 EOF
-echo1 "Checking for Cygwin... "
+echo1 "Checking for Cygwin..."
 if conftest; then
     echo2 yes
     cat << EOF

@@ -69,9 +69,6 @@ laola_close_document();
 alarm 0;
 
 if ($extension) {
-    my $newname = $file;
-    $newname =~ s/\..*?$/.$extension/;
-    print "$file => $newname\n";
-    rename $file, $newname or die "rename: $!\n";
+    print "RENAME $extension";
 }
 

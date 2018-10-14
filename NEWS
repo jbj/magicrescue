@@ -1,3 +1,12 @@
+Version 1.1.0: Tue Apr 13 13:23:28 CEST 2004
+- Transformed README files into proper manpages and wrote more documentation
+- Added dupemap, another tool for getting a better overview of the output
+- Recipes take the output file name in $1 now, instead of $0
+- Changed the output file format to adapt to "find|xargs magicrescue" usage
+- Make magicrescue aware of output-file renaming
+- Ported to Solaris
+- Added more choices for machine-readable output
+
 Version 1.0.4: Fri Mar 26 18:17:05 CET 2004
 - tools/checkrecipe was broken for some file types, fixed that
 - Fixed a rounding bug that could lead to segfaulting on some rare data

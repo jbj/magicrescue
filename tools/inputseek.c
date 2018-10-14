@@ -1,7 +1,6 @@
 #define _FILE_OFFSET_BITS 64
 #define _LARGEFILE_SOURCE
-
-#define _XOPEN_SOURCE 600
+#define _LARGEFILE64_SOURCE
 
 #include <sys/types.h>
 
@@ -64,12 +63,12 @@ int main(int argc, char **argv)
 	if (stroffset[0] == '0' && stroffset[1] == 'x') {
 	    offset = (off_t)hextoll(stroffset + 2);
 	} else {
-#ifdef HAS_ATOLL
+#ifdef HAVE_ATOLL
 	    offset = (off_t)atoll(stroffset);
 #else
 	    fprintf(stderr, "Get a C99 compiler or specify offset in hex\n");
 	    return 1;
-#endif
+#endif /* HAVE_ATOLL */
 	}
 	offset *= sign;
     }

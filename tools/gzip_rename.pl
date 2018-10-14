@@ -1,11 +1,9 @@
 #!/usr/bin/env perl
 use strict;
 
-use constant {
-    FCONT  => 1<<1,
-    FEXTRA => 1<<2,
-    FNAME  => 1<<3,
-};
+use constant FCONT  => 1<<1;
+use constant FEXTRA => 1<<2;
+use constant FNAME  => 1<<3;
 
 my $file = $ARGV[0];
 unless (@ARGV and -f $file) {
@@ -33,7 +31,5 @@ if ($flags & FEXTRA) {
 read STDIN, $buf, 130 or exit;
 my $origname = unpack("Z130", $buf);
 if ($origname and length($origname) < 128 and $origname !~ m[[/\x00-\x1F]]) {
-    my $newname = $file;
-    $newname =~ s/\..*?$/_$origname/;
-    rename $file, $newname or die "rename: $!\n";
+    print "RENAME $origname\n";
 }
