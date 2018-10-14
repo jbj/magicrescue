@@ -1,3 +1,10 @@
+Version 1.0.3: Tue Mar 23 16:02:19 CET 2004
+- New recipes for Microsoft Office formats and ELF
+- Recipe for gzip now extracts file names, if available
+- Proper support was added for resuming an interrupted run
+- Output file names now reflect match offsets
+- Portability fixes, especially for Cygwin
+
 Version 1.0.2: Mon Mar 15 13:17:48 CET 2004
 - Much improved mp3 recipe
 - Anti-overlapping prevents the same recipe from extracting part of the same

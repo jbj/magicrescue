@@ -1,0 +1,43 @@
+#!/bin/sh
+
+# These checks are warnings only
+echo1 "Checking for perl... "
+
+lf="`perl -V:uselargefiles 2>/dev/null`"
+
+if [ 0 -ne $? ]; then
+    echo2 "not found"
+    cat << EOF
+
+You do not appear to have perl on your system. Even though perl is not required
+for using magicrescue, you should be aware that many of the included recipes
+and tools require it.
+
+EOF
+else
+    if echo "$lf"|grep -q define; then
+	if /usr/bin/env perl </dev/null >/dev/null 2>&1; then
+	    echo2 "ok"
+	else
+	    echo2 "almost"
+	    cat << EOF
+
+You have perl on your system, but invoking it with "/usr/bin/env perl" does not
+work. Unless your system is completely broken or nonstandard, please report
+this issue.
+In the mean time you need to change the first line of all the included perl
+scripts you wish to use, if any.
+
+EOF
+	fi
+    else
+	echo2 "present"
+	cat << EOF
+
+You have perl, but support for large files is not enabled. You should either
+recompile perl with -Duselargefiles or chop your files into 2GB pieces to use
+any of the recipes that require perl.
+
+EOF
+    fi
+fi

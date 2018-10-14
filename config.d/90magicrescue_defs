@@ -1,0 +1,8 @@
+#!/bin/sh
+
+CPPFLAGS="$CPPFLAGS -I."
+
+cat >> config.h << EOF
+#define COMMAND_PATH "$prefix/share/$app/tools"
+#define RECIPE_PATH  "$prefix/share/$app/recipes"
+EOF

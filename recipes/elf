@@ -1,0 +1,8 @@
+# Extracts ELF executable files.
+# Depends on perl from http://perl.com, and readelf and objdump from GNU
+# binutils: http://sources.redhat.com/binutils/
+
+0 string \x7f\x45\x4c\x46\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00
+extension elf
+command elfextract.pl $0
+min_output_size 1024

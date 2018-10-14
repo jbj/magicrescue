@@ -1,6 +1,268 @@
 For less detailed change information, see the NEWS file
 
 ------------------------------------------------------------------------
+r109 | jbj | 2004-03-23 14:49:41 +0100 (Tue, 23 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/Makefile.in
+   M /magicrescue/trunk/config.d/50cygwin
+   M /magicrescue/trunk/config.d/50off_t
+   A /magicrescue/trunk/config.d/50perl
+   M /magicrescue/trunk/tools/oleextract.pl
+
+More cygwin fixes and warnings
+------------------------------------------------------------------------
+r108 | jbj | 2004-03-23 13:10:34 +0100 (Tue, 23 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/configure
+   M /magicrescue/trunk/magicrescue.c
+   M /magicrescue/trunk/tools/inputseek.c
+   M /magicrescue/trunk/tools/safecat.c
+
+staticness, constness, and compilation with gcc's strictness options
+------------------------------------------------------------------------
+r107 | jbj | 2004-03-23 12:00:28 +0100 (Tue, 23 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/configure
+
+Don't leave config.h files on error
+------------------------------------------------------------------------
+r106 | jbj | 2004-03-23 10:48:41 +0100 (Tue, 23 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+
+Huge whitespace update
+------------------------------------------------------------------------
+r105 | jbj | 2004-03-23 10:35:00 +0100 (Tue, 23 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/checkrecipe
+   M /magicrescue/trunk/magicsort
+   M /magicrescue/trunk/new_NEWS
+   M /magicrescue/trunk/tools/elfextract.pl
+   M /magicrescue/trunk/tools/gzip_rename.pl
+   M /magicrescue/trunk/tools/mp3extract.pl
+   M /magicrescue/trunk/tools/ole_rename.pl
+   M /magicrescue/trunk/tools/oleextract.pl
+   M /magicrescue/trunk/tools/pngextract.pl
+
+/usr/bin/perl -> /usr/bin/env perl
+------------------------------------------------------------------------
+r104 | jbj | 2004-03-23 10:21:56 +0100 (Tue, 23 Mar 2004) | 1 line
+Changed paths:
+   A /magicrescue/trunk/config.d/90magicrescue_defs
+   M /magicrescue/trunk/configure
+
+More configure cleanups
+------------------------------------------------------------------------
+r103 | jbj | 2004-03-23 09:12:51 +0100 (Tue, 23 Mar 2004) | 3 lines
+Changed paths:
+   A /magicrescue/trunk/config.d
+   A /magicrescue/trunk/config.d/00cc
+   A /magicrescue/trunk/config.d/50atoll
+   A /magicrescue/trunk/config.d/50cygwin
+   A /magicrescue/trunk/config.d/50off_t
+   M /magicrescue/trunk/configure
+
+- configure tests moved out of main script and into modules
+- configure tests for sizeof off_t and the C compiler
+
+------------------------------------------------------------------------
+r102 | jbj | 2004-03-22 23:16:49 +0100 (Mon, 22 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/Makefile.in
+   M /magicrescue/trunk/configure
+
+more cygwin fixes, now it can install
+------------------------------------------------------------------------
+r101 | jbj | 2004-03-22 21:49:38 +0100 (Mon, 22 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+
+make overlap unsigned, fixing cygwin problem
+------------------------------------------------------------------------
+r100 | jbj | 2004-03-22 21:14:13 +0100 (Mon, 22 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/README
+   M /magicrescue/trunk/recipes/msoffice
+
+wording
+------------------------------------------------------------------------
+r99 | jbj | 2004-03-22 21:05:35 +0100 (Mon, 22 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/Makefile.in
+   M /magicrescue/trunk/configure
+   M /magicrescue/trunk/tools/inputseek.c
+
+Support platforms without atoll (i.e. cygwin)
+------------------------------------------------------------------------
+r98 | jbj | 2004-03-22 18:32:47 +0100 (Mon, 22 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/recipes/msoffice
+   A /magicrescue/trunk/tools/laola.pl
+   A /magicrescue/trunk/tools/ole_rename.pl
+   M /magicrescue/trunk/tools/oleextract.pl
+
+OLE extractor can now guess the file type and rename to reflect it
+------------------------------------------------------------------------
+r97 | jbj | 2004-03-22 18:20:02 +0100 (Mon, 22 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+
+casting fix
+------------------------------------------------------------------------
+r96 | jbj | 2004-03-22 00:08:40 +0100 (Mon, 22 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/new_NEWS
+   A /magicrescue/trunk/recipes/msoffice
+   A /magicrescue/trunk/tools/oleextract.pl
+
+Support for Microsoft Office files (OLE container)
+------------------------------------------------------------------------
+r95 | jbj | 2004-03-21 17:58:56 +0100 (Sun, 21 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/recipes/elf
+   M /magicrescue/trunk/tools/elfextract.pl
+
+More validity checking on ELF files
+------------------------------------------------------------------------
+r94 | jbj | 2004-03-21 17:39:05 +0100 (Sun, 21 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/new_NEWS
+   A /magicrescue/trunk/recipes/elf
+   A /magicrescue/trunk/tools/elfextract.pl
+
+Add ELF recipe
+------------------------------------------------------------------------
+r93 | jbj | 2004-03-21 14:14:03 +0100 (Sun, 21 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/Makefile.in
+   D /magicrescue/trunk/tools/Makefile
+
+Don't do recursive make
+------------------------------------------------------------------------
+r92 | jbj | 2004-03-20 20:45:49 +0100 (Sat, 20 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+
+Rearranged functions so program execution flows from the bottom up, like most C programs
+------------------------------------------------------------------------
+r91 | jbj | 2004-03-20 20:26:37 +0100 (Sat, 20 Mar 2004) | 1 line
+Changed paths:
+   A /magicrescue/trunk/recipes/gzip (from /magicrescue/trunk/recipes/gzip-deflate:89)
+   D /magicrescue/trunk/recipes/gzip-any
+   D /magicrescue/trunk/recipes/gzip-deflate
+
+Remove gzip-any recipe, because the gzip.org tool only supports deflate anyway
+------------------------------------------------------------------------
+r90 | jbj | 2004-03-20 20:26:01 +0100 (Sat, 20 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicsort
+
+Make magicsort work with new naming scheme
+------------------------------------------------------------------------
+r89 | jbj | 2004-03-20 20:06:23 +0100 (Sat, 20 Mar 2004) | 3 lines
+Changed paths:
+   M /magicrescue/trunk/README.recipes
+   M /magicrescue/trunk/magicrescue.c
+   M /magicrescue/trunk/recipes/gzip-any
+   M /magicrescue/trunk/recipes/gzip-deflate
+   A /magicrescue/trunk/tools/gzip_rename.pl
+
+- Add postextract directive to recipe format
+- Restore the original file names from the gzip recipes sometimes
+
+------------------------------------------------------------------------
+r88 | jbj | 2004-03-20 17:16:35 +0100 (Sat, 20 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+   M /magicrescue/trunk/new_NEWS
+
+Output file names are now the match offset, not a sequence number
+------------------------------------------------------------------------
+r87 | jbj | 2004-03-20 15:57:25 +0100 (Sat, 20 Mar 2004) | 3 lines
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+   M /magicrescue/trunk/new_NEWS
+
+- Don't overwrite existing output files
+- Install a signal handler to report progress before death
+
+------------------------------------------------------------------------
+r86 | jbj | 2004-03-20 14:28:52 +0100 (Sat, 20 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/README
+   M /magicrescue/trunk/magicrescue.c
+   M /magicrescue/trunk/new_NEWS
+   M /magicrescue/trunk/tools
+   M /magicrescue/trunk/tools/Makefile
+   A /magicrescue/trunk/tools/inputseek.c
+
+Replace the -O option with tools/inputseek
+------------------------------------------------------------------------
+r85 | jbj | 2004-03-20 14:27:02 +0100 (Sat, 20 Mar 2004) | 1 line
+Changed paths:
+   D /magicrescue/trunk/recipes/gzip
+   A /magicrescue/trunk/recipes/gzip-any (from /magicrescue/trunk/recipes/gzip:78)
+   A /magicrescue/trunk/recipes/gzip-deflate (from /magicrescue/trunk/recipes/gzip:78)
+
+Split gzip recipe to support non-deflate compression
+------------------------------------------------------------------------
+r84 | jbj | 2004-03-18 22:20:38 +0100 (Thu, 18 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/Makefile.in
+   M /magicrescue/trunk/README
+   D /magicrescue/trunk/commands
+   M /magicrescue/trunk/configure
+   M /magicrescue/trunk/magicrescue.c
+   M /magicrescue/trunk/recipes/avi
+   A /magicrescue/trunk/tools (from /magicrescue/trunk/commands:80)
+   R /magicrescue/trunk/tools/Makefile (from /magicrescue/trunk/commands/Makefile:78)
+   R /magicrescue/trunk/tools/mp3extract.pl (from /magicrescue/trunk/commands/mp3extract.pl:78)
+   R /magicrescue/trunk/tools/pngextract.pl (from /magicrescue/trunk/commands/pngextract.pl:78)
+   R /magicrescue/trunk/tools/safecat.c (from /magicrescue/trunk/commands/safecat.c:78)
+
+rename commands -> tools
+------------------------------------------------------------------------
+r83 | jbj | 2004-03-18 22:14:58 +0100 (Thu, 18 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/release.sh
+
+Argument checking for release.sh
+------------------------------------------------------------------------
+r82 | jbj | 2004-03-15 15:48:54 +0100 (Mon, 15 Mar 2004) | 3 lines
+Changed paths:
+   M /magicrescue/trunk/Makefile.in
+
+- make install also installs READMEs
+- make install uses mkdir -p
+
+------------------------------------------------------------------------
+r81 | jbj | 2004-03-15 15:17:02 +0100 (Mon, 15 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/README
+
+more usage info
+------------------------------------------------------------------------
+r80 | jbj | 2004-03-15 14:41:24 +0100 (Mon, 15 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/commands
+
+svn:ignore property set on commands
+------------------------------------------------------------------------
+r79 | jbj | 2004-03-15 14:40:57 +0100 (Mon, 15 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk
+   M /magicrescue/trunk/release
+
+svn:ignore property set
+------------------------------------------------------------------------
+r78 | jbj | 2004-03-15 13:19:57 +0100 (Mon, 15 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/NEWS
+   M /magicrescue/trunk/new_NEWS
+   M /magicrescue/trunk/release.sh
+
+Release 1.0.2
+------------------------------------------------------------------------
 r77 | jbj | 2004-03-15 12:17:21 +0100 (Mon, 15 Mar 2004) | 2 lines
 Changed paths:
    M /magicrescue/trunk/magicrescue.c

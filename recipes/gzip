@@ -1,4 +1,5 @@
-# Extracts gzip files
+# Extracts gzip files compressed with the deflate algorithm (i.e. all modern
+# gzip files)
 # Depends on gzip: http://www.gzip.org/
 
 # Format defined at http://www.faqs.org/rfcs/rfc1952.html
@@ -13,7 +14,5 @@
 extension unzipped
 allow_overlap
 
-# TODO: gzip files can contain the original filename, but we lose it here. To
-# make it possible to find one file in the thousands of files that will be
-# extracted, a script to extract this name should be written.
 command gzip -d > $0
+postextract gzip_rename.pl $0

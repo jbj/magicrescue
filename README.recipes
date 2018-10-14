@@ -42,6 +42,12 @@ command <expression>
 	its output should be written to, and it must respect this. Otherwise
 	magicrescue cannot tell whether it succeeded.
 
+postextract <expression>
+	Specify an optional command to run after successfully extracting the
+	file. The purpose of this command could be to rename the output file if
+	more information can be found about it. stdin and $0 will work like
+	with the "command" directive.
+
 min_output_file <size>
 	Default: 100. Output files less than this size will be deleted.
 

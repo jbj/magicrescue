@@ -1,45 +1,43 @@
+PROGRAMS = magicrescue tools/inputseek tools/safecat
 
-all: magicrescue subdirs
+all: $(PROGRAMS)
  
-magicrescue: magicrescue.c
+.c:
 	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $(LDFLAGS) $<
 
-subdirs:
-	@make -k -C commands
-
 clean:
-	rm -f magicrescue
-	@make -C commands clean
+	rm -f $(PROGRAMS)
 
 distclean: clean
 	rm -f Makefile config.h
 
 install: all
 	[ -d $(PREFIX) ]
-	cp magicrescue checkrecipe magicsort $(PREFIX)/bin/
 	
-	mkdir $(PREFIX)/share 2>/dev/null; true
-	mkdir $(PREFIX)/share/magicrescue 2>/dev/null; true
-	mkdir $(PREFIX)/share/magicrescue/commands 2>/dev/null; true
-	mkdir $(PREFIX)/share/magicrescue/recipes 2>/dev/null; true
+	mkdir -p $(PREFIX)/share/magicrescue/tools \
+	    $(PREFIX)/share/magicrescue/recipes \
+	    $(PREFIX)/share/doc/magicrescue \
+	    $(PREFIX)/bin
 	
-	cp recipes/* $(PREFIX)/share/magicrescue/recipes
+	cp magicrescue$(EXE) checkrecipe magicsort $(PREFIX)/bin/
+	cp recipes/* $(PREFIX)/share/magicrescue/recipes/
+	cp README* $(PREFIX)/share/doc/magicrescue/
 	
-	for f in commands/*; do \
+	for f in tools/*; do \
 	  if [ -x "$$f" ]; then \
-	    cp -f "$$f" $(PREFIX)/share/magicrescue/commands; \
+	    cp -f "$$f" $(PREFIX)/share/magicrescue/tools/; \
 	  fi; \
 	done
 
 uninstall:
 	[ -d $(PREFIX) ]
-	rm -f $(PREFIX)/bin/magicrescue
+	rm -f $(PREFIX)/bin/magicrescue$(EXE)
 	rm -f $(PREFIX)/bin/magicsort
 	rm -f $(PREFIX)/bin/checkrecipe
-	rm -rf $(PREFIX)/share/magicrescue/commands
+	rm -rf $(PREFIX)/share/magicrescue/tools
 	rm -rf $(PREFIX)/share/magicrescue/recipes
 	-rmdir $(PREFIX)/share/magicrescue
 
-.PHONY: subdirs clean distclean install uninstall all
+.PHONY: clean distclean install uninstall all
 
 .POSIX:

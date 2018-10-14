@@ -1,0 +1,23 @@
+# Extracts Microsoft's OLE container format, used by newer versions of
+# Microsoft Office (>= Word 6.0) and old versions of StarOffice (<= 5.0). The
+# format is documented at http://user.cs.tu-berlin.de/~schwartz/pmh/guide.html
+#
+# The files it extracts can be Word, Powerpoint, Excel or other interesting
+# things, but many weird OLE fragments will be pulled out as well. All known
+# formats are listed near the top of tools/ole_rename.pl.
+# This recipe will NOT recover Microsoft Access files, WordPerfect files,
+# OpenOffice files, or StarOffice >= 6.0 files.
+# It will try to guess the file type, but if it fails to guess something you
+# have identified manually, please send sample files to jbj@knef.dk.
+#
+# Depends on perl: http://perl.com
+
+0 string \xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1
+extension ole
+command oleextract.pl > $0
+postextract ole_rename.pl $0
+
+# There must be at least 4 512-byte blocks: the header, a big block depot, the
+# root entry, and something useful. Files around 4KB are usually embedded OLE
+# objects, and Office documents start appearing above 10KB.
+min_output_file 2048

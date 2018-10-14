@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/usr/bin/env perl
 use strict;
 
 my $dir = shift;
@@ -11,16 +11,14 @@ if (!$dir or !chdir($dir)) {
 
 opendir DH, "." or die "opening $dir: $!\n";
 while (defined(my $file = readdir DH)) {
-    if ($file !~ /^\d{8}\./ or !-f $file) {
-	next;
-    }
+    next unless -f $file;
 
     open FILE, "-|", "file", $file or die "Executing file: $!\n";
     my $idstring = <FILE>;
     close FILE;
 
     chomp $idstring;
-    $idstring =~ s{[/\0]}{_};
+    $idstring =~ s{[/\x00-\x1F]}{_};
 
     if (length($idstring) - 3 < length($file)) {
 	print STDERR "Invalid idstring: $idstring";

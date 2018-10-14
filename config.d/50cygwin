@@ -1,0 +1,30 @@
+#!/bin/sh
+# Cygwin needs some special handling for .exe files
+cat > conftest.c << EOF
+int main() {
+#ifdef __CYGWIN__
+    return 0;
+#else
+    return 1;
+#endif
+}
+EOF
+echo1 "Checking for Cygwin... "
+if conftest; then
+    echo2 yes
+    cat << EOF
+
+  configure: WARNING: At the time of writing, you cannot use Magic Rescue
+  directly on Cygwin's block devices, such as /dev/sda1. This is caused by a
+  bug in either Cygwin or Windows. Copying the block device out to a file and
+  running magicrescue on the file works
+
+  Also, many of Cygwin's included utilities lack support for large files, which
+  means that you have to either recompile them or split your file into 2GB
+  chunks.
+
+EOF
+    EXE=.exe
+else
+    echo2 no
+fi

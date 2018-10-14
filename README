@@ -37,16 +37,24 @@ $ mkdir ~/output
 Look in the recipes/ directory of the source for the recipes you want. Magic
 Rescue somes with recipes for some common file types, and you can make your own
 too (see the next section).
+Open the recipes you want to use in a text editor and read their comments. Most
+recipes require 3rd party software to work, and you may want to modify some
+parameters (such as min_output_file) to suit your needs.
+
 Then invoke magicrescue
 $ ./magicrescue -r jpeg-jfif -r jpeg-exif -d ~/output /dev/hdb1
 
-It will scan through your entire hard disk, so it may take a while. When it has
-finished you will probably find thousands of .jpg files in ~/output, including
-things you never knew was in your browser cache.
+It will scan through your entire hard disk, so it may take a while. You can
+stop it and resume later of you want to. Interrupt it (with CTRL+C) and note
+the progress information saying what address it got to. Then restart it later
+with:
+$ tools/inputseek 0x2F3A94BE0 ./magicrescue -r jpeg-jfif -r jpeg-exif \
+    -d ~/output - < /dev/hdb1
 
-Sorting through all those files can be a huge task, so you may want to use
-software or scripts to do it. You can use use magicsort to get a better
-overview:
+When it has finished you will probably find thousands of .jpg files in
+~/output, including things you never knew was in your browser cache. Sorting
+through all those files can be a huge task, so you may want to use software or
+scripts to do it. You can use use magicsort to get a better overview:
 $ ./magicsort ~/output
 
 Extending
@@ -87,13 +95,13 @@ wants to try and extract the file.
 For some file types (such as jpeg), a tool already exists that can do this.
 However, many programs misbehave when told to read from the middle of a huge
 block device. Some seek to byte 0 before reading (can be fixed by prefixing
-cat|), and some refuse to work on a file they can't seek in. Others try to read
+cat|, but some refuse to work on a file they can't seek in). Others try to read
 the whole file into memory before doing anything, which will of course fail on
 a muti-gigabyte block device. And some fail completely to parse a partially
 corrupted file.
 This means that you may have to write your own tool or wrap an existing program
 in some scripts that make it behave better. For example, this could be to
 extract the first 10MB into a temporary file and let the program work on that.
-Or perhaps you can use commands/safecat if the file may be very large.
+Or perhaps you can use tools/safecat if the file may be very large.
 
 For a full reference on creating recipes, read README.recipes

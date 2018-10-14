@@ -1,0 +1,32 @@
+#!/bin/sh
+
+# Size of off_t should be at least 8
+cat > conftest.c << EOF
+#define _FILE_OFFSET_BITS 64
+#define _LARGEFILE_SOURCE
+#define _XOPEN_SOURCE 600
+
+#include <stdio.h>
+#include <sys/types.h>
+int main() {
+    printf("%d", sizeof(off_t));
+    if (sizeof(off_t) < 8)
+	return 1;
+    else {
+	return 0;
+    }
+}
+EOF
+echo1 "Checking the size of off_t... "
+if conftest; then
+    echo
+else
+    echo " < 8"
+    cat << EOF
+
+  configure: WARNING: Your system does not seem to support large files (i.e.
+  files > 2GB). You will not be able to use Magic Rescue on files or partitions
+  above that size.
+
+EOF
+fi
