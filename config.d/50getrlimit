@@ -10,5 +10,5 @@ int main() {
 }
 EOF
 if conftest_define HAVE_GETRLIMIT "Checking for getrlimit..."; then
-    echo "#define MAX_MEMORY 50*1024*1024" >> config.h
+    echo "#define MAX_MEMORY 1024*1024*1024" >> config.h
 fi

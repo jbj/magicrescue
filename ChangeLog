@@ -1,6 +1,29 @@
 For less detailed change information, see the NEWS file
 
 ------------------------------------------------------------------------
+r824 | jbj | 2009-11-03 10:00:58 +0100 (Tue, 03 Nov 2009) | 1 line
+Changed paths:
+   M /magicrescue/trunk/new_NEWS
+   A /magicrescue/trunk/recipes/mbox
+   A /magicrescue/trunk/recipes/mbox-mozilla-inbox
+   A /magicrescue/trunk/recipes/mbox-mozilla-sent
+
+New mbox recipes
+------------------------------------------------------------------------
+r822 | jbj | 2009-10-01 21:13:49 +0200 (Thu, 01 Oct 2009) | 1 line
+Changed paths:
+   M /magicrescue/trunk/new_NEWS
+   M /magicrescue/trunk/src/magicrescue.c
+
+It appears that there exists a program named safecat. Move tools dir to beginning of path so our safecat takes precedence.
+------------------------------------------------------------------------
+r821 | jbj | 2009-10-01 14:53:12 +0200 (Thu, 01 Oct 2009) | 1 line
+Changed paths:
+   M /magicrescue/trunk/config.d/50getrlimit
+   M /magicrescue/trunk/new_NEWS
+
+Raise maximum virtual memory usage for helper programs from 50MB to 1024MB.
+------------------------------------------------------------------------
 r820 | jbj | 2009-09-04 22:22:31 +0200 (Fri, 04 Sep 2009) | 1 line
 Changed paths:
    M /magicrescue/trunk/recipes/zip

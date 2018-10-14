@@ -552,10 +552,13 @@ int main(int argc, char **argv)
 
     buf = malloc(bufsize);
 
-    sprintf(buf, "PATH=%s:%s", getenv("PATH"), "tools");
+    sprintf(buf, "PATH=%s%s%s:%s", "tools",
 #ifdef COMMAND_PATH
-    sprintf(buf + strlen(buf), ":%s", COMMAND_PATH);
+	":", COMMAND_PATH,
+#else
+	"", "",
 #endif
+	getenv("PATH"));
     putenv(strdup(buf));
 
     while ((c = getopt(argc, argv, "b:d:r:I:M:O:")) >= 0) {

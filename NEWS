@@ -1,5 +1,9 @@
-Version 1.1.7: Fri Sep  4 22:23:35 CEST 2009
-- Fix small oops
+Version 1.1.8: Wed Nov  4 16:12:53 CET 2009
+- Add mbox recipes, contributed by Jeff Bucove.
+- Raise maximum virtual memory usage for helper programs from 50MB to 1024MB.
+  It turns out that mencoder needs around 150MB on 64-bit systems.
+- Place tools directory first in path to avoid name clashes with other
+  programs.
 
 Version 1.1.7: Fri Sep  4 19:48:14 CEST 2009
 - Update zip recipe to work with latest version of Zip and latest
