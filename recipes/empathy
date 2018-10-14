@@ -1,0 +1,25 @@
+# Extracts Emphathy chat history files. I've lost my records about who
+# contributed this recipe.
+
+0 string <?xml
+
+extension log
+
+# Max file size is 200K.
+# You might want to lower this value if your files are smaller. A smaller value
+# here will prevent different files from being mixed into the same output file.
+
+#command textextract -M 200K "$1"; if grep "empathy-log.xsl" "$1" >/dev/null; then grep "<log>" "$1" >/dev/null;else rm -f "$1"; fi
+#command textextract -M 200K "$1"; if grep "empathy-log.xsl" "$1" >/dev/null; then if grep "<log>" "$1" >/dev/null;then if grep "</log>" >/dev/null;then rm -f "$1"; fi;fi; else rm -f "$1"; fi
+#;if grep "empathy-log.xsl" "$1" >/dev/null;then grep "<log>" "$1"  >/dev/null;else rm -f "$1"; fi
+#command textextract -M 200K "$1"; if grep "empathy-log.xsl" "$1" >/dev/null; then grep "<log>" "$1" >/dev/null;grep "</log>" >/dev/null;then rm -f "$1"; fi;fi; else rm -f "$1"; fi
+#command textextract -M 200K "$1"; if grep "empathy-log.xsl" "$1" >/dev/null; then if grep "^<log>*</log>$" "$1" >/dev/null; then rm -f "$1"; fi; else rm -f "$1"; fi
+command textextract -M 200K "$1"; if ! grep 'empathy-log\.xsl' "$1" >/dev/null || grep '^<log>.*</log>$' "$1" >/dev/null; then rm -f "$1"; fi
+#rename script_rename.pl "$1" 
+#command textextract -M 200K "$1"; if grep "empathy-log.xsl" "$1" >/dev/null; then if grep "<log>" "$1" >/dev/null;then if "</log>" "$1" >/dev/null; then rm -f "$1"; fi;fi; else rm -f "$1"; fi
+#command textextract -M 200K "$1"; if grep "empathy-log.xsl" "$1" >/dev/null; then if grep "<log>" "$1" >/dev/null;then if grep "</log>" "$1" >/dev/null;then rm -f "$1";fi;fi; else rm -f "$1"; fi
+#command textextract -r 1024 -M 200K "$1"; if grep "empathy-log.xsl" "$1" >/dev/null; then if grep "<log>" "$1" | grep "</log>" "$1" >/dev/null; then rm -f "$1"; fi; else rm -f "$1"; fi
+# Because of the -r option to textextract
+#allow_overlap 1024
+
+# vim: wm=0

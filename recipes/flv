@@ -1,0 +1,34 @@
+# Extracts FLV files (Flash Video).
+# Contributed by John Zoidberg <zohn.joidberg@gmail.com>
+# Depends on MPlayer's mencoder: http://www.mplayerhq.hu/
+
+0 string FLV\x01
+
+#4 int32 05000000 ffffffff
+4 int32 00000000 f0ffffff
+8 int32 09000000 ffffffff
+12 int32 00000000 ff000000
+
+extension flv
+
+# mencoder will keep reading after the flv ends, so we use tools/safecat to
+# stop it when it's not outputting useful things anymore.
+command safecat -d 30M -u 200M -t 200M "$1" | mencoder -of lavf -nocache -o "$1" -ovc copy -oac copy -
+
+min_output_file 102400
+
+# A few notes about the recipe:
+# 1) It is based on the official FLV file specification from
+# http://www.adobe.com/devnet/flv/
+# 2) I assume FLV version 1 + audio tags present + video tags present
+# 
+# This leads to a header of the form
+# # header
+# # 46 4C 56 01  05 00 00 00  09
+# # header + start of file body
+# # 46 4C 56 01  05 00 00 00  09 00 00 00  00
+# 
+# However, I found some FLV files which started like this instead:
+# # 46 4C 56 01  0D 00 00 00  09 00 00 00  00
+# 0D=00001101 is contrary to the official file specification.
+# Only 00,01,04 or 05 should be possible.
