@@ -1,6 +1,41 @@
 For less detailed change information, see the NEWS file
 
 ------------------------------------------------------------------------
+r329 | jbj | 2004-08-15 01:10:37 +0200 (Sun, 15 Aug 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/new_NEWS
+
+news
+------------------------------------------------------------------------
+r328 | jbj | 2004-08-15 01:05:27 +0200 (Sun, 15 Aug 2004) | 1 line
+Changed paths:
+   A /magicrescue/trunk/config.config
+   M /magicrescue/trunk/config.d/50cygwin
+   M /magicrescue/trunk/configure
+
+Overhaul of configure to make it more independent of Magic Rescue. Also fixes the deletion of config.h by ./configure --help.
+------------------------------------------------------------------------
+r327 | jbj | 2004-08-15 00:43:25 +0200 (Sun, 15 Aug 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/Makefile.in
+
+Remove nonsense dependency
+------------------------------------------------------------------------
+r326 | jbj | 2004-08-14 16:02:21 +0200 (Sat, 14 Aug 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/new_NEWS
+   M /magicrescue/trunk/src/magicrescue.c
+   M /magicrescue/trunk/src/scanner.c
+
+Remove ugly workaround and fix the real bug instead
+------------------------------------------------------------------------
+r324 | jbj | 2004-08-10 22:33:04 +0200 (Tue, 10 Aug 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/NEWS
+   M /magicrescue/trunk/new_NEWS
+
+Release 1.1.3
+------------------------------------------------------------------------
 r323 | jbj | 2004-08-10 22:04:25 +0200 (Tue, 10 Aug 2004) | 1 line
 Changed paths:
    M /magicrescue/trunk/new_NEWS

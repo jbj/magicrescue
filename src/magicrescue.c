@@ -149,9 +149,9 @@ static int scan_buf(const unsigned char *scanbuf, ssize_t scanbuf_len,
 
 	while (p - scanbuf < scanbuf_len &&
 		(p = scanner->func(p, scanbuf_len - (p-scanbuf) +
-				     scanner->extra_len,
-				     &scanner->param,
-				     scanbuf_filepos + (p-scanbuf)))) {
+				   scanner->offset,
+				   &scanner->param,
+				   scanbuf_filepos + (p-scanbuf)))) {
 	    off_t filepos;
 
 	    p -= scanner->offset;
@@ -495,11 +495,8 @@ static int parse_recipe(const char *recipefile,
     array_add(&scanner->recipes, &r);
 
     /* Round overlap to machine word boundary, for faster memcpy */
-    /*
-     * Temporarily removed, it's causing the GPL recipe to fail the testsuite
     overlap +=   sizeof(long) - 1;
     overlap &= ~(sizeof(long) - 1);
-     */
 
     return 0;
 }

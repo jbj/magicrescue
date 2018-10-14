@@ -36,7 +36,7 @@ tools/textextract: $(TEXTEXTRACT_OBJS)
 .c.o:
 	$(CC) -c $(CPPFLAGS) $(CFLAGS) -o $@ $<
 
-.o: $(MAGICRESCUE_OBJS)
+.o:
 	$(CC) -o $@ $(LDFLAGS) $<
 
 .pod.1:

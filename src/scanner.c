@@ -53,6 +53,7 @@ const unsigned char *scanner_string(const unsigned char *scanbuf,
     const unsigned char *p = scanbuf + param->scanstring.magicoff;
     struct string string = param->scanstring.string;
     unsigned char magicchar = param->scanstring.magicchar;
+    scanbuf_len += param->scanstring.magicoff;
 
     while ((size_t)(p - scanbuf) < scanbuf_len &&
 	    (p = memchr(p, magicchar, scanbuf_len - (p-scanbuf)))) {

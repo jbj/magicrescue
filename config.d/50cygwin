@@ -1,5 +1,7 @@
 #!/bin/sh
 # Cygwin needs some special handling for .exe files
+MAKE_VARS="$MAKE_VARS EXE"
+
 cat > conftest.c << EOF
 int main() {
 #ifdef __CYGWIN__
