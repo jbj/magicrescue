@@ -76,6 +76,15 @@ Use I<database> as an on-disk database to read from or write to.  See the
 L</DESCRIPTION> section above about how this influences the operation of
 B<dupemap>.
 
+=item B<-I> I<file>
+
+Reads input files from I<file> in addition to those listed on the command line.
+If I<file> is C<->, read from standard input.  Each line will be interpreted as
+a file name.
+
+The paths given here will NOT be scanned recursively.  Directories will be
+ignored and symlinks will be followed.
+
 =item B<-m> I<minsize>
 
 Ignore files below this size.
@@ -133,26 +142,16 @@ be the same as the original documents.  That is quite rare with Word documents,
 but this step is critical for formats like mp3, gzip and jpeg, which will often
 look very different after passing through magicrescue.
 
-    $ find /mnt/windows -type f -iname "*.doc" -print0 \
-      |xargs -0 magicrescue -r msoffice -d healthy_docs
+    $ find /mnt/windows -type f -iname "*.doc" \
+      |magicrescue -I- -r msoffice -d healthy_docs
     $ dupemap -d healthy_docs.map scan healthy_docs
     $ rm -rf healthy_docs
-
-This can be done more efficiently, albeit with a more complicated command line.
-The following pipeline will do the same thing as the commands above, but it's
-faster (especially for multi-CPU machines) and will use very little temporary
-disk space.
-
-    $ find /mnt/windows -type f -iname "*.doc" -print0 \
-      |xargs -0 magicrescue -Mo -r msoffice -d healthy_docs \
-      |sed "s/['\"\\[:blank:]]/\\\\&/g" \
-      |xargs sh -c 'dupemap -d healthy_docs.map scan "$@"; rm -f "$@"' sh
 
 Now rescue all C<msoffice> documents from the block device and get rid of
 everything that's not a *.doc.
 
     $ magicrescue -Mo -r msoffice -d rescued_docs /dev/hda1 \
-      |grep -v '.doc$'|xargs rm -f
+      |grep -v '\.doc$'|xargs rm -f
 
 Remove all the rescued documents that also appear on the file system, and
 remove duplicates.
@@ -163,14 +162,6 @@ remove duplicates.
 The F<rescued_docs> folder should now contain only a few files.  This will be
 the undeleted files and some documents that were not stored in contiguous
 blocks (use that defragger ;-)).
-
-For the record, the two commands for rescueing files and removing duplicates
-can also be expressed with one pipeline.
-
-    $ magicrescue -Mo -r msoffice -d rescued_docs /dev/hda1 \
-      |xargs sh -c 'for f in "$@"; do echo "$f"; done|grep -v "\.doc$" \
-             |xargs rm -f; \
-             dupemap -v delete healthy_docs.map "$@" 2>/dev/null' sh
 
 =head2 Usage with fsck
 
@@ -237,41 +228,6 @@ This assumes that the dbm appends the C<.db> extension to database files.
     $ diff unchanged_files current_files > changed_files
     $ mv current.map.db old.map.db
 
-=head2 Usage with find
-
-Sometimes you want to index only files meeting certain criteria.  Your system's
-B<find>(1) and B<xargs>(1) utilities can help with this, but usage varies with
-each UNIX implementation.  The other examples in this manual are for the GNU
-system.
-
-The basic command is:
-
-    $ find ARGS|xargs dupemap ARGS
-
-but this will fail when encountering a file with quotes or spaces in the file
-name.  The GNU utilities have non-standard options to work around this:
-
-    $ find ARGS -print0|xargs -0 dupemap ARGS
-
-If you are not on a GNU system, try escaping the output of find.  This will work
-for everything except file names containing newlines, but it's not very
-readable.
-
-    $ find ARGS|sed "s/['\"\\[:blank:]]/\\\\&/g"|xargs dupemap ARGS
-
-If you're lucky enough to be on a system where B<find> conforms to the latest
-POSIX.1-2001 standard, the solution is very simple.  I haven't seen such a
-system, though.
-
-    $ find ARGS -exec dupemap ARGS {} +
-
-A useful application of this could be to update your database of mp3 file
-checksums with only the files that have been changed/added since the last time.
-This assumes that the dbm appends the C<.db> extension to database files.
-
-    $ find ~/music ARGS -newer mp3s.map.db -name "*.mp3" -print0 \
-      |xargs -0 dupemap -d mp3s.map scan
-
 =head1 DATABASE
 
 The actual database file(s) written by B<dupecheck> will have some relation to
@@ -316,6 +272,6 @@ Jonas Jensen <jbj@knef.dk>
 
 =head1 LATEST VERSION
 
-This tools is part of Magic Rescue.  You can find the latest version at
+This tool is part of Magic Rescue.  You can find the latest version at
 L<http://jbj.rapanden.dk/magicrescue/>
 

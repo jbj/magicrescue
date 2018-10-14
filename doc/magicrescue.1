@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "MAGICRESCUE 1"
-.TH MAGICRESCUE 1 "2004-04-30" "1.1.1" "Magic Rescue"
+.TH MAGICRESCUE 1 "2004-05-06" "1.1.2" "Magic Rescue"
 .SH "NAME"
 magicrescue \- Scans a block device and extracts known file types by looking at
 magic bytes.
@@ -176,7 +176,7 @@ extracting many files.
 You should not place the output directory on the same block device you are
 trying to rescue files from.  This might add the same file to the block device
 ahead of the current reading position, causing \fBmagicrescue\fR to find the same
-file again later.  In the worst theoretical case, this could cause an infinite
+file again later.  In the worst theoretical case, this could cause a
 loop where the same file is extracted thousands of times until disk space is
 exhausted.  You are also likely to overwrite the deleted files you were looking
 for in the first place.
@@ -197,6 +197,11 @@ inside it before using it.  Either use the recipe as it is or copy it somewhere
 and modify it.
 .Sp
 For information on creating your own recipes, see the \*(L"\s-1RECIPES\s0\*(R" section.
+.IP "\fB\-I\fR \fIfile\fR" 7
+.IX Item "-I file"
+Reads input files from \fIfile\fR in addition to those listed on the command line.
+If \fIfile\fR is \f(CW\*(C`\-\*(C'\fR, read from standard input.  Each line will be interpreted as
+a file name.
 .IP "\fB\-M\fR \fIoutput_mode\fR" 7
 .IX Item "-M output_mode"
 Produce machine-readable output to stdout.  \fIoutput_mode\fR can be:
@@ -215,6 +220,25 @@ Print both input and output file names.  Input file names will be prefixed by
 .RS 7
 .Sp
 Nothing else will be written to standard output in this mode.
+.RE
+.IP "\fB\-O\fR [\fB+\fR|\fB\-\fR|\fB=\fR][\fB0x\fR]\fIoffset\fR" 7
+.IX Item "-O [+|-|=][0x]offset"
+Resume from the specified \fIoffset\fR in the first device.  If prefixed with
+\&\fB0x\fR it will be interpreted as a hex number.
+.Sp
+The number may be prefixed with a sign:
+.RS 7
+.IP "\fB=\fR" 4
+.IX Item "="
+Seek to an absolute position (default)
+.IP "\fB+\fR" 4
+.IX Item "+"
+Seek to a relative position.  On regular files this does the same as the above.
+.IP "\fB\-\fR" 4
+.IX Item "-"
+Seek to \s-1EOF\s0, minus the offset.
+.RE
+.RS 7
 .RE
 .SH "USAGE"
 .IX Header "USAGE"
@@ -249,14 +273,9 @@ Then invoke \fBmagicrescue\fR
 .Ve
 .PP
 It will scan through your entire hard disk, so it may take a while.  You can
-stop it and resume later of you want to.  Interrupt it (with \s-1CTRL+C\s0) and note
-the progress information saying what address it got to.  Then restart it later
-with:
-.PP
-.Vb 2
-\&    $ /usr/local/share/magicrescue/tools/inputseek 0x2F3A94BE0 \e
-\&      magicrescue -r jpeg-jfif -r jpeg-exif -d ~/output - < /dev/hdb1
-.Ve
+stop it and resume later of you want to.  To do so, interrupt it (with \s-1CTRL+C\s0)
+and note the progress information saying what address it got to.  Then restart
+it later with the \fB\-O\fR option.
 .PP
 When it has finished you will probably find thousands of .jpg files in
 \&\fI~/output\fR, including things you never knew was in your browser cache.  Sorting
@@ -274,7 +293,7 @@ If you are performing an undelete operation you will want to get rid
 of all the rescued files that also appear on the live file system.  See the
 \&\fBdupemap\fR(1) manual for instructions on doing this.
 .PP
-If that's not enough, you can use use \fBmagicsort\fR to get a better overview:
+If that's not enough, you can use use \fBmagicsort\fR(1) to get a better overview:
 .PP
 .Vb 1
 \&    $ magicsort ~/output
@@ -459,11 +478,14 @@ utilities include <http://www.cgsecurity.org/?photorec.html>,
 .RE
 .IP "Getting disk images from failed disks" 4
 .IX Item "Getting disk images from failed disks"
-\&\fBdd\fR(1), \fBdd_rescue\fR, \fBdd_rhelp\fR, <http://vanheusden.com/recoverdm/>,
+\&\fBdd\fR(1),
+<http://www.garloff.de/kurt/linux/ddrescue/>,
+<http://www.kalysto.org/utilities/dd_rhelp/>,
+<http://vanheusden.com/recoverdm/>,
 <http://myrescue.sourceforge.net>
 .IP "Processing \fBmagicrescue\fR's output" 4
 .IX Item "Processing magicrescue's output"
-\&\fBdupemap\fR(1), \fBfile\fR(1), \fBmagicsort\fR, <http://ccorr.sourceforge.net>
+\&\fBdupemap\fR(1), \fBfile\fR(1), \fBmagicsort\fR(1), <http://ccorr.sourceforge.net>
 .IP "Authoring recipes" 4
 .IX Item "Authoring recipes"
 \&\fBmagic\fR(4), \fBhexedit\fR(1), <http://wotsit.org>

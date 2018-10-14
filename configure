@@ -3,7 +3,7 @@
 #
 # Default options
 #
-app=magicrescue
+app="Magic Rescue"
 prefix=/usr/local
 env_vars="CC CFLAGS CPPFLAGS LDFLAGS"
 def_CC=cc
@@ -16,8 +16,8 @@ EXE=
 # Helper functions
 #
 
-echo1() { echo $ECHO_N "$1 $ECHO_C"; }
-echo2() { echo "$ECHO_T$1"; }
+echo1() { echo $ECHO_N "$* $ECHO_C"; }
+echo2() { echo "$ECHO_T$*"; }
 
 conftest() {
     conftest_compile && conftest_link
@@ -101,6 +101,8 @@ EOF
 
     --strict)
 	CFLAGS="$CFLAGS -std=c9x -W -Wshadow -Wpointer-arith -Wstrict-prototypes -Wmissing-prototypes -Wredundant-decls"
+	echo "#define _POSIX_C_SOURCE 200112L" >> config.h
+	echo "#define _XOPEN_SOURCE 600" >> config.h
 	;;
 
     --*=*)
@@ -166,6 +168,11 @@ for var in $env_vars $MAKE_VARS; do
 done
 
 cat Makefile.in >> Makefile
+if [ -f Makefile.dep ]; then
+    cat Makefile.dep >> Makefile
+    rm -f Makefile.dep
+fi
+
 chmod 444 Makefile
 
 echo

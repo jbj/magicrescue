@@ -16,9 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-#define _FILE_OFFSET_BITS 64
-#define _LARGEFILE_SOURCE
-#define _LARGEFILE64_SOURCE
+#include "config.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -70,7 +68,7 @@ int main(int argc, char **argv)
     ssize_t max_total     = 50*1024*1024;
 
     char *ofile;
-    const size_t blocksize = 102400;
+    const size_t bufsize = 102400;
     char *buf;
     int c;
 
@@ -96,7 +94,7 @@ int main(int argc, char **argv)
     }
 
     ofile = argv[optind];
-    buf = malloc(blocksize);
+    buf = malloc(bufsize);
 
     {
 	off_t total_in = 0, total_out = 0, in_at_last_out = 0;
@@ -105,7 +103,7 @@ int main(int argc, char **argv)
 	const char *buf_offset;
 
 	do {
-	    read_count = read(0, buf, blocksize);
+	    read_count = read(0, buf, bufsize);
 	    if (read_count <= 0) break;
 
 	    buf_offset = buf;

@@ -1,0 +1,27 @@
+=head1 NAME
+
+magicsort - Categorize files by their B<file>(1) magic
+
+=head1 SYNOPSIS
+
+B<magicsort> I<directory>
+
+=head1 DESCRIPTION
+
+Invokes the system's B<file> utility on all files in I<directory>
+non-recursively.  For each different string that B<file> outputs it will create
+a sub-directory of that name and move the file in there.
+
+=head1 SEE ALSO
+
+B<magicrescue>(1), B<dupemap>(1)
+
+=head1 AUTHOR
+
+Jonas Jensen <jbj@knef.dk>
+
+=head1 LATEST VERSION
+
+This tool is part of Magic Rescue.  You can find the latest version at
+L<http://jbj.rapanden.dk/magicrescue/>
+

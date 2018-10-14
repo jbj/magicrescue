@@ -1,0 +1,19 @@
+#!/bin/sh
+
+echo1 "Finding dependencies..."
+if $CC -MM $CPPFLAGS $CFLAGS src/magicrescue.c >/dev/null 2>&5; then
+    exec 6> Makefile.dep
+
+    for dir in src tools; do
+	for f in $dir/*.c; do
+	    $CC -MM $CPPFLAGS $CFLAGS "$f" 2>&5|sed "1s%^%$dir/%" >&6
+	done
+    done
+    echo2 ok
+
+    exec 6>&-
+else
+    rm -f Makefile.dep
+    echo2 "skipped"
+fi
+

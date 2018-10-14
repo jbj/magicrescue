@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "DUPEMAP 1"
-.TH DUPEMAP 1 "2004-04-30" "1.1.1" "Magic Rescue"
+.TH DUPEMAP 1 "2004-05-03" "1.1.2" "Magic Rescue"
 .SH "NAME"
 dupemap \- Creates a database of file checksums and uses it to eliminate
 duplicates
@@ -186,6 +186,14 @@ to scan one \fIpath\fR and delete files in a second \fIpath\fR.
 Use \fIdatabase\fR as an on-disk database to read from or write to.  See the
 \&\*(L"\s-1DESCRIPTION\s0\*(R" section above about how this influences the operation of
 \&\fBdupemap\fR.
+.IP "\fB\-I\fR \fIfile\fR" 7
+.IX Item "-I file"
+Reads input files from \fIfile\fR in addition to those listed on the command line.
+If \fIfile\fR is \f(CW\*(C`\-\*(C'\fR, read from standard input.  Each line will be interpreted as
+a file name.
+.Sp
+The paths given here will \s-1NOT\s0 be scanned recursively.  Directories will be
+ignored and symlinks will be followed.
 .IP "\fB\-m\fR \fIminsize\fR" 7
 .IX Item "-m minsize"
 Ignore files below this size.
@@ -244,22 +252,10 @@ but this step is critical for formats like mp3, gzip and jpeg, which will often
 look very different after passing through magicrescue.
 .PP
 .Vb 4
-\&    $ find /mnt/windows -type f -iname "*.doc" -print0 \e
-\&      |xargs -0 magicrescue -r msoffice -d healthy_docs
+\&    $ find /mnt/windows -type f -iname "*.doc" \e
+\&      |magicrescue -I- -r msoffice -d healthy_docs
 \&    $ dupemap -d healthy_docs.map scan healthy_docs
 \&    $ rm -rf healthy_docs
-.Ve
-.PP
-This can be done more efficiently, albeit with a more complicated command line.
-The following pipeline will do the same thing as the commands above, but it's
-faster (especially for multi-CPU machines) and will use very little temporary
-disk space.
-.PP
-.Vb 4
-\&    $ find /mnt/windows -type f -iname "*.doc" -print0 \e
-\&      |xargs -0 magicrescue -Mo -r msoffice -d healthy_docs \e
-\&      |sed "s/['\e"\e\e[:blank:]]/\e\e\e\e&/g" \e
-\&      |xargs sh -c 'dupemap -d healthy_docs.map scan "$@"; rm -f "$@"' sh
 .Ve
 .PP
 Now rescue all \f(CW\*(C`msoffice\*(C'\fR documents from the block device and get rid of
@@ -267,7 +263,7 @@ everything that's not a *.doc.
 .PP
 .Vb 2
 \&    $ magicrescue -Mo -r msoffice -d rescued_docs /dev/hda1 \e
-\&      |grep -v '.doc$'|xargs rm -f
+\&      |grep -v '\e.doc$'|xargs rm -f
 .Ve
 .PP
 Remove all the rescued documents that also appear on the file system, and
@@ -281,16 +277,6 @@ remove duplicates.
 The \fIrescued_docs\fR folder should now contain only a few files.  This will be
 the undeleted files and some documents that were not stored in contiguous
 blocks (use that defragger ;\-)).
-.PP
-For the record, the two commands for rescueing files and removing duplicates
-can also be expressed with one pipeline.
-.PP
-.Vb 4
-\&    $ magicrescue -Mo -r msoffice -d rescued_docs /dev/hda1 \e
-\&      |xargs sh -c 'for f in "$@"; do echo "$f"; done|grep -v "\e.doc$" \e
-\&             |xargs rm -f; \e
-\&             dupemap -v delete healthy_docs.map "$@" 2>/dev/null' sh
-.Ve
 .Sh "Usage with fsck"
 .IX Subsection "Usage with fsck"
 In this scenario (based on a true story), you have a hard disk that's gone bad.
@@ -368,50 +354,6 @@ This assumes that the dbm appends the \f(CW\*(C`.db\*(C'\fR extension to databas
 \&    $ diff unchanged_files current_files > changed_files
 \&    $ mv current.map.db old.map.db
 .Ve
-.Sh "Usage with find"
-.IX Subsection "Usage with find"
-Sometimes you want to index only files meeting certain criteria.  Your system's
-\&\fBfind\fR(1) and \fBxargs\fR(1) utilities can help with this, but usage varies with
-each \s-1UNIX\s0 implementation.  The other examples in this manual are for the \s-1GNU\s0
-system.
-.PP
-The basic command is:
-.PP
-.Vb 1
-\&    $ find ARGS|xargs dupemap ARGS
-.Ve
-.PP
-but this will fail when encountering a file with quotes or spaces in the file
-name.  The \s-1GNU\s0 utilities have non-standard options to work around this:
-.PP
-.Vb 1
-\&    $ find ARGS -print0|xargs -0 dupemap ARGS
-.Ve
-.PP
-If you are not on a \s-1GNU\s0 system, try escaping the output of find.  This will work
-for everything except file names containing newlines, but it's not very
-readable.
-.PP
-.Vb 1
-\&    $ find ARGS|sed "s/['\e"\e\e[:blank:]]/\e\e\e\e&/g"|xargs dupemap ARGS
-.Ve
-.PP
-If you're lucky enough to be on a system where \fBfind\fR conforms to the latest
-\&\s-1POSIX\s0.1\-2001 standard, the solution is very simple.  I haven't seen such a
-system, though.
-.PP
-.Vb 1
-\&    $ find ARGS -exec dupemap ARGS {} +
-.Ve
-.PP
-A useful application of this could be to update your database of mp3 file
-checksums with only the files that have been changed/added since the last time.
-This assumes that the dbm appends the \f(CW\*(C`.db\*(C'\fR extension to database files.
-.PP
-.Vb 2
-\&    $ find ~/music ARGS -newer mp3s.map.db -name "*.mp3" -print0 \e
-\&      |xargs -0 dupemap -d mp3s.map scan
-.Ve
 .SH "DATABASE"
 .IX Header "DATABASE"
 The actual database file(s) written by \fBdupecheck\fR will have some relation to
@@ -452,5 +394,5 @@ implement an option for using \s-1MD5\s0 checksums instead.
 Jonas Jensen <jbj@knef.dk>
 .SH "LATEST VERSION"
 .IX Header "LATEST VERSION"
-This tools is part of Magic Rescue.  You can find the latest version at
+This tool is part of Magic Rescue.  You can find the latest version at
 <http://jbj.rapanden.dk/magicrescue/>

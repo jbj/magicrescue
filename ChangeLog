@@ -1,6 +1,333 @@
 For less detailed change information, see the NEWS file
 
 ------------------------------------------------------------------------
+r271 | jbj | 2004-05-06 22:43:22 +0200 (Thu, 06 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/recipes/zip
+
+Some .jar files have bad CRC on all their contents
+------------------------------------------------------------------------
+r270 | jbj | 2004-05-06 22:30:54 +0200 (Thu, 06 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/doc/magicrescue.pod
+
+Wording/formatting in manual
+------------------------------------------------------------------------
+r269 | jbj | 2004-05-05 22:21:59 +0200 (Wed, 05 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/config.d/80magicrescue_defs
+   M /magicrescue/trunk/configure
+
+The name of the package is 'Magic Rescue'
+------------------------------------------------------------------------
+r268 | jbj | 2004-05-05 22:19:05 +0200 (Wed, 05 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/configure
+
+Change echo[12] slightly
+------------------------------------------------------------------------
+r267 | jbj | 2004-05-05 22:13:05 +0200 (Wed, 05 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/src/array.h
+   M /magicrescue/trunk/src/dupemap.c
+   M /magicrescue/trunk/src/magicrescue.h
+   M /magicrescue/trunk/src/recipe.h
+   M /magicrescue/trunk/src/recur.c
+   M /magicrescue/trunk/src/recur.h
+   M /magicrescue/trunk/src/scanner.h
+   M /magicrescue/trunk/src/util.h
+
+Proper header inclusion
+------------------------------------------------------------------------
+r266 | jbj | 2004-05-05 22:12:42 +0200 (Wed, 05 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/src/magicrescue.c
+
+redundant var
+------------------------------------------------------------------------
+r265 | jbj | 2004-05-05 22:12:21 +0200 (Wed, 05 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/configure
+
+Make --strict work on glibc again
+------------------------------------------------------------------------
+r264 | jbj | 2004-05-05 21:52:16 +0200 (Wed, 05 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/src/magicrescue.c
+
+oops
+------------------------------------------------------------------------
+r263 | jbj | 2004-05-05 20:46:57 +0200 (Wed, 05 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/release.sh
+
+Add all docs to release
+------------------------------------------------------------------------
+r262 | jbj | 2004-05-04 22:00:49 +0200 (Tue, 04 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/src/magicrescue.c
+
+Source comments in magicrescue.c
+------------------------------------------------------------------------
+r261 | jbj | 2004-05-04 21:28:09 +0200 (Tue, 04 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/src/find_dbm.h
+
+oops
+------------------------------------------------------------------------
+r260 | jbj | 2004-05-04 19:49:05 +0200 (Tue, 04 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/src/dupemap.c
+   M /magicrescue/trunk/src/find_dbm.h
+
+Store 0-length keys in the DBMs that support it
+------------------------------------------------------------------------
+r259 | jbj | 2004-05-03 22:52:19 +0200 (Mon, 03 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/Makefile.in
+   M /magicrescue/trunk/src/dupemap.c
+   A /magicrescue/trunk/src/recur.c (from /magicrescue/trunk/src/dupemap.c:258)
+   A /magicrescue/trunk/src/recur.h (from /magicrescue/trunk/src/dupemap.c:258)
+   M /magicrescue/trunk/src/util.c
+   M /magicrescue/trunk/src/util.h
+
+Move directory recursion functions to recur.c
+------------------------------------------------------------------------
+r258 | jbj | 2004-05-03 22:02:15 +0200 (Mon, 03 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/src/dupemap.c
+
+Any Berkeley DB version can now be used
+------------------------------------------------------------------------
+r257 | jbj | 2004-05-03 21:55:37 +0200 (Mon, 03 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/doc/magicrescue.pod
+
+Change utility names to urls
+------------------------------------------------------------------------
+r256 | jbj | 2004-05-03 21:44:16 +0200 (Mon, 03 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/doc/dupemap.pod
+
+Remove overly complicated examples from usage info
+------------------------------------------------------------------------
+r255 | jbj | 2004-05-03 21:42:48 +0200 (Mon, 03 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/doc/dupemap.pod
+   M /magicrescue/trunk/doc/magicrescue.pod
+   M /magicrescue/trunk/new_NEWS
+   M /magicrescue/trunk/src/dupemap.c
+   M /magicrescue/trunk/src/magicrescue.c
+
+Implement and document the -I option for magicrescue and dupemap
+------------------------------------------------------------------------
+r254 | jbj | 2004-05-02 22:53:04 +0200 (Sun, 02 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/new_NEWS
+
+news
+------------------------------------------------------------------------
+r253 | jbj | 2004-05-02 22:19:30 +0200 (Sun, 02 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/Makefile.in
+
+fix 'make uninstall'
+------------------------------------------------------------------------
+r252 | jbj | 2004-05-02 22:04:33 +0200 (Sun, 02 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/Makefile.in
+
+.PHONY update
+------------------------------------------------------------------------
+r251 | jbj | 2004-05-02 21:55:56 +0200 (Sun, 02 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/doc/magicrescue.pod
+
+magicsort now has manpage
+------------------------------------------------------------------------
+r250 | jbj | 2004-05-02 21:55:36 +0200 (Sun, 02 May 2004) | 3 lines
+Changed paths:
+   M /magicrescue/trunk/Makefile.in
+   M /magicrescue/trunk/doc/dupemap.pod
+   A /magicrescue/trunk/doc/magicsort.pod
+
+- make distclean removes binaries
+- document magicsort
+
+------------------------------------------------------------------------
+r249 | jbj | 2004-05-02 21:35:41 +0200 (Sun, 02 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/src/dupemap.c
+   M /magicrescue/trunk/src/magicrescue.c
+
+wording
+------------------------------------------------------------------------
+r248 | jbj | 2004-05-02 21:09:07 +0200 (Sun, 02 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/src/util.c
+
+proper fallback when atoll is missing
+------------------------------------------------------------------------
+r247 | jbj | 2004-05-02 20:54:55 +0200 (Sun, 02 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/doc/magicrescue.pod
+   M /magicrescue/trunk/src/magicrescue.c
+
+Document -O
+------------------------------------------------------------------------
+r246 | jbj | 2004-05-02 20:10:16 +0200 (Sun, 02 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/src/magicrescue.c
+
+periods
+------------------------------------------------------------------------
+r245 | jbj | 2004-05-02 20:08:33 +0200 (Sun, 02 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/src/magicrescue.c
+   M /magicrescue/trunk/src/util.c
+   M /magicrescue/trunk/src/util.h
+
+Revival of the -O option
+------------------------------------------------------------------------
+r244 | jbj | 2004-05-02 20:07:40 +0200 (Sun, 02 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/Makefile.in
+
+oops
+------------------------------------------------------------------------
+r243 | jbj | 2004-05-02 19:39:08 +0200 (Sun, 02 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/Makefile.in
+   M /magicrescue/trunk/src/dupemap.c
+   M /magicrescue/trunk/src/util.c
+   M /magicrescue/trunk/src/util.h
+   M /magicrescue/trunk/tools/inputseek.c
+
+Change dupemap and inputseek to new build style
+------------------------------------------------------------------------
+r242 | jbj | 2004-05-02 19:38:13 +0200 (Sun, 02 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/tools/safecat.c
+
+safecat cosmetics
+------------------------------------------------------------------------
+r241 | jbj | 2004-05-02 19:13:18 +0200 (Sun, 02 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/src/magicrescue.c
+
+variable name blocksize -> bufsize
+------------------------------------------------------------------------
+r240 | jbj | 2004-05-02 19:11:54 +0200 (Sun, 02 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/src/magicrescue.c
+
+variable name rlp -> rl
+------------------------------------------------------------------------
+r239 | jbj | 2004-05-02 19:10:22 +0200 (Sun, 02 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/src/array.c
+   A /magicrescue/trunk/src/array.h (from /magicrescue/trunk/src/common.h:235)
+   D /magicrescue/trunk/src/common.h
+   M /magicrescue/trunk/src/extract.c
+   M /magicrescue/trunk/src/magicrescue.c
+   M /magicrescue/trunk/src/recipe.c
+   A /magicrescue/trunk/src/recipe.h (from /magicrescue/trunk/src/common.h:235)
+   M /magicrescue/trunk/src/scanner.c
+   A /magicrescue/trunk/src/scanner.h (from /magicrescue/trunk/src/common.h:235)
+   M /magicrescue/trunk/src/util.c
+   A /magicrescue/trunk/src/util.h (from /magicrescue/trunk/src/common.h:235)
+
+Split common.h into multiple header files
+------------------------------------------------------------------------
+r238 | jbj | 2004-05-02 18:55:48 +0200 (Sun, 02 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/config.d/90dep
+
+oops
+------------------------------------------------------------------------
+r237 | jbj | 2004-05-02 18:49:18 +0200 (Sun, 02 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/config.d/90dep
+
+wording
+------------------------------------------------------------------------
+r236 | jbj | 2004-05-02 18:47:06 +0200 (Sun, 02 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/Makefile.in
+   A /magicrescue/trunk/config.d/80magicrescue_defs (from /magicrescue/trunk/config.d/90magicrescue_defs:235)
+   A /magicrescue/trunk/config.d/90dep
+   D /magicrescue/trunk/config.d/90magicrescue_defs
+   M /magicrescue/trunk/configure
+
+Dependency generation at configure time
+------------------------------------------------------------------------
+r235 | jbj | 2004-05-02 17:38:48 +0200 (Sun, 02 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/Makefile.in
+   M /magicrescue/trunk/config.d/50off_t
+   M /magicrescue/trunk/config.d/90magicrescue_defs
+   A /magicrescue/trunk/src/array.c (from /magicrescue/trunk/src/magicrescue.c:232)
+   A /magicrescue/trunk/src/common.h (from /magicrescue/trunk/src/magicrescue.c:232)
+   M /magicrescue/trunk/src/dupemap.c
+   A /magicrescue/trunk/src/extract.c (from /magicrescue/trunk/src/magicrescue.c:232)
+   A /magicrescue/trunk/src/largefile.h (from /magicrescue/trunk/src/magicrescue.c:232)
+   M /magicrescue/trunk/src/magicrescue.c
+   A /magicrescue/trunk/src/magicrescue.h (from /magicrescue/trunk/src/magicrescue.c:232)
+   A /magicrescue/trunk/src/recipe.c (from /magicrescue/trunk/src/magicrescue.c:232)
+   A /magicrescue/trunk/src/scanner.c (from /magicrescue/trunk/src/magicrescue.c:232)
+   A /magicrescue/trunk/src/util.c (from /magicrescue/trunk/src/magicrescue.c:232)
+
+Split magicrescue.c into multiple files
+------------------------------------------------------------------------
+r234 | jbj | 2004-05-02 16:07:06 +0200 (Sun, 02 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/Makefile.in
+
+clean config.log with distclean
+------------------------------------------------------------------------
+r233 | jbj | 2004-05-02 14:46:21 +0200 (Sun, 02 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk
+   M /magicrescue/trunk/Makefile.in
+   A /magicrescue/trunk/doc
+   A /magicrescue/trunk/doc/dupemap.pod (from /magicrescue/trunk/dupemap.pod:231)
+   A /magicrescue/trunk/doc/magicrescue.pod (from /magicrescue/trunk/magicrescue.pod:231)
+   D /magicrescue/trunk/dupemap.pod
+   D /magicrescue/trunk/magicrescue.pod
+
+docs go in doc/
+------------------------------------------------------------------------
+r232 | jbj | 2004-05-02 14:38:10 +0200 (Sun, 02 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk
+   M /magicrescue/trunk/Makefile.in
+   A /magicrescue/trunk/config.d/10magicrescue_defs
+   M /magicrescue/trunk/config.d/90magicrescue_defs
+   D /magicrescue/trunk/dupemap.c
+   D /magicrescue/trunk/find_dbm.h
+   D /magicrescue/trunk/magicrescue.c
+   D /magicrescue/trunk/magicsort
+   A /magicrescue/trunk/src
+   A /magicrescue/trunk/src/dupemap.c (from /magicrescue/trunk/dupemap.c:220)
+   A /magicrescue/trunk/src/find_dbm.h (from /magicrescue/trunk/find_dbm.h:220)
+   A /magicrescue/trunk/src/magicrescue.c (from /magicrescue/trunk/magicrescue.c:231)
+   A /magicrescue/trunk/src/magicsort (from /magicrescue/trunk/magicsort:220)
+
+Sources and binaries go in src/
+------------------------------------------------------------------------
+r231 | jbj | 2004-05-02 10:52:30 +0200 (Sun, 02 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+
+Oops, scanner_compare never worked. The problem should only affect performance, not correctness.
+------------------------------------------------------------------------
+r229 | jbj | 2004-05-01 19:14:32 +0200 (Sat, 01 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/NEWS
+   M /magicrescue/trunk/new_NEWS
+
+Release 1.1.1
+------------------------------------------------------------------------
 r228 | jbj | 2004-05-01 19:13:20 +0200 (Sat, 01 May 2004) | 1 line
 Changed paths:
    M /magicrescue/trunk/new_NEWS

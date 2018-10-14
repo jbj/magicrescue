@@ -1,25 +1,41 @@
 SHELL = /bin/sh
-PROGRAMS = magicrescue tools/inputseek tools/safecat dupemap
-DOCS = magicrescue.1 dupemap.1
+PROGRAMS = src/magicrescue src/dupemap tools/inputseek tools/safecat
+DOCS = doc/magicrescue.1 doc/dupemap.1 doc/magicsort.1
+
+MAGICRESCUE_OBJS = src/magicrescue.o src/array.o src/extract.o src/recipe.o \
+		   src/scanner.o src/util.o
+
+DUPEMAP_OBJS = src/dupemap.o src/recur.o
+
+INPUTSEEK_OBJS = tools/inputseek.o src/util.o
 
 all: $(PROGRAMS) docs
 
 docs: $(DOCS)
 
-dupemap: dupemap.c
-	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $(LDFLAGS) $(DBM_LDFLAGS) dupemap.c
+src/magicrescue: $(MAGICRESCUE_OBJS)
+	$(CC) -o $@ $(LDFLAGS) $(MAGICRESCUE_OBJS)
+
+src/dupemap: $(DUPEMAP_OBJS)
+	$(CC) -o $@ $(LDFLAGS) $(DBM_LDFLAGS) $(DUPEMAP_OBJS)
  
-.c:
-	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $(LDFLAGS) $<
+tools/inputseek: $(INPUTSEEK_OBJS)
+	$(CC) -o $@ $(LDFLAGS) $(INPUTSEEK_OBJS)
+
+.c.o:
+	$(CC) -c $(CPPFLAGS) $(CFLAGS) -o $@ $<
+
+.o: $(MAGICRESCUE_OBJS)
+	$(CC) -o $@ $(LDFLAGS) $<
 
 .pod.1:
 	pod2man --release "$(RELEASE)" --center "Magic Rescue" $< $@
 
 clean:
-	rm -f $(PROGRAMS)
+	rm -f src/*.o tools/*.o
 
 distclean: clean
-	rm -f Makefile config.h
+	rm -f $(PROGRAMS) Makefile config.h config.log
 
 docs-clean:
 	rm -f $(DOCS)
@@ -34,7 +50,7 @@ install: all
 	    $(PREFIX)/man/man1 \
 	    $(PREFIX)/bin
 	
-	cp magicrescue$(EXE) dupemap$(EXE) magicsort $(PREFIX)/bin/
+	cp src/magicrescue$(EXE) src/dupemap$(EXE) src/magicsort $(PREFIX)/bin/
 	cp recipes/* $(PREFIX)/share/magicrescue/recipes/
 	cp $(DOCS) $(PREFIX)/man/man1
 	
@@ -50,14 +66,15 @@ uninstall:
 	rm -f $(PREFIX)/bin/magicsort
 	rm -f $(PREFIX)/bin/dupemap$(EXE)
 	for f in $(DOCS); do \
-	   rm -f "$(PREFIX)/man/man1/$$f" \
+	   rm -f "$(PREFIX)/man/man1/`basename $$f`"; \
 	done
 	rm -rf $(PREFIX)/share/magicrescue/tools
 	rm -rf $(PREFIX)/share/magicrescue/recipes
 	-rmdir $(PREFIX)/share/magicrescue
 
-.PHONY: all clean distclean maintainerclean install uninstall docs
+.PHONY: all clean distclean docs-clean maintainer-clean install uninstall docs
 
 .SUFFIXES: .1 .pod
 
 .POSIX:
+

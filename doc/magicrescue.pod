@@ -51,7 +51,7 @@ extracting many files.
 You should not place the output directory on the same block device you are
 trying to rescue files from.  This might add the same file to the block device
 ahead of the current reading position, causing B<magicrescue> to find the same
-file again later.  In the worst theoretical case, this could cause an infinite
+file again later.  In the worst theoretical case, this could cause a
 loop where the same file is extracted thousands of times until disk space is
 exhausted.  You are also likely to overwrite the deleted files you were looking
 for in the first place.
@@ -73,6 +73,12 @@ inside it before using it.  Either use the recipe as it is or copy it somewhere
 and modify it.
 
 For information on creating your own recipes, see the L</RECIPES> section.
+
+=item B<-I> I<file>
+
+Reads input files from I<file> in addition to those listed on the command line.
+If I<file> is C<->, read from standard input.  Each line will be interpreted as
+a file name.
 
 =item B<-M> I<output_mode>
 
@@ -96,6 +102,29 @@ C<i> and a space.  Output file names will be prefixed by C<o> and a space.
 =back
 
 Nothing else will be written to standard output in this mode.
+
+=item B<-O> [B<+>|B<->|B<=>][B<0x>]I<offset>
+
+Resume from the specified I<offset> in the first device.  If prefixed with
+B<0x> it will be interpreted as a hex number.
+
+The number may be prefixed with a sign:
+
+=over
+
+=item B<=>
+
+Seek to an absolute position (default)
+
+=item B<+>
+
+Seek to a relative position.  On regular files this does the same as the above.
+
+=item B<->
+
+Seek to EOF, minus the offset.
+
+=back
 
 =back
 
@@ -126,12 +155,9 @@ Then invoke B<magicrescue>
     $ magicrescue -r jpeg-jfif -r jpeg-exif -d ~/output /dev/hdb1
 
 It will scan through your entire hard disk, so it may take a while.  You can
-stop it and resume later of you want to.  Interrupt it (with CTRL+C) and note
-the progress information saying what address it got to.  Then restart it later
-with:
-
-    $ /usr/local/share/magicrescue/tools/inputseek 0x2F3A94BE0 \
-      magicrescue -r jpeg-jfif -r jpeg-exif -d ~/output - < /dev/hdb1
+stop it and resume later of you want to.  To do so, interrupt it (with CTRL+C)
+and note the progress information saying what address it got to.  Then restart
+it later with the B<-O> option.
 
 When it has finished you will probably find thousands of .jpg files in
 F<~/output>, including things you never knew was in your browser cache.  Sorting
@@ -147,7 +173,7 @@ If you are performing an undelete operation you will want to get rid
 of all the rescued files that also appear on the live file system.  See the
 B<dupemap>(1) manual for instructions on doing this.
 
-If that's not enough, you can use use B<magicsort> to get a better overview:
+If that's not enough, you can use use B<magicsort>(1) to get a better overview:
 
     $ magicsort ~/output
 
@@ -374,12 +400,15 @@ L<http://www.vanheusden.com/findfile/>.
 
 =item Getting disk images from failed disks
 
-B<dd>(1), B<dd_rescue>, B<dd_rhelp>, L<http://vanheusden.com/recoverdm/>,
+B<dd>(1),
+L<http://www.garloff.de/kurt/linux/ddrescue/>,
+L<http://www.kalysto.org/utilities/dd_rhelp/>,
+L<http://vanheusden.com/recoverdm/>,
 L<http://myrescue.sourceforge.net>
 
 =item Processing B<magicrescue>'s output
 
-B<dupemap>(1), B<file>(1), B<magicsort>, L<http://ccorr.sourceforge.net>
+B<dupemap>(1), B<file>(1), B<magicsort>(1), L<http://ccorr.sourceforge.net>
 
 =item Authoring recipes
 

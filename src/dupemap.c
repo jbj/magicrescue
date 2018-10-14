@@ -16,10 +16,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-#define _FILE_OFFSET_BITS 64
-#define _LARGEFILE_SOURCE
-#define _LARGEFILE64_SOURCE
-
 #include "config.h"
 
 #ifdef HAVE_NDBM
@@ -38,170 +34,20 @@
 #include <unistd.h>
 
 #include "find_dbm.h"
+#include "recur.h"
+#include "util.h"
 
 enum operation { SCAN=1, REPORT=2, DELETE=4, HASDB=8 };
 
 enum mode { MODE_READDB=1, MODE_WRITEDB=2, MODE_DELETE=4, MODE_REPORT=8,
             MODE_TEMPDB=16 };
 
-static void rm_rf(const char *dir);
-
-/*
- *
- * DIRECTORY RECURSION FUNCTIONS
- *
- */
-
-#define MAXDEPTH 100
-
-struct dirstack {
-    DIR *dirs[MAXDEPTH];
-    DIR **pos;
-    char prefix[PATH_MAX];
-};
-
-struct recur {
-    char **list;
-    struct dirstack *stack;
-};
-
-static void parentdir(char *s)
-{
-    char *p;
-    
-    for (p = &s[strlen(s) - 1]; p >= s; p--) {
-	if (*p == '/') {
-	    *p = '\0';
-	    return;
-	}
-    }
-}
-
-static struct dirstack *dirstack_open(const char *path)
-{
-    struct dirstack *stack;
-    DIR *dh = opendir(path);
-
-    if (!dh)
-	return NULL;
-
-    stack = malloc(sizeof(struct dirstack));
-    stack->dirs[0] = dh;
-    stack->pos = stack->dirs;
-
-    strcpy(stack->prefix, path);
-    {
-	char *s = &stack->prefix[strlen(stack->prefix)-1];
-	if (*s == '/')
-	    *s = '\0';
-    }
-
-    return stack;
-}
-
-static void dirstack_close(struct dirstack *stack)
-{
-    free(stack);
-}
-
-static int dirstack_next(struct dirstack *stack, char *fullname, struct stat *st_arg)
-{
-    struct dirent *dirent;
-    struct stat st;
-
-    if (stack == NULL)
-	return -1;
-
-    do {
-	while ((dirent = readdir(*stack->pos)) == NULL) {
-	    closedir(*stack->pos);
-
-	    if (stack->pos == stack->dirs) {
-		return -1;
-	    }
-	    --stack->pos;
-	    parentdir(stack->prefix);
-	}
-
-    } while (  strcmp(dirent->d_name, "." ) == 0
-	    || strcmp(dirent->d_name, "..") == 0
-	    || snprintf(fullname, PATH_MAX, "%s/%s",
-		    stack->prefix, dirent->d_name) >= PATH_MAX
-	    || lstat(fullname, &st) != 0);
-
-    if (S_ISDIR(st.st_mode) && 
-	    stack->pos - stack->dirs + 1 < MAXDEPTH &&
-	    (stack->pos[1] = opendir(fullname))) {
-
-	++stack->pos;
-	strcpy(stack->prefix, fullname);
-    }
-    
-    if (st_arg)
-	*st_arg = st;
-
-    return 0;
-}
-
-static struct recur *recur_open(char **paths)
-{
-    struct recur *recur;
-    
-    if (paths == NULL || paths[0] == NULL || strlen(paths[0]) >= PATH_MAX)
-	return NULL;
-    
-    recur = malloc(sizeof(struct recur));
-    recur->list = paths;
-    recur->stack = NULL;
-
-    return recur;
-}
-
-static void recur_close(struct recur *recur)
-{
-    free(recur->stack);
-    free(recur);
-}
-
-static int recur_next(struct recur *recur, char *name, struct stat *st_arg)
-{
-    int rv = -1;
-
-    while (recur->stack == NULL
-	    || (rv = dirstack_next(recur->stack, name, st_arg)) != 0) {
-	const char *cur = recur->list[0];
-	recur->list++;
-
-	if (!cur)
-	    return -1;
-	
-	dirstack_close(recur->stack);
-	
-	recur->stack = dirstack_open(cur);
-	if (!recur->stack) {
-	    struct stat st;
-	    if (lstat(cur, &st) == 0) {
-
-		strcpy(name, cur);
-		if (st_arg)
-		    *st_arg = st;
-		return 0;
-
-	    } else {
-		fprintf(stderr, "%s: %s\n", cur, strerror(errno));
-	    }
-	}
-    }
-
-    return rv;
-}
-
 /*
  *
  * DATABASE CODE
  *
  * An implementation of the database layer should provide a dbhandle typedef
- * and the csdb_{open,open_tempdb,exists,store,close} functions. No
+ * and the csdb_{open,open_tempdb,exists,store,close} functions.  No
  * values are stored in the database, only the existence of keys matters.
  *
  */
@@ -269,10 +115,11 @@ static int csdb_exists(dbhandle *db, void *key, int len)
 static int csdb_store(dbhandle *db, void *key, int len)
 {
     datum d, value;
+
     d.dptr = key;
     d.dsize = len;
     value.dptr = "";
-    value.dsize = 1;
+    value.dsize = DBM_KEY_LEN;
 
     dbm_store(db->db, d, value, DBM_INSERT);
     return 0;
@@ -394,6 +241,8 @@ static int checksum_calc(checksum_t *checksum, const char *file)
  *
  */
 static dbhandle *global_dbhandle = NULL;
+static off_t min_size = 1, max_size = 0;
+static enum mode mode;
 
 static void signal_beforedeath(int signo)
 {
@@ -401,35 +250,6 @@ static void signal_beforedeath(int signo)
     csdb_close(global_dbhandle);
 
     exit(0);
-}
-
-static void rm_rf(const char *dir)
-{
-    struct dirent *dirent;
-    struct stat st;
-    DIR *dh = opendir(dir);
-    char fullname[PATH_MAX];
-
-    if (!dh)
-	return;
-
-    while ((dirent = readdir(dh))) {
-	if (   strcmp(dirent->d_name, "." ) == 0
-	    || strcmp(dirent->d_name, "..") == 0
-	    || snprintf(fullname, PATH_MAX, "%s/%s",
-		    dir, dirent->d_name) >= PATH_MAX
-	    || lstat(fullname, &st) != 0) {
-
-	    continue;
-	}
-
-	if (S_ISDIR(st.st_mode))
-	    rm_rf(fullname);
-	else
-	    unlink(fullname);
-    }
-    closedir(dh);
-    rmdir(dir);
 }
 
 static enum mode parse_mode(char *str, int hasdb) {
@@ -473,6 +293,47 @@ static enum mode parse_mode(char *str, int hasdb) {
     return 0;
 }
 
+static void scan_file(const char *name, const struct stat *st,
+	dbhandle *db) {
+    checksum_t checksum;
+
+    if (!(st->st_mode & S_IFREG
+		&& st->st_size >= min_size
+		&& (max_size > 0 ? st->st_size <= max_size : 1)
+		&& checksum_calc(&checksum, name) == 0 ))
+	return;
+
+    if (mode & MODE_TEMPDB) {
+
+	if (csdb_exists(db, &checksum, sizeof checksum)) {
+
+	    if (mode & MODE_REPORT)
+		printf("%s\n", name);
+	    if (mode & MODE_DELETE)
+		unlink(name);
+
+	} else {
+	    csdb_store(db, &checksum, sizeof checksum);
+	}
+
+    } else if (mode & MODE_WRITEDB) {
+
+	if (mode & MODE_REPORT)
+	    printf("%s\n", name);
+
+	csdb_store(db, &checksum, sizeof checksum);
+
+    } else if (mode & MODE_READDB
+	    && csdb_exists(db, &checksum, sizeof checksum)) {
+
+	if (mode & MODE_REPORT)
+	    printf("%s\n", name);
+
+	if (mode & MODE_DELETE)
+	    unlink(name);
+
+    }
+}
 
 static void usage(void)
 {
@@ -482,6 +343,7 @@ static void usage(void)
 "\n"
 "Options:\n"
 "  -d DATABASE   Read/write from a database on disk\n"
+"  -I FILE       Read input file names from this file (\"-\" for stdin)\n"
 "  -m MINSIZE    Exclude files below this size\n"
 "  -M MAXSIZE    Exclude files above this size\n"
 );
@@ -491,16 +353,18 @@ int main(int argc, char **argv)
 {
     struct recur *recur;
     int c;
-    off_t min_size = 1, max_size = 0;
     char name[PATH_MAX], *dbname = NULL;
+    char *file_names_from = NULL;
     struct stat st;
-    enum mode mode;
     dbhandle db;
 
-    while ((c = getopt(argc, argv, "d:m:M:")) >= 0) {
+    while ((c = getopt(argc, argv, "d:m:I:M:")) >= 0) {
 	switch (c) {
 	case 'd':
 	    dbname = optarg;
+
+	break; case 'I':
+	    file_names_from = optarg;
 	    
 	break; case 'm':
 #ifdef HAVE_ATOLL
@@ -539,11 +403,6 @@ int main(int argc, char **argv)
 	return 1;
     }
 
-    recur = recur_open(argv + 1);
-    if (!recur) {
-	return 0;
-    }
-
     if (dbname) {
 	if (csdb_open(&db, dbname, mode) != 0) {
 	    fprintf(stderr, "Cannot open database\n");
@@ -563,48 +422,38 @@ int main(int argc, char **argv)
     signal(SIGSEGV, signal_beforedeath);
     signal(SIGPIPE, signal_beforedeath);
     
-    while (recur_next(recur, name, &st) == 0) {
-	checksum_t checksum;
-
-	if (!(st.st_mode & S_IFREG
-		    && st.st_size >= min_size
-		    && (max_size > 0 ? st.st_size <= max_size : 1)
-		    && checksum_calc(&checksum, name) == 0 ))
-	    continue;
-
-	if (mode & MODE_TEMPDB) {
-
-	    if (csdb_exists(&db, &checksum, sizeof checksum)) {
-
-		if (mode & MODE_REPORT)
-		    printf("%s\n", name);
-		if (mode & MODE_DELETE)
-		    unlink(name);
-
-	    } else {
-		csdb_store(&db, &checksum, sizeof checksum);
-	    }
-
-	} else if (mode & MODE_WRITEDB) {
-
-	    if (mode & MODE_REPORT)
-		printf("%s\n", name);
-
-	    csdb_store(&db, &checksum, sizeof checksum);
-
-	} else if (mode & MODE_READDB
-		&& csdb_exists(&db, &checksum, sizeof checksum)) {
-
-	    if (mode & MODE_REPORT)
-		printf("%s\n", name);
-
-	    if (mode & MODE_DELETE)
-		unlink(name);
-
+    if (argc > 1) {
+	recur = recur_open(argv + 1);
+	if (!recur) {
+	    csdb_close(&db);
+	    return 0;
 	}
+
+	while (recur_next(recur, name, &st) == 0) {
+	    scan_file(name, &st, &db);
+	}
+	recur_close(recur);
     }
 
-    recur_close(recur);
+    if (file_names_from) {
+	FILE *fh = strcmp(file_names_from, "-") == 0 ? stdin : 
+		fopen(file_names_from, "r");
+	
+	if (!fh) {
+	    fprintf(stderr, "Opening %s: %s\n",
+		    file_names_from, strerror(errno));
+	    csdb_close(&db);
+	    return 1;
+	}
+
+	while (fgets(name, sizeof name, fh)) {
+	    name[strlen(name)-1] = '\0'; /* kill newline */
+	    if (stat(name, &st) == 0)
+		scan_file(name, &st, &db);
+	}
+	fclose(fh);
+    }
+
     csdb_close(&db);
     global_dbhandle = NULL;
     
@@ -617,8 +466,8 @@ int main(int argc, char **argv)
 int main()
 {
     printf(
-"dupemap was not compiled because no ndbm.h was found on your system. Please\n"
-"install the development packages for Berkeley DB 1 or GDBM and recompile.\n"
+"dupemap was not compiled because no ndbm.h was found on your system.  Please\n"
+"install the development packages for Berkeley DB or GDBM and recompile.\n"
 	  );
     return 0;
 }

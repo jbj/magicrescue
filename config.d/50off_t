@@ -2,9 +2,7 @@
 
 # Size of off_t should be at least 8
 cat > conftest.c << EOF
-#define _FILE_OFFSET_BITS 64
-#define _LARGEFILE_SOURCE
-#define _LARGEFILE64_SOURCE
+#include "largefile.h"
 
 #include <stdio.h>
 #include <sys/types.h>

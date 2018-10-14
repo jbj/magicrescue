@@ -20,4 +20,4 @@ command dd bs=1024k count=50 of="$1" 2>/dev/null; zip -qF "$1" || rm -f "$1"
 
 # Try to guess if it's a JAR archive or an OpenOffice.org file, and rename
 # accordingly
-rename if unzip -p "$1" META-INF/MANIFEST.MF >/dev/null 2>&1; then echo "RENAME jar"; elif unzip -p "$1" content.xml >/dev/null 2>&1; then echo "RENAME ooo"; fi
+rename if unzip -l "$1"|grep META-INF/MANIFEST.MF >/dev/null 2>&1; then echo "RENAME jar"; elif unzip -p "$1" content.xml >/dev/null 2>&1; then echo "RENAME ooo"; fi
