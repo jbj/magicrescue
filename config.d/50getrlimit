@@ -1,0 +1,14 @@
+#!/bin/sh
+cat > conftest.c << EOF
+#include <sys/time.h>
+#include <sys/resource.h>
+#include <unistd.h>
+int main() {
+    struct rlimit rlp;
+    return !(getrlimit(RLIMIT_CORE, &rlp) == 0 &&
+             getrlimit(RLIMIT_AS  , &rlp) == 0);
+}
+EOF
+if conftest_define HAS_GETRLIMIT "Checking for getrlimit... "; then
+    echo "#define MAX_MEMORY 50*1024*1024" >> config.h
+fi

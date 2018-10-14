@@ -342,15 +342,10 @@ static off_t extract(int fd, struct recipe *r, off_t offset)
 {
     char outfile[PATH_MAX];
     struct stat st;
-    int i = 0;
+    static int i = 0;
 
-    snprintf(outfile, sizeof outfile, "%s/%012llX.%s", 
-	    output_dir, (long long)offset, r->extension);
-    while (lstat(outfile, &st) == 0) {
-	snprintf(outfile, sizeof outfile, "%s/%012llX-%d.%s", 
-		output_dir, (long long)offset, i, r->extension);
-	i++;
-    }
+    snprintf(outfile, sizeof outfile, "%s/%012llX-%08d.%s", 
+	    output_dir, (long long)offset, i++, r->extension);
 
     if (run_shell(fd, offset, r->command, outfile) == -1)
 	return -1;
@@ -459,7 +454,8 @@ static void scan_disk(const char *device)
     size_t readsize = blocksize;
     off_t offset_before_read;
     
-    if (strcmp(device, "-") != 0 && (fd = open(device, O_RDONLY)) == -1) {
+    if (strcmp(device, "-") != 0 &&
+	    (fd = open(device, O_RDONLY)) == -1) {
 	fprintf(stderr, "opening %s: %s\n", device, strerror(errno));
 	return;
     }
@@ -467,6 +463,7 @@ static void scan_disk(const char *device)
     offset_before_read = lseek(fd, 0, SEEK_CUR);
     if (offset_before_read == (off_t)-1) {
 	fprintf(stderr, "lseek failed on %s: %s\n", device, strerror(errno));
+	close(fd);
 	return;
     }
 
@@ -492,11 +489,14 @@ static void scan_disk(const char *device)
 
 	result = scan_buf(scanbuf, got + (readbuf - scanbuf) - overlap,
 		fd, offset_before_read - (readbuf - scanbuf));
-	if (result == -1)
+	if (result == -1) {
+	    close(fd);
 	    return;
-	else if (result) {
+
+	} else if (result) {
 	    if (lseek(fd, offset_before_read + got, SEEK_SET) == (off_t)-1) {
 		perror("lseek()");
+		close(fd);
 		return;
 	    }
 	}
@@ -524,24 +524,32 @@ static void scan_disk(const char *device)
 	fprintf(stderr, "Scanning %s finished at %lldMB\n",
 		device, (long long int)(offset_before_read >> 20));
     }
+
+    close(fd);
+    {
+	int i;
+	for (i = 0; i < recipe_count; i++) {
+	    recipes[i].skip_bytes = 0;
+	}
+    }
 }
 
 static int parse_recipe(const char *recipefile)
 {
     struct recipe *r;
-    FILE *fd = NULL; 
+    FILE *fh = NULL; 
     char **sp, *search_path[] = { ".", "recipes", NULL, NULL };
 
 #ifdef RECIPE_PATH
     search_path[2] = RECIPE_PATH;
 #endif
-    for (sp = search_path; !fd && *sp; sp++) {
+    for (sp = search_path; !fh && *sp; sp++) {
 	char path[PATH_MAX];
 	snprintf(path, sizeof path, "%s/%s", *sp, recipefile);
-	fd = fopen(path, "r");
+	fh = fopen(path, "r");
     }
     
-    if (!fd) {
+    if (!fh) {
 	fprintf(stderr, "Opening %s: %s\n", recipefile, strerror(errno));
 	return 0;
     }
@@ -555,7 +563,7 @@ static int parse_recipe(const char *recipefile)
 	r->name = strdup(basename ? basename + 1 : recipefile);
     }
 
-    while (fgets(buf, blocksize, fd)) {
+    while (fgets(buf, blocksize, fh)) {
 	char opname[64];
 	int magic_offset, param_offset;
 	buf[strlen(buf) - 1] = '\0'; /* kill trailing newline */
@@ -584,8 +592,10 @@ static int parse_recipe(const char *recipefile)
 			r->scanner.param.scanstring.string = string;
 			scanner_string_init(&r->scanner.param);
 			len = string.l;
-		    } else
+		    } else {
+			fclose(fh);
 			return 0;
+		    }
 		}
 
 		if (len) {
@@ -612,8 +622,10 @@ static int parse_recipe(const char *recipefile)
 		} else if (strcmp(opname, "int32") == 0) {
 		    char buf_val[16], buf_mask[16];
 		    op->func = op_int32;
-		    if (sscanf(param, "%15s %15s", buf_val, buf_mask) != 2)
+		    if (sscanf(param, "%15s %15s", buf_val, buf_mask) != 2) {
+			fclose(fh);
 			return 0;
+		    }
 		    op->param.int32.val  = hextoll(buf_val);
 		    op->param.int32.mask = hextoll(buf_mask);
 		    op->param.int32.val &= op->param.int32.mask;
@@ -639,6 +651,7 @@ static int parse_recipe(const char *recipefile)
 
 	    if (len <= 0) {
 		fprintf(stderr, "Invalid operation '%s'\n", opname);
+		fclose(fh);
 		return 0;
 	    }
 	    len += magic_offset;
@@ -663,11 +676,14 @@ static int parse_recipe(const char *recipefile)
 		r->allow_overlap = 1;
 	    } else {
 		fprintf(stderr, "Invalid line in %s: %s\n", recipefile, buf);
+		fclose(fh);
 		return 0;
 	    }
 
 	}
     }
+
+    fclose(fh);
 
     if (!r->scanner.func || !r->command) {
 	fprintf(stderr, 
@@ -677,10 +693,8 @@ static int parse_recipe(const char *recipefile)
     }
 
     /* Round overlap to machine word boundary, for faster memcpy */
-    if (overlap %  sizeof(long)) {
-	overlap &= sizeof(long) - 1;
-	overlap += sizeof(long);
-    }
+    overlap +=   sizeof(long) - 1;
+    overlap &= ~(sizeof(long) - 1);
 
     return 1;
 }
@@ -704,13 +718,23 @@ int main(int argc, char **argv)
     /* Some recipes depend on parsing error messages from various programs */
     setenv("LC_ALL", "C", 1);
 
-    /* Some helper programs will segfault on malformed input. This should
-     * prevent core files from piling up */
+#ifdef HAS_GETRLIMIT
+    /* Some helper programs will segfault or exhaust memory on malformed
+     * input. This should prevent core files and swap storms */
     {
 	struct rlimit rlp;
 	rlp.rlim_cur = rlp.rlim_max = 0;
 	setrlimit(RLIMIT_CORE, &rlp);
+
+	if (getrlimit(RLIMIT_AS, &rlp) == 0 && (
+		    rlp.rlim_max == RLIM_INFINITY ||
+		    rlp.rlim_max > MAX_MEMORY)) {
+	    rlp.rlim_cur = rlp.rlim_max = MAX_MEMORY;
+
+	    setrlimit(RLIMIT_AS, &rlp);
+	}
     }
+#endif /* HAS_GETRLIMIT */
 
     buf = malloc(blocksize);
 

@@ -30,8 +30,10 @@ conftest_define() {
     if conftest; then
 	echo "#define $1 1" >> config.h
 	echo2 "yes"
+	return 0
     else
 	echo2 "no"
+	return 1
     fi
 }
 

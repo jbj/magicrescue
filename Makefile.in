@@ -19,7 +19,7 @@ install: all
 	    $(PREFIX)/share/doc/magicrescue \
 	    $(PREFIX)/bin
 	
-	cp magicrescue$(EXE) checkrecipe magicsort $(PREFIX)/bin/
+	cp magicrescue$(EXE) magicsort $(PREFIX)/bin/
 	cp recipes/* $(PREFIX)/share/magicrescue/recipes/
 	cp README* $(PREFIX)/share/doc/magicrescue/
 	
@@ -33,7 +33,6 @@ uninstall:
 	[ -d $(PREFIX) ]
 	rm -f $(PREFIX)/bin/magicrescue$(EXE)
 	rm -f $(PREFIX)/bin/magicsort
-	rm -f $(PREFIX)/bin/checkrecipe
 	rm -rf $(PREFIX)/share/magicrescue/tools
 	rm -rf $(PREFIX)/share/magicrescue/recipes
 	-rmdir $(PREFIX)/share/magicrescue

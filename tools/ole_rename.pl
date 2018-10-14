@@ -40,10 +40,11 @@ unless (@ARGV and -f $file) {
     die "Usage: ole_rename.pl FILENAME\n";
 }
 
-# LAOLA does not do much sanity checking. A corrupted file can send it into
-# a memory-exhausting loop, which we try to avoid by timing out here. 
+# LAOLA does not do much sanity checking, a corrupted file can send it into
+# a memory-exhausting loop. Using alarm here is basically a hack for systems
+# where magicrescue can't do setrlimit to set max memory usage.
 $SIG{ALRM} = sub { die "Timed out" };
-alarm 5;
+alarm 10;
 
 my $extension = "";
 my $status = laola_open_document($file);

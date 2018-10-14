@@ -1,0 +1,72 @@
+#!/usr/bin/env perl
+use strict;
+
+if (@ARGV == 0 or $ARGV[0] eq "--help") {
+    print
+q(This script will test magicrescue on existing files on your hard disk to see
+if your recipe is good enough. It can be very useful when creating or modifying
+a recipe.
+
+Usage:
+tools/checkrecipe [OPTIONS] ./magicrescue -M OPTIONS FILES
+
+Options:
+  -s VALUE  Size tolerance, in percent. Specifies when checkrecipe should
+            complain about the output file size being different from the input.
+
+Usage examples:
+
+find / -name \*.png -print0 |\
+xargs -0 tools/checkrecipe ./magicrescue -M -r png -d /tmp/test-output
+
+  or
+
+slocate \*.png|grep -v "['\"]"|\
+xargs tools/checkrecipe ./magicrescue -M -r png -d /tmp/test-output
+);
+    exit;
+}
+
+my $size_tolerance = 0;
+
+while ($ARGV[0] =~ /^-/) {
+    my $arg = shift @ARGV;
+
+    if ($arg eq "-s") {
+	$size_tolerance = shift(@ARGV)/100;
+    } else {
+	die "$0: Unknown option $arg\n";
+    }
+}
+
+if (0 == open PIPE, "-|") {
+    open STDERR, ">/dev/null";
+    exec @ARGV or die "Executing $ARGV[0]: $!\n";
+}
+
+my ($curfile, $cur_ok);
+while (<PIPE>) {
+    if (/^i (.*)$/) {
+	if ($curfile and !$cur_ok and -s $curfile) {
+	    print "$curfile: not extracted\n";
+	}
+	$curfile = $1;
+	$cur_ok = 0;
+    } elsif (/^o \d+ (.*)$/) {
+	my $outfile = $1;
+	if ($curfile and $cur_ok) {
+	    print "$curfile: extracted again\n";
+
+	} else {
+	    my ($insize, $outsize) = (-s $curfile, -s $outfile);
+	    if ($size_tolerance >= 0 and $insize and -f $outfile 
+		    and abs($outsize - $insize)/$insize > $size_tolerance) {
+		print "$curfile: is $insize bytes, extracted $outsize bytes\n";
+	    }
+	}
+
+	$cur_ok = 1;
+	unlink $outfile or warn "unlinking $outfile: $!";
+    }
+}
+

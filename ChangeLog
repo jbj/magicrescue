@@ -1,6 +1,84 @@
 For less detailed change information, see the NEWS file
 
 ------------------------------------------------------------------------
+r124 | jbj | 2004-03-26 18:14:10 +0100 (Fri, 26 Mar 2004) | 3 lines
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+   M /magicrescue/trunk/new_NEWS
+
+- Add missing close/fclose
+- fd -> fh for a libc FILE*
+
+------------------------------------------------------------------------
+r123 | jbj | 2004-03-26 16:00:50 +0100 (Fri, 26 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+   M /magicrescue/trunk/new_NEWS
+
+Fix rounding bug
+------------------------------------------------------------------------
+r122 | jbj | 2004-03-25 23:15:55 +0100 (Thu, 25 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/new_NEWS
+   M /magicrescue/trunk/tools/checkrecipe
+
+enable checkrecipe to compare file sizes
+------------------------------------------------------------------------
+r121 | jbj | 2004-03-25 17:43:46 +0100 (Thu, 25 Mar 2004) | 5 lines
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+
+- Use both position and sequence number as a key for output filenames. Using
+  only offsets broke checkrecipe for msoffice files. A better solution would be
+  a more formal rename method.
+- Reset skip_bytes between files
+
+------------------------------------------------------------------------
+r120 | jbj | 2004-03-25 17:15:43 +0100 (Thu, 25 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/Makefile.in
+   M /magicrescue/trunk/README.recipes
+   D /magicrescue/trunk/checkrecipe
+   A /magicrescue/trunk/tools/checkrecipe (from /magicrescue/trunk/checkrecipe:110)
+
+Move checkrecipe script to tools/
+------------------------------------------------------------------------
+r119 | jbj | 2004-03-25 17:09:45 +0100 (Thu, 25 Mar 2004) | 3 lines
+Changed paths:
+   A /magicrescue/trunk/config.d/50getrlimit
+   M /magicrescue/trunk/configure
+   M /magicrescue/trunk/magicrescue.c
+   M /magicrescue/trunk/tools/ole_rename.pl
+
+- Use setrlimit to kill memory-exhausting processes
+- configure check for setrlimit
+
+------------------------------------------------------------------------
+r118 | jbj | 2004-03-25 15:55:46 +0100 (Thu, 25 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/release.sh
+
+Make release.sh output helpful info for maintainer
+------------------------------------------------------------------------
+r117 | jbj | 2004-03-25 11:34:58 +0100 (Thu, 25 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/release.sh
+
+fixes for nightly build script
+------------------------------------------------------------------------
+r116 | jbj | 2004-03-25 11:25:34 +0100 (Thu, 25 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/release.sh
+
+Nightly build support in release script
+------------------------------------------------------------------------
+r110 | jbj | 2004-03-23 16:23:10 +0100 (Tue, 23 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/NEWS
+   M /magicrescue/trunk/new_NEWS
+
+Release 1.0.3
+------------------------------------------------------------------------
 r109 | jbj | 2004-03-23 14:49:41 +0100 (Tue, 23 Mar 2004) | 1 line
 Changed paths:
    M /magicrescue/trunk/Makefile.in

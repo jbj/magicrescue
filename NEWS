@@ -1,3 +1,9 @@
+Version 1.0.4: Fri Mar 26 18:17:05 CET 2004
+- tools/checkrecipe was broken for some file types, fixed that
+- Fixed a rounding bug that could lead to segfaulting on some rare data
+- Limits memory to 50MB per process, to prevent helper programs from exhausting
+  memory on invalid input
+
 Version 1.0.3: Tue Mar 23 16:02:19 CET 2004
 - New recipes for Microsoft Office formats and ELF
 - Recipe for gzip now extracts file names, if available

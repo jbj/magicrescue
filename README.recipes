@@ -57,8 +57,8 @@ allow_overlap
 	may be larger than it was on disk.
 
 To test whether your recipe actually works, either just run it on your hard
-disk or use the checkrecipe script to pick out files that should match but
-don't.
+disk or use the tools/checkrecipe script to pick out files that should match
+but don't.
 
 If you have created a recipe that works, please mail it to me at jbj@knef.dk so
 I can include it in the distribution.
