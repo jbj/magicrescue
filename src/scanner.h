@@ -15,7 +15,7 @@ union scan_param {
     } scanstring;
 };
 
-typedef const unsigned char *(*scan_function)(const unsigned char *, size_t,
+typedef const char *(*scan_function)(const char *, size_t,
 	union scan_param *, off_t);
 
 struct scanner {
@@ -26,11 +26,11 @@ struct scanner {
     struct array recipes;
 };
 
-const unsigned char *scanner_char(const unsigned char *scanbuf,
+const char *scanner_char(const char *scanbuf,
 	size_t scanbuf_len, union scan_param *param, off_t offset);
-const unsigned char *scanner_block(const unsigned char *scanbuf,
+const char *scanner_block(const char *scanbuf,
 	size_t scanbuf_len, union scan_param *param, off_t offset);
-const unsigned char *scanner_string(const unsigned char *scanbuf,
+const char *scanner_string(const char *scanbuf,
 	size_t scanbuf_len, union scan_param *param, off_t offset);
 
 void scanner_string_init(union scan_param *param);

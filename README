@@ -16,10 +16,10 @@ Find the latest version at http://jbj.rapanden.dk/magicrescue/
 Building
 --------
 
-There are no build requirements other than a C library and an X/OPEN system
-interface.  To use the dupemap(1) utility, you must have the NDBM
-compatibility header, which either comes with your system or the development
-libraries of GDBM or Berkeley DB.
+There are no build requirements other than a C library and a UNIXish system.
+To use the dupemap(1) utility, you must have the NDBM compatibility header,
+which either comes with your system or the development libraries of GDBM or
+Berkeley DB.
 
 ./configure && make && make install
 

@@ -10,7 +10,7 @@ union param {
     } int32;
 };
 
-typedef int (*op_function)(const unsigned char *, union param *);
+typedef int (*op_function)(const char *, union param *);
 
 struct operation {
     op_function func;
@@ -29,8 +29,8 @@ struct recipe {
     int allow_overlap;
 };
 
-int op_string(const unsigned char *s, union param *p);
-int op_int32(const unsigned char *s, union param *p);
+int op_string(const char *s, union param *p);
+int op_int32(const char *s, union param *p);
 
 void op_destroy(struct operation *op);
 void recipe_init(struct recipe *r);

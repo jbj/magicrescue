@@ -1,0 +1,7 @@
+# Extract (at most 30 MB) Canon CR2 RAW files. These are used by the Powershot
+# and EOS digital cameras.
+# This recipe was contributed by Daniel J Blueman
+0 string II*
+8 string CR
+extension CR2
+command dd bs=1024k count=30 of="$1" 2>/dev/null; dcraw -i "$1" || rm -f "$1"

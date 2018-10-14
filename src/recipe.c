@@ -26,13 +26,14 @@
 #include "recipe.h"
 
 
-int op_string(const unsigned char *s, union param *p)
+int op_string(const char *s, union param *p)
 {
     return memcmp(s, p->string.s, p->string.l) == 0;
 }
 
-int op_int32(const unsigned char *s, union param *p)
+int op_int32(const char *s_signed, union param *p)
 {
+    const unsigned char *s = (unsigned char *)s_signed;
     return ((s[0]<<24 | s[1]<<16 | s[2]<<8 | s[3]) & p->int32.mask)
 	== p->int32.val;
 }

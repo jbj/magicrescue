@@ -67,7 +67,7 @@ struct progress progress;
 static ssize_t overlap = 0;
 
 /* General-purpose buffer.  Mostly used to hold the raw data when scanning. */
-static unsigned char *buf;
+static char *buf;
 static const size_t bufsize = 102400;
 
 
@@ -117,7 +117,7 @@ static void scanners_free(void)
  * them.
  * Returns 1 if an external program has been called, which means the file
  * position has changed.  Returns -1 on fatal error. */
-static int scan_buf(const unsigned char *scanbuf, ssize_t scanbuf_len,
+static int scan_buf(const char *scanbuf, ssize_t scanbuf_len,
 	int fd, off_t scanbuf_filepos)
 {
     int filepos_changed = 0;
@@ -145,7 +145,7 @@ static int scan_buf(const unsigned char *scanbuf, ssize_t scanbuf_len,
     }
 
     array_foreach(&scanners, scanner) {
-	const unsigned char *p = scanbuf + scanner->offset;
+	const char *p = scanbuf + scanner->offset;
 
 	while (p - scanbuf < scanbuf_len &&
 		(p = scanner->func(p, scanbuf_len - (p-scanbuf) +
@@ -226,7 +226,7 @@ static void scan_disk(const char *device, const char *offset)
     int fd = 0;
     int result, firsttime = 1;
 
-    unsigned char *readbuf = buf, *scanbuf = buf;
+    char *readbuf = buf, *scanbuf = buf;
     size_t readsize = bufsize;
     off_t offset_before_read;
     

@@ -1,6 +1,82 @@
 For less detailed change information, see the NEWS file
 
 ------------------------------------------------------------------------
+r602 | jbj | 2008-01-17 12:33:57 +0100 (Thu, 17 Jan 2008) | 1 line
+Changed paths:
+   M /magicrescue/trunk/configure
+
+Workaround for Solaris /bin/sh non-POSIX 'trap' command
+------------------------------------------------------------------------
+r590 | jbj | 2007-12-31 16:25:04 +0100 (Mon, 31 Dec 2007) | 1 line
+Changed paths:
+   M /magicrescue/trunk/src/dupemap.c
+   M /magicrescue/trunk/src/magicrescue.c
+   M /magicrescue/trunk/src/recipe.c
+   M /magicrescue/trunk/src/recipe.h
+   M /magicrescue/trunk/src/scanner.c
+   M /magicrescue/trunk/src/scanner.h
+   M /magicrescue/trunk/src/util.c
+   M /magicrescue/trunk/src/util.h
+   M /magicrescue/trunk/tools/textextract.c
+
+Change buffers to signed string types to silence gcc warnings
+------------------------------------------------------------------------
+r589 | jbj | 2007-12-31 15:37:57 +0100 (Mon, 31 Dec 2007) | 1 line
+Changed paths:
+   M /magicrescue/trunk/new_NEWS
+
+news
+------------------------------------------------------------------------
+r588 | jbj | 2007-12-31 15:13:24 +0100 (Mon, 31 Dec 2007) | 1 line
+Changed paths:
+   A /magicrescue/trunk/recipes/canon-cr2
+
+Add a recipe for Canon CR2 RAW files
+------------------------------------------------------------------------
+r490 | jbj | 2007-06-22 10:49:38 +0200 (Fri, 22 Jun 2007) | 1 line
+Changed paths:
+   M /magicrescue/trunk/configure
+
+typo
+------------------------------------------------------------------------
+r489 | jbj | 2007-06-21 22:30:14 +0200 (Thu, 21 Jun 2007) | 1 line
+Changed paths:
+   M /magicrescue/trunk/configure
+
+Syntax fix to make configure script work on the dash shell (Debian, Ubuntu, ...)
+------------------------------------------------------------------------
+r488 | jbj | 2007-06-03 23:30:57 +0200 (Sun, 03 Jun 2007) | 1 line
+Changed paths:
+   M /magicrescue/trunk/doc/dupemap.pod
+
+typo
+------------------------------------------------------------------------
+r483 | jbj | 2007-05-01 22:14:43 +0200 (Tue, 01 May 2007) | 1 line
+Changed paths:
+   M /magicrescue/trunk/new_NEWS
+   A /magicrescue/trunk/recipes/flac
+
+Add flac recipe
+------------------------------------------------------------------------
+r333 | jbj | 2004-08-15 11:19:08 +0200 (Sun, 15 Aug 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/configure
+
+Proper cleanup after configure
+------------------------------------------------------------------------
+r332 | jbj | 2004-08-15 01:31:23 +0200 (Sun, 15 Aug 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/README
+
+No users know what X/OPEN is
+------------------------------------------------------------------------
+r330 | jbj | 2004-08-15 01:16:20 +0200 (Sun, 15 Aug 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/NEWS
+   M /magicrescue/trunk/new_NEWS
+
+Release 1.1.4
+------------------------------------------------------------------------
 r329 | jbj | 2004-08-15 01:10:37 +0200 (Sun, 15 Aug 2004) | 1 line
 Changed paths:
    M /magicrescue/trunk/new_NEWS

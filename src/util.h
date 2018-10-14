@@ -8,16 +8,16 @@
 #endif
 
 struct string {
-    unsigned char *s;
+    char *s;
     size_t l;
 };
 
-int hex2num(unsigned char c);
-long long hextoll(const unsigned char *str);
+int hex2num(char c);
+long long hextoll(const char *str);
 long atol_calc(const char *str);
 off_t rich_seek(int fd, const char *string);
 
-void string_init(struct string *dst, const unsigned char *src);
+void string_init(struct string *dst, const char *src);
 void string_destroy(struct string *string);
 
 #define _UTIL_H

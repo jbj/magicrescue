@@ -38,20 +38,20 @@ static int max_reverse = 0;
 static long max_bytes = 0;
 
 static size_t bufsize = 8192;
-static unsigned char *buf;
+static char *buf;
 
 static short scorelut[UCHAR_MAX+1], replut[UCHAR_MAX+1];
 
 struct rule {
     short score, rep;
-    unsigned char *ranges;
+    char *ranges;
 };
 
 enum direction { DIR_FORWARD, DIR_REVERSE };
 static enum direction direction = DIR_FORWARD;
 
 struct scores {
-    unsigned char *last_letter;
+    char *last_letter;
     unsigned char repeated_char;
     int sum_score, sum_repeats, cur_line;
     off_t offset;
@@ -168,7 +168,8 @@ static void make_luts(void)
     };
 
     for (rule = rules; rule->ranges != NULL; rule++) {
-	unsigned char a, b, *range = rule->ranges;
+	unsigned char a, b;
+        char *range = rule->ranges;
 	int i;
 
 	do {
@@ -219,7 +220,7 @@ static void usage(void)
 static int read_backward(struct scores *s, int outfd)
 {
     ssize_t read_count;
-    unsigned char *p;
+    char *p;
 
     if (s->offset <= 0)
 	return 0;
@@ -257,7 +258,7 @@ static int read_backward(struct scores *s, int outfd)
 static int read_forward(struct scores *s, int outfd)
 {
     ssize_t read_count;
-    unsigned char *p, *bufpos;
+    char *p, *bufpos;
 
     bufpos = buf;
 

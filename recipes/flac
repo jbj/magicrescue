@@ -1,0 +1,15 @@
+# Extracts flac sound files: http://flac.sourceforge.net/
+# Contributed by Richard Zidlicky <rz (at) linux (dash) m68k (dot) org>
+
+0 string fLaC
+
+extension flac
+
+# Allow infinite overlap because the recompressed file may be much larger than
+# the original one.. at least in theory
+
+allow_overlap -1
+
+
+# hope that flac will do the right thing
+command flac -d - | flac -8 - > "$1"

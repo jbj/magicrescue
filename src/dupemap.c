@@ -198,7 +198,7 @@ typedef struct {
 
 static int checksum_calc(checksum_t *checksum, const char *file)
 {
-    static unsigned char buf[BUFLEN];
+    static char buf[BUFLEN];
     ssize_t bytes_read;
     off_t _length = 0;
     long _crc = 0;
@@ -212,7 +212,7 @@ static int checksum_calc(checksum_t *checksum, const char *file)
     }
 
     while ((bytes_read = fread(buf, 1, BUFLEN, fp)) > 0) {
-	unsigned char *cp = buf;
+	char *cp = buf;
 
 	_length += bytes_read;
 	while (bytes_read--)

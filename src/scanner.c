@@ -28,13 +28,13 @@
 #include "recipe.h"
 #include "scanner.h"
 
-const unsigned char *scanner_char(const unsigned char *scanbuf,
+const char *scanner_char(const char *scanbuf,
 	size_t scanbuf_len, union scan_param *param, off_t offset)
 {
     return memchr(scanbuf, param->c, scanbuf_len);
 }
 
-const unsigned char *scanner_block(const unsigned char *scanbuf,
+const char *scanner_block(const char *scanbuf,
 	size_t scanbuf_len, union scan_param *param, off_t offset)
 {
     long extrabytes = (long)offset & (param->block-1);
@@ -47,12 +47,12 @@ const unsigned char *scanner_block(const unsigned char *scanbuf,
     return scanbuf;
 }
 
-const unsigned char *scanner_string(const unsigned char *scanbuf,
+const char *scanner_string(const char *scanbuf,
 	size_t scanbuf_len, union scan_param *param, off_t offset)
 {
-    const unsigned char *p = scanbuf + param->scanstring.magicoff;
+    const char *p = scanbuf + param->scanstring.magicoff;
     struct string string = param->scanstring.string;
-    unsigned char magicchar = param->scanstring.magicchar;
+    char magicchar = param->scanstring.magicchar;
     scanbuf_len += param->scanstring.magicoff;
 
     while ((size_t)(p - scanbuf) < scanbuf_len &&

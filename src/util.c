@@ -32,14 +32,14 @@
 
 
 /** Returns the value (0-15) of a single hex digit. Returns 0 on error. */
-int hex2num(unsigned char c)
+int hex2num(char c)
 {
     return  (c >= '0' && c <= '9' ? c-'0' :
 	    (c >= 'a' && c <= 'f' ? c-'a'+10 :
 	    (c >= 'A' && c <= 'F' ? c-'A'+10 : 0)));
 }
 
-long long hextoll(const unsigned char *str)
+long long hextoll(const char *str)
 {
     long long result = 0;
     size_t i, len = strlen(str);
@@ -109,7 +109,7 @@ off_t rich_seek(int fd, const char *string)
 
 /** Initializes a struct string from a 0-terminated string, parsing escape
  * sequences. The struct string will not be 0-terminated. */
-void string_init(struct string *dst, const unsigned char *src)
+void string_init(struct string *dst, const char *src)
 {
     const size_t slen = strlen(src);
     size_t i;

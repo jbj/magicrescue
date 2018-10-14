@@ -111,7 +111,7 @@ Ignore files above this size.
 The easiest operations to understand is when the B<-d> option is not given.  To
 delete all duplicate files in F</tmp/recovered-files>, do:
 
-    $ dupemap delete /tmp/recovered files
+    $ dupemap delete /tmp/recovered-files
 
 Often, B<dupemap scan> is run to produce a checksum database of all files in a
 directory tree.  Then B<dupemap delete> is run on another directory, possibly 

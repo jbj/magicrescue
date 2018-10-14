@@ -1,3 +1,8 @@
+Version 1.1.5: Thu Jan 17 14:03:49 CET 2008
+- Recipe for Flac files
+- Recipe for Canon CR2 RAW files
+- Configure script compatibility fix for Debian-based Linuxes
+
 Version 1.1.4: Sun Aug 15 01:11:27 CEST 2004
 - Fixed a minor bug that prevented some not yet written recipes from working
   perfectly
