@@ -13,12 +13,12 @@ Usage:
 Usage examples:
 
 find / -name \*.png -print0 |\
-xargs -0 ./provemewrong.pl ./magicrescue -M -m recipes/png -d /tmp/test-output
+xargs -0 ./provemewrong.pl ./magicrescue -M -r recipes/png -d /tmp/test-output
 
   or
 
 slocate \*.png|grep -v "['\"]"|\
-xargs ./provemewrong.pl ./magicrescue -M -m recipes/png -d /tmp/test-output
+xargs ./provemewrong.pl ./magicrescue -M -r recipes/png -d /tmp/test-output
 );
 }
 

@@ -59,6 +59,7 @@ struct recipe {
 	char extension[64];
 	char *command;
 	int min_output_file;
+	char *name;
 };
 
 struct recipe *recipes[256];
@@ -75,6 +76,11 @@ unsigned char *buf;
 int file_index = 0;
 
 
+void string_destroy(struct string *string)
+{
+	free(string->s);
+}
+
 int op_string(unsigned char *s, union param *p)
 {
 	return memcmp(s, p->string.s, p->string.l) == 0;
@@ -86,13 +92,22 @@ int op_int32(unsigned char *s, union param *p)
 		== p->int32.val;
 }
 
+void op_destroy(struct operation *op)
+{
+	/* Primitive multi-dispatch.
+	 * Add a case here for every operation type that requires destruction */
+	if (op->func == op_string) {
+		string_destroy(&op->param.string);
+	}
+}
+
 #define HEX2NUM(c) ( \
         ((c) >= '0' && (c) <= '9' ? (c)-'0' : \
         ((c) >= 'a' && (c) <= 'f' ? (c)-'a'+10 : \
         ((c) >= 'A' && (c) <= 'F' ? (c)-'A'+10 : -1))) \
 )
 
-void parse_string(const unsigned char *src, struct string *dst)
+void string_new(struct string *dst, const unsigned char *src)
 {
 	const size_t slen = strlen(src);
 	size_t i;
@@ -194,7 +209,7 @@ int scan_buf(int f, unsigned char *scanbuf, ssize_t got, off_t store_offset)
 
 				if (ok) {
 					fprintf(stderr, "Found %s at 0x%llX\n",
-							r->extension, store_offset+(p-buf)-overlap);
+							r->name, store_offset+(p-buf)-overlap);
 
 					if (lseek(f, store_offset+(p-buf)-overlap, SEEK_SET)
 							== (off_t)-1) {
@@ -282,6 +297,32 @@ void recipe_new(struct recipe *r)
 	r->extension[0] = '\0';
 	r->command = NULL;
 	r->min_output_file = 100;
+	r->name = NULL;
+}
+
+void recipe_destroy(struct recipe *r)
+{
+	int i;
+	for (i = 0; i < r->ops_count; i++) {
+		op_destroy(&r->ops[i]);
+	}
+	free(r->ops);
+	free(r->command);
+	free(r->name);
+}
+
+void recipes_free()
+{
+	int i, j;
+
+	for (i = 0; i < char_list_count; i++) {
+		unsigned char c = char_list[i];
+
+		for (j = 0; j < recipes_count[c]; j++) {
+			recipe_destroy(&recipes[c][j]);
+		}
+		free(recipes[c]);
+	}
 }
 
 int parse_recipe(char *recipefile)
@@ -308,9 +349,11 @@ int parse_recipe(char *recipefile)
 			if (!r && strcmp(opname, "char") == 0) {
 				struct string string;
 				unsigned char c;
+				char *basename;
 
-				parse_string(buf + param_offset, &string);
+				string_new(&string, buf + param_offset);
 				c = string.s[0];
+				string_destroy(&string);
 
 				if (recipes_count[c] == 0)
 					char_list[char_list_count++] = c;
@@ -321,6 +364,9 @@ int parse_recipe(char *recipefile)
 				r = &recipes[c][recipes_count[c]-1];
 				recipe_new(r);
 				r->offset = magic_offset;
+
+				basename = strrchr(recipefile, '/');
+				r->name = strdup(basename ? basename + 1 : recipefile);
 
 				/*fprintf(stderr, "char: '%c'\n", magic_char);*/
 			
@@ -339,7 +385,7 @@ int parse_recipe(char *recipefile)
 
 				if (strcmp(opname, "string") == 0) {
 					op->func = op_string;
-					parse_string(param, &op->param.string);
+					string_new(&op->param.string, param);
 					len = op->param.string.l;
 					/*fprintf(stderr, "string: %*s\n",
 							op->param.string.l, op->param.string.s);*/
@@ -421,8 +467,8 @@ int parse_recipe(char *recipefile)
 void usage()
 {
 	printf(
-"Usage: magicrescue -d output_dir -r recipe1 [-r recipe2 [...]] \n"
-"       [-M] device1 [device2 [...]]\n"
+"Usage: magicrescue -d OUTPUT_DIR -r RECIPE1 [-r RECIPE2 [...]] \n"
+"       [-M] DEVICE1 [DEVICE2 [...]]\n"
 "\n"
 "  -d  Output directory for found files. Mandatory.\n"
 "  -r  Recipe file. At least one must be specified.\n"
@@ -432,16 +478,22 @@ void usage()
 
 int main(int argc, char **argv)
 {
-	int c;
+	int c, i;
 
 	buf = malloc(blocksize);
+
+	/* hm, do I need to initialize static arrays manually, or is every element
+	 * guaranteed to be 0? */
 	memset(recipes_count, 0, sizeof recipes_count);
+	for (i = 0; i < sizeof(recipes)/sizeof(*recipes); i++) {
+		recipes[i] = NULL;
+	}
 
 	while ((c = getopt(argc, argv, "d:r:M")) >= 0) {
 		switch (c) {
 		case 'd': {
 			struct stat dirstat;
-			if (stat(optarg, &dirstat) == 0 || dirstat.st_mode & S_IFDIR) {
+			if (stat(optarg, &dirstat) == 0 && dirstat.st_mode & S_IFDIR) {
 				output_dir = optarg;
 			} else {
 				fprintf(stderr, "Invalid directory %s\n", optarg);
@@ -473,6 +525,7 @@ int main(int argc, char **argv)
 		scan_disk(argv[optind++]);
 	}
 
+	recipes_free();
 	free(buf);
 	return 0;
 }

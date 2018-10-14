@@ -1,0 +1,18 @@
+# Extracts gzip files
+# Depends on gzip: http://www.gzip.org/
+
+# Format defined at http://www.faqs.org/rfcs/rfc1952.html
+# First byte: magic 0x1f
+0 char \x1f
+# The next 4 bytes: magic 0x8b, compression method 0x08 (deflate), flags (bits
+# 5, 6 and 7 are reserved), first byte of mtime (little endian?!)
+1 int32 8B080000 FFffE000
+# Last byte of mtime (assuming before year 2038), "Extra flags" (only the
+# values 2 and 4 are used by deflate)
+7 int32 00000000 80F90000
+extension unzipped
+
+# TODO: gzip files contain the original filename, but we lose it here. To make
+# it possible to find one file in the thousands of files that will be
+# extracted, a script to extract this name should be written.
+command gzip -d > $0

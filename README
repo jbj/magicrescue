@@ -11,6 +11,8 @@ It works on any file system, but on very fragmented file systems it can only
 recover the first chunk of each file. Practical experience (this program was
 not written for fun) shows, however, that chunks of 30-50MB are not uncommon.
 
+Find the latest version at http://jbj.rapanden.dk/magicrescue/
+
 Building
 --------
 
@@ -70,7 +72,12 @@ The "int32" operation matches 4 bytes ANDed with a bit mask. To match all four
 bytes, use the bit mask ffffffff. If you have no idea what a bit mask is, just
 use the "string" operation instead.
 
-If all these operations match, we have found the start of the file. Finding the
+To learn these patterns, look at files of the desired type in a hex editor,
+search through the resource files for the "file" utility
+(http://freshmeat.net/projects/file) and/or search google for a reference on
+the format.
+
+If all the operations match, we have found the start of the file. Finding the
 end of the file is a much harder problem, and therefore it is delegated to an
 external command, which is named by the "command" directive. This command
 receives the block device's file descriptor on stdin and must write to the file
@@ -86,5 +93,6 @@ corrupted file.
 This means that you may have to write your own tool or wrap an existing program
 in some scripts that make it behave better. For example, this could be to
 extract the first 10MB into a temporary file and let the program work on that.
+Or perhaps you can use commands/safecat if the file may be very large.
 
 For a full reference on creating recipes, read README.recipes

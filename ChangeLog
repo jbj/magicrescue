@@ -1,6 +1,126 @@
 For less detailed change information, see the NEWS file
 
 ------------------------------------------------------------------------
+r45 | jbj | 2004-03-05 11:10:21 +0100 (Fri, 05 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/recipes/gzip
+
+don't recompress gzipped files
+------------------------------------------------------------------------
+r44 | jbj | 2004-03-05 11:09:44 +0100 (Fri, 05 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+
+show the recipe name, not extension, in info output
+------------------------------------------------------------------------
+r43 | jbj | 2004-03-04 23:30:33 +0100 (Thu, 04 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/new_NEWS
+   A /magicrescue/trunk/recipes/gzip
+
+added gzip recipe
+------------------------------------------------------------------------
+r42 | jbj | 2004-03-04 22:40:53 +0100 (Thu, 04 Mar 2004) | 1 line
+Changed paths:
+   A /magicrescue/trunk/commands/mp3extract.pl
+   A /magicrescue/trunk/recipes/mp3-id3
+   A /magicrescue/trunk/recipes/mp3-noid3
+
+mp3 extractor
+------------------------------------------------------------------------
+r41 | jbj | 2004-03-04 22:39:38 +0100 (Thu, 04 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/provemewrong.pl
+
+option -m to -r
+------------------------------------------------------------------------
+r40 | jbj | 2004-03-04 21:23:38 +0100 (Thu, 04 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/recipes/png
+
+commands should be executable
+------------------------------------------------------------------------
+r39 | jbj | 2004-03-04 21:22:27 +0100 (Thu, 04 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/commands/safecat.c
+   M /magicrescue/trunk/recipes/avi
+
+configurable limits for safecat
+------------------------------------------------------------------------
+r38 | jbj | 2004-03-04 21:14:18 +0100 (Thu, 04 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/Makefile
+
+commands can have rare dependencies, so use make -k
+------------------------------------------------------------------------
+r37 | jbj | 2004-03-04 21:13:31 +0100 (Thu, 04 Mar 2004) | 3 lines
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+
+Use caps for arguments in usage
+More correct memory initialization
+
+------------------------------------------------------------------------
+r36 | jbj | 2004-03-02 13:44:19 +0100 (Tue, 02 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/README
+
+More hints on recipe writing
+------------------------------------------------------------------------
+r35 | jbj | 2004-03-02 13:28:24 +0100 (Tue, 02 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/README
+   M /magicrescue/trunk/README.recipes
+
+References to web site in readme
+------------------------------------------------------------------------
+r34 | jbj | 2004-03-02 13:26:30 +0100 (Tue, 02 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/Makefile
+   A /magicrescue/trunk/commands/Makefile
+   A /magicrescue/trunk/commands/safecat.c
+   M /magicrescue/trunk/new_NEWS
+   M /magicrescue/trunk/recipes/avi
+
+Improved .avi recipe with commands/safecat.c
+------------------------------------------------------------------------
+r33 | (no author) | 2004-03-02 11:47:20 +0100 (Tue, 02 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/Makefile
+
+webdav test again...
+------------------------------------------------------------------------
+r32 | (no author) | 2004-03-02 11:42:29 +0100 (Tue, 02 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/Makefile
+
+reverse test
+------------------------------------------------------------------------
+r31 | (no author) | 2004-03-02 11:39:40 +0100 (Tue, 02 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/Makefile
+
+webdav test...
+------------------------------------------------------------------------
+r30 | (no author) | 2004-03-02 11:37:52 +0100 (Tue, 02 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/new_NEWS
+
+NEWS entry
+------------------------------------------------------------------------
+r29 | jbj | 2004-03-02 10:08:03 +0100 (Tue, 02 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+
+Nicer memory management
+------------------------------------------------------------------------
+r28 | jbj | 2004-03-01 22:08:42 +0100 (Mon, 01 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/NEWS
+   M /magicrescue/trunk/new_NEWS
+
+Release 1.0
+------------------------------------------------------------------------
 r27 | jbj | 2004-03-01 21:55:40 +0100 (Mon, 01 Mar 2004) | 1 line
 Changed paths:
    M /magicrescue/trunk/README.recipes
