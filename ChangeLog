@@ -1,6 +1,39 @@
 For less detailed change information, see the NEWS file
 
 ------------------------------------------------------------------------
+r791 | jbj | 2009-02-15 21:58:09 +0100 (Sun, 15 Feb 2009) | 1 line
+Changed paths:
+   M /magicrescue/trunk/new_NEWS
+   A /magicrescue/trunk/recipes/ppm
+
+Add PPM recipe from Daniel J Blueman
+------------------------------------------------------------------------
+r790 | jbj | 2009-02-15 21:38:46 +0100 (Sun, 15 Feb 2009) | 1 line
+Changed paths:
+   M /magicrescue/trunk/recipes/nikon-raw
+
+Modifications for the Nikon recipe from Daniel J Blueman
+------------------------------------------------------------------------
+r773 | jbj | 2008-10-29 08:12:57 +0100 (Wed, 29 Oct 2008) | 1 line
+Changed paths:
+   M /magicrescue/trunk/doc/magicrescue.pod
+
+typo
+------------------------------------------------------------------------
+r771 | jbj | 2008-10-06 18:55:59 +0200 (Mon, 06 Oct 2008) | 1 line
+Changed paths:
+   M /magicrescue/trunk/new_NEWS
+   A /magicrescue/trunk/recipes/nikon-raw
+
+Add recipe for Nikon raw photos
+------------------------------------------------------------------------
+r603 | jbj | 2008-01-17 14:04:15 +0100 (Thu, 17 Jan 2008) | 1 line
+Changed paths:
+   M /magicrescue/trunk/NEWS
+   M /magicrescue/trunk/new_NEWS
+
+Release 1.1.5
+------------------------------------------------------------------------
 r602 | jbj | 2008-01-17 12:33:57 +0100 (Thu, 17 Jan 2008) | 1 line
 Changed paths:
    M /magicrescue/trunk/configure

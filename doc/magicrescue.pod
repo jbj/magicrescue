@@ -144,7 +144,7 @@ Choose your output directory, somewhere with lots of disk space.
     $ mkdir ~/output
 
 Look in the F</usr/local/share/magicrescue/recipes> directory for the recipes
-you want.  Magic Rescue somes with recipes for some common file types, and you
+you want.  Magic Rescue comes with recipes for some common file types, and you
 can make your own too (see the next section).  Open the recipes you want to use
 in a text editor and read their comments.  Most recipes require 3rd party
 software to work, and you may want to modify some parameters (such as

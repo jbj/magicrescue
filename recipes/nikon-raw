@@ -1,0 +1,7 @@
+# Extract (at most 30 MB) Nikon NEF RAW files. These are used by Nikon dSLR
+# cameras.
+# Contributed by Brian E Lavender and refined by Daniel J Blueman.
+0 string MM\x00\x2a
+6 int32 00080019 ffffffff
+extension NEF
+command dd bs=1024k count=30 of="$1" 2>/dev/null; dcraw -i "$1" || rm -f "$1"

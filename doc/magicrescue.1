@@ -25,11 +25,11 @@
 ..
 .\" Set up some character translations and predefined strings.  \*(-- will
 .\" give an unbreakable dash, \*(PI will give pi, \*(L" will give a left
-.\" double quote, and \*(R" will give a right double quote.  | will give a
-.\" real vertical bar.  \*(C+ will give a nicer C++.  Capital omega is used to
-.\" do unbreakable dashes and therefore won't be available.  \*(C` and \*(C'
-.\" expand to `' in nroff, nothing in troff, for use with C<>.
-.tr \(*W-|\(bv\*(Tr
+.\" double quote, and \*(R" will give a right double quote.  \*(C+ will
+.\" give a nicer C++.  Capital omega is used to do unbreakable dashes and
+.\" therefore won't be available.  \*(C` and \*(C' expand to `' in nroff,
+.\" nothing in troff, for use with C<>.
+.tr \(*W-
 .ds C+ C\v'-.1v'\h'-1p'\s-2+\h'-1p'+\s0\v'.1v'\h'-1p'
 .ie n \{\
 .    ds -- \(*W-
@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "MAGICRESCUE 1"
-.TH MAGICRESCUE 1 "2007-12-31" "1.1.5" "Magic Rescue"
+.TH MAGICRESCUE 1 "2008-10-29" "1.1.6" "Magic Rescue"
 .SH "NAME"
 magicrescue \- Scans a block device and extracts known file types by looking at
 magic bytes.
@@ -250,7 +250,7 @@ Make sure \s-1DMA\s0 and other optimizations are enabled on your disk, or it wil
 hours.  In Linux, use hdparm to set these options:
 .PP
 .Vb 1
-\&    $ hdparm -d 1 -c 1 -u 1 /dev/hdb
+\&    $ hdparm \-d 1 \-c 1 \-u 1 /dev/hdb
 .Ve
 .PP
 Choose your output directory, somewhere with lots of disk space.
@@ -260,7 +260,7 @@ Choose your output directory, somewhere with lots of disk space.
 .Ve
 .PP
 Look in the \fI/usr/local/share/magicrescue/recipes\fR directory for the recipes
-you want.  Magic Rescue somes with recipes for some common file types, and you
+you want.  Magic Rescue comes with recipes for some common file types, and you
 can make your own too (see the next section).  Open the recipes you want to use
 in a text editor and read their comments.  Most recipes require 3rd party
 software to work, and you may want to modify some parameters (such as
@@ -269,7 +269,7 @@ software to work, and you may want to modify some parameters (such as
 Then invoke \fBmagicrescue\fR
 .PP
 .Vb 1
-\&    $ magicrescue -r jpeg-jfif -r jpeg-exif -d ~/output /dev/hdb1
+\&    $ magicrescue \-r jpeg\-jfif \-r jpeg\-exif \-d ~/output /dev/hdb1
 .Ve
 .PP
 It will scan through your entire hard disk, so it may take a while.  You can

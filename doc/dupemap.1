@@ -25,11 +25,11 @@
 ..
 .\" Set up some character translations and predefined strings.  \*(-- will
 .\" give an unbreakable dash, \*(PI will give pi, \*(L" will give a left
-.\" double quote, and \*(R" will give a right double quote.  | will give a
-.\" real vertical bar.  \*(C+ will give a nicer C++.  Capital omega is used to
-.\" do unbreakable dashes and therefore won't be available.  \*(C` and \*(C'
-.\" expand to `' in nroff, nothing in troff, for use with C<>.
-.tr \(*W-|\(bv\*(Tr
+.\" double quote, and \*(R" will give a right double quote.  \*(C+ will
+.\" give a nicer C++.  Capital omega is used to do unbreakable dashes and
+.\" therefore won't be available.  \*(C` and \*(C' expand to `' in nroff,
+.\" nothing in troff, for use with C<>.
+.tr \(*W-
 .ds C+ C\v'-.1v'\h'-1p'\s-2+\h'-1p'+\s0\v'.1v'\h'-1p'
 .ie n \{\
 .    ds -- \(*W-
@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "DUPEMAP 1"
-.TH DUPEMAP 1 "2007-12-31" "1.1.5" "Magic Rescue"
+.TH DUPEMAP 1 "2008-06-26" "1.1.6" "Magic Rescue"
 .SH "NAME"
 dupemap \- Creates a database of file checksums and uses it to eliminate
 duplicates
@@ -216,7 +216,7 @@ The easiest operations to understand is when the \fB\-d\fR option is not given. 
 delete all duplicate files in \fI/tmp/recovered\-files\fR, do:
 .PP
 .Vb 1
-\&    $ dupemap delete /tmp/recovered-files
+\&    $ dupemap delete /tmp/recovered\-files
 .Ve
 .PP
 Often, \fBdupemap scan\fR is run to produce a checksum database of all files in a
@@ -225,8 +225,8 @@ following \fBdupemap report\fR.  For example, to delete all files in
 \&\fI/tmp/recovered\-files\fR that already exist in \fI$HOME\fR, do this:
 .PP
 .Vb 2
-\&    $ dupemap -d homedir.map scan $HOME
-\&    $ dupemap -d homedir.map delete,report /tmp/recovered-files
+\&    $ dupemap \-d homedir.map scan $HOME
+\&    $ dupemap \-d homedir.map delete,report /tmp/recovered\-files
 .Ve
 .Sh "Usage with magicrescue"
 .IX Subsection "Usage with magicrescue"
@@ -247,7 +247,7 @@ Windows partition, preferably read-only (especially with \s-1NTFS\s0), and creat
 directories we will use.
 .PP
 .Vb 2
-\&    $ mount -o ro /dev/hda1 /mnt/windows
+\&    $ mount \-o ro /dev/hda1 /mnt/windows
 \&    $ mkdir healthy_docs rescued_docs
 .Ve
 .PP
@@ -260,25 +260,25 @@ inside other files, such as uncompressed zip archives or files with the wrong
 extension.
 .PP
 .Vb 4
-\&    $ find /mnt/windows -type f \e
-\&      |magicrescue -I- -r msoffice -d healthy_docs
-\&    $ dupemap -d healthy_docs.map scan healthy_docs
-\&    $ rm -rf healthy_docs
+\&    $ find /mnt/windows \-type f \e
+\&      |magicrescue \-I\- \-r msoffice \-d healthy_docs
+\&    $ dupemap \-d healthy_docs.map scan healthy_docs
+\&    $ rm \-rf healthy_docs
 .Ve
 .PP
 Now rescue all \f(CW\*(C`msoffice\*(C'\fR documents from the block device and get rid of
 everything that's not a *.doc.
 .PP
 .Vb 2
-\&    $ magicrescue -Mo -r msoffice -d rescued_docs /dev/hda1 \e
-\&      |grep -v '\e.doc$'|xargs rm -f
+\&    $ magicrescue \-Mo \-r msoffice \-d rescued_docs /dev/hda1 \e
+\&      |grep \-v \(aq\e.doc$\(aq|xargs rm \-f
 .Ve
 .PP
 Remove all the rescued documents that also appear on the file system, and
 remove duplicates.
 .PP
 .Vb 2
-\&    $ dupemap -d healthy_docs.map delete,report rescued_docs
+\&    $ dupemap \-d healthy_docs.map delete,report rescued_docs
 \&    $ dupemap delete,report rescued_docs
 .Ve
 .PP
@@ -299,8 +299,8 @@ some free space on the disk image, so fsck has something to work with.
 .Vb 6
 \&    $ cp diskimage diskimage.bak
 \&    $ dd if=/dev/zero bs=1M count=2048 >> diskimage
-\&    $ reiserfsck --rebuild-tree diskimage
-\&    $ mount -o loop diskimage /mnt
+\&    $ reiserfsck \-\-rebuild\-tree diskimage
+\&    $ mount \-o loop diskimage /mnt
 \&    $ ls /mnt/lost+found
 \&    (tons of files)
 .Ve
@@ -311,14 +311,14 @@ backup after eliminating duplicates.  Therefore we create a checksum database
 of the directory we have unpacked the backup in.
 .PP
 .Vb 1
-\&    $ dupemap -d backup.map scan ~/backup
+\&    $ dupemap \-d backup.map scan ~/backup
 .Ve
 .PP
 Next, we eliminate all the files from the rescued image that are also present
 in the backup.
 .PP
 .Vb 1
-\&    $ dupemap -d backup.map delete,report /mnt
+\&    $ dupemap \-d backup.map delete,report /mnt
 .Ve
 .PP
 We also want to remove duplicates from \fIlost+found\fR, and we want to get rid of
@@ -326,8 +326,8 @@ any files that are also present in the other directories in \fI/mnt\fR.
 .PP
 .Vb 3
 \&    $ dupemap delete,report /mnt/lost+found
-\&    $ ls /mnt|grep -v lost+found|xargs dupemap -d mnt.map scan
-\&    $ dupemap -d mnt.map delete,report /mnt/lost+found
+\&    $ ls /mnt|grep \-v lost+found|xargs dupemap \-d mnt.map scan
+\&    $ dupemap \-d mnt.map delete,report /mnt/lost+found
 .Ve
 .PP
 This should leave only the files in \fI/mnt\fR that have changed since the last
@@ -342,7 +342,7 @@ the more exotic uses, and it's only included for inspiration.
 First, you map the whole file system.
 .PP
 .Vb 1
-\&    $ dupemap -d old.map scan /
+\&    $ dupemap \-d old.map scan /
 .Ve
 .PP
 Then you come back a few days/weeks later and run \fBdupemap report\fR.  This will
@@ -351,8 +351,8 @@ need a list of the whole file system.  You can get this list along with
 preparing a new map easily.  Both lists need to be sorted to be compared.
 .PP
 .Vb 2
-\&    $ dupemap -d old.map report /|sort > unchanged_files
-\&    $ dupemap -d current.map scan /|sort > current_files
+\&    $ dupemap \-d old.map report /|sort > unchanged_files
+\&    $ dupemap \-d current.map scan /|sort > current_files
 .Ve
 .PP
 All that's left to do is comparing these files and preparing for next week.
