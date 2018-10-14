@@ -5,4 +5,4 @@
 0 string \x7f\x45\x4c\x46\x01\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00
 extension elf
 command elfextract.pl "$1"
-min_output_size 1024
+min_output_file 1024

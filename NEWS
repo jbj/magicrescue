@@ -1,3 +1,12 @@
+Version 1.1.1: Sat May  1 19:14:14 CEST 2004
+- Added recipe for zip files and OpenOffice.org documents
+- Added -b option for block alignment
+- If argument to -r is a directory, read all files within it
+- Anti-overlapping between files is now global instead of per-recipe
+- Fixed bug that made anti-overlap code skip too much sometimes
+- Fixed bug that prevented the use of an absolute path for recipes
+- dupemap works on KNOPPIX now
+
 Version 1.1.0: Tue Apr 13 13:23:28 CEST 2004
 - Transformed README files into proper manpages and wrote more documentation
 - Added dupemap, another tool for getting a better overview of the output

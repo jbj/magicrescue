@@ -2,13 +2,13 @@ Magic Rescue
 ------------
 
 Magic Rescue scans a block device for file types it knows how to recover and
-calls an external program to extract them. It looks at "magic bytes" in file
+calls an external program to extract them.  It looks at "magic bytes" in file
 contents, so it can be used both as an undelete utility and for recovering a
-corrupted drive or partition. As long as the file data is there, it will find
+corrupted drive or partition.  As long as the file data is there, it will find
 it.
 
 It works on any file system, but on very fragmented file systems it can only
-recover the first chunk of each file. Practical experience (this program was
+recover the first chunk of each file.  Practical experience (this program was
 not written for fun) shows, however, that chunks of 30-50MB are not uncommon.
 
 Find the latest version at http://jbj.rapanden.dk/magicrescue/
@@ -16,11 +16,14 @@ Find the latest version at http://jbj.rapanden.dk/magicrescue/
 Building
 --------
 
+There are no build requirements other than a C library and an X/OPEN system
+interface.  To use the dupemap(1) utility, you must have the NDBM
+compatibility header, which either comes with your system or the development
+libraries of GDBM or Berkeley DB.
+
 ./configure && make && make install
 
-Don't worry about it if all the files don't build, the most important thing is
-that the magicrescue binary builds. You may want to run "make -k" and come back
-later to build the problematic files only if you need them.
+The "make install" step is optional.
 
 Using
 -----

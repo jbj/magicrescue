@@ -1,6 +1,9 @@
 # Extracts mp3 files.
 # Depends on perl and mpg123 from http://www.mpg123.de/ 
 #
+# If you use this together with the mp3-id3v1 recipe, specify this recipe
+# AFTER the other. Otherwise files will be extracted twice.
+#
 # Currently this recipe is very slow because the header to match against is
 # way too small. Therefore the command is executed very often, and it could
 # take a whole day to complete.
@@ -18,6 +21,6 @@ extension mp3
 # out errors we try to let it play those 100KB into "$1.pcm". Then we call the
 # extractor, which first sees if "$1.pcm" is big enough, and then tries to
 # extract the file.
-command dd bs=102400 count=1 of="$1" 2>/dev/null; if mpg123 -t "$1" 2>&1|egrep -q 'Illegal|too large|not allowed|Giving up'; then rm -f "$1"; else mpg123 -s "$1" > "$1.pcm" 2>/dev/null; mp3extract.pl "$1"; rm -f "$1.pcm"; fi
+command dd bs=102400 count=1 of="$1" 2>/dev/null; if mpg123 -t "$1" 2>&1|egrep 'Illegal|too large|not allowed|Giving up' >/dev/null; then rm -f "$1"; else mpg123 -s "$1" > "$1.pcm" 2>/dev/null; mp3extract.pl "$1"; rm -f "$1.pcm"; fi
 
 min_output_file 102401

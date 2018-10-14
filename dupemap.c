@@ -1,5 +1,5 @@
 /*
- * Dupemap, part of Magic Rescue
+ * dupemap, part of Magic Rescue
  * Copyright (C) 2004 Jonas Jensen <jbj@knef.dk>
  * 
  * This program is free software; you can redistribute it and/or
@@ -214,7 +214,7 @@ static int csdb_open_tempdb(dbhandle *db)
 {
     int i = 0, rv;
     char *env_tmp = getenv("TMP");
-    if (!env_tmp)
+    if (!env_tmp || !*env_tmp)
 	env_tmp = "/tmp";
 
     db->tempdir = malloc(PATH_MAX);
@@ -272,7 +272,7 @@ static int csdb_store(dbhandle *db, void *key, int len)
     d.dptr = key;
     d.dsize = len;
     value.dptr = "";
-    value.dsize = 0;
+    value.dsize = 1;
 
     dbm_store(db->db, d, value, DBM_INSERT);
     return 0;

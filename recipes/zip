@@ -1,0 +1,23 @@
+# Extracts PKZIP files, including OpenOffice.org and StarOffice 6+ documents.
+# Depends on Info-ZIP from http://www.info-zip.org
+#
+# Files that seem to be OpenOffice.org or StarOffice documents will be renamed
+# to *.ooo
+
+# magic
+0 string PK\x03\x04
+# high byte of "version made by"
+5 char \x00
+# high byte of "version needed to extract"
+7 char \x00
+
+extension zip
+
+# This command takes a 50MB chunk of the file and tries to repair it. If the
+# zip files you are looking for are less than 50MB, you can lower the value of
+# the count= parameter for performance.
+command dd bs=1024k count=50 of="$1" 2>/dev/null; zip -qF "$1" || rm -f "$1"
+
+# Try to guess if it's a JAR archive or an OpenOffice.org file, and rename
+# accordingly
+rename if unzip -p "$1" META-INF/MANIFEST.MF >/dev/null 2>&1; then echo "RENAME jar"; elif unzip -p "$1" content.xml >/dev/null 2>&1; then echo "RENAME ooo"; fi

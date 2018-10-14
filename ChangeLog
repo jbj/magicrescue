@@ -1,6 +1,198 @@
 For less detailed change information, see the NEWS file
 
 ------------------------------------------------------------------------
+r228 | jbj | 2004-05-01 19:13:20 +0200 (Sat, 01 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/new_NEWS
+
+news
+------------------------------------------------------------------------
+r227 | jbj | 2004-05-01 13:16:07 +0200 (Sat, 01 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/config.d/50dbm
+
+Try GDBM first because it has known behavior
+------------------------------------------------------------------------
+r226 | jbj | 2004-05-01 10:43:40 +0200 (Sat, 01 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/README
+
+Two periods after space; Describe dependencies; Remove obsolete info.
+------------------------------------------------------------------------
+r225 | jbj | 2004-05-01 10:42:50 +0200 (Sat, 01 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/config.d/50dbm
+
+Try <db1/ndbm.h> last, it doesn't seem to be common
+------------------------------------------------------------------------
+r224 | jbj | 2004-05-01 10:23:34 +0200 (Sat, 01 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+
+Use seperate buffer for temporary file name
+------------------------------------------------------------------------
+r223 | jbj | 2004-05-01 00:21:03 +0200 (Sat, 01 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/config.d/50cygwin
+
+period
+------------------------------------------------------------------------
+r222 | jbj | 2004-05-01 00:13:02 +0200 (Sat, 01 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/recipes/mp3-id3v1
+
+Solaris has no grep -q
+------------------------------------------------------------------------
+r221 | jbj | 2004-05-01 00:00:34 +0200 (Sat, 01 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/new_NEWS
+
+news
+------------------------------------------------------------------------
+r220 | jbj | 2004-04-30 23:52:32 +0200 (Fri, 30 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/dupemap.c
+
+Make dupemap not just compile, but also work, on KNOPPIX
+------------------------------------------------------------------------
+r219 | jbj | 2004-04-30 23:45:41 +0200 (Fri, 30 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/config.d/50dbm
+   M /magicrescue/trunk/find_dbm.h
+
+KNOPPIX compatibility for dupemap
+------------------------------------------------------------------------
+r218 | jbj | 2004-04-30 23:19:53 +0200 (Fri, 30 Apr 2004) | 3 lines
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+   M /magicrescue/trunk/magicrescue.pod
+   M /magicrescue/trunk/new_NEWS
+
+- If argument to -r is a directory, read all files within it.
+- Give better error messages when recipe parsing fails
+
+------------------------------------------------------------------------
+r217 | jbj | 2004-04-30 23:17:23 +0200 (Fri, 30 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/recipes/elf
+
+typo
+------------------------------------------------------------------------
+r216 | jbj | 2004-04-29 23:06:38 +0200 (Thu, 29 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+
+trivial cleanup
+------------------------------------------------------------------------
+r215 | jbj | 2004-04-29 22:57:41 +0200 (Thu, 29 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/new_NEWS
+
+news
+------------------------------------------------------------------------
+r214 | jbj | 2004-04-29 22:52:00 +0200 (Thu, 29 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+   M /magicrescue/trunk/magicrescue.pod
+   M /magicrescue/trunk/new_NEWS
+   M /magicrescue/trunk/recipes/mp3-id3v1
+   M /magicrescue/trunk/recipes/mp3-id3v2
+
+Merge shared_scanner branch, which adds the -b option, implemented as a scanner that can be shared between recipes. Also changes the anti-overlap code to use a global list instead of being per-recipe.
+------------------------------------------------------------------------
+r209 | jbj | 2004-04-28 23:18:11 +0200 (Wed, 28 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+   M /magicrescue/trunk/new_NEWS
+
+Recipe search path bug 2/2
+------------------------------------------------------------------------
+r208 | jbj | 2004-04-28 23:00:07 +0200 (Wed, 28 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+
+Recipe search path bug 1/2
+------------------------------------------------------------------------
+r201 | jbj | 2004-04-28 20:46:35 +0200 (Wed, 28 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+   M /magicrescue/trunk/magicrescue.pod
+   M /magicrescue/trunk/new_NEWS
+
+Remove -b option from trunk for now
+------------------------------------------------------------------------
+r200 | jbj | 2004-04-25 19:50:45 +0200 (Sun, 25 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/recipes/zip
+
+Guess when a zip file is a JAR
+------------------------------------------------------------------------
+r199 | jbj | 2004-04-25 18:08:05 +0200 (Sun, 25 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/recipes/zip
+
+minor change in dd parameter
+------------------------------------------------------------------------
+r198 | jbj | 2004-04-25 17:02:38 +0200 (Sun, 25 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/new_NEWS
+   M /magicrescue/trunk/recipes/msoffice
+   A /magicrescue/trunk/recipes/zip
+
+Add zip recipe
+------------------------------------------------------------------------
+r196 | jbj | 2004-04-24 17:47:26 +0200 (Sat, 24 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/recipes/jpeg-exif
+   M /magicrescue/trunk/recipes/jpeg-jfif
+
+Preserve non-image markers in jpeg files
+------------------------------------------------------------------------
+r195 | jbj | 2004-04-21 19:29:08 +0200 (Wed, 21 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+
+remove whitespace from scanner_string_init's scoretable
+------------------------------------------------------------------------
+r194 | jbj | 2004-04-21 19:28:36 +0200 (Wed, 21 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/new_NEWS
+
+news about -b
+------------------------------------------------------------------------
+r193 | jbj | 2004-04-21 00:17:08 +0200 (Wed, 21 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+   M /magicrescue/trunk/magicrescue.pod
+
+Add -b option for aligning to block boundaries
+------------------------------------------------------------------------
+r192 | jbj | 2004-04-20 08:47:03 +0200 (Tue, 20 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/dupemap.pod
+   M /magicrescue/trunk/magicrescue.pod
+
+Use two spaces after period in the docs. Rearrange the DATABASE section of dupemap.pod
+------------------------------------------------------------------------
+r191 | jbj | 2004-04-20 08:46:21 +0200 (Tue, 20 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/dupemap.c
+
+Correct case in title; ignore $TMP if it's the null string
+------------------------------------------------------------------------
+r190 | jbj | 2004-04-14 23:46:21 +0200 (Wed, 14 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/dupemap.pod
+   M /magicrescue/trunk/magicrescue.pod
+
+Refer to other file recovery tools
+------------------------------------------------------------------------
+r187 | jbj | 2004-04-13 13:24:02 +0200 (Tue, 13 Apr 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/NEWS
+
+Release 1.1.0 (again)
+------------------------------------------------------------------------
 r186 | jbj | 2004-04-13 13:21:34 +0200 (Tue, 13 Apr 2004) | 1 line
 Changed paths:
    M /magicrescue/trunk/magicrescue.pod

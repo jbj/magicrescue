@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "DUPEMAP 1"
-.TH DUPEMAP 1 "2004-04-12" "1.1.0" "Magic Rescue"
+.TH DUPEMAP 1 "2004-04-30" "1.1.1" "Magic Rescue"
 .SH "NAME"
 dupemap \- Creates a database of file checksums and uses it to eliminate
 duplicates
@@ -145,7 +145,7 @@ must be a comma-seperated list of \fBscan\fR, \fBreport\fR, \fBdelete\fR:
 .Sh "Without \fB\-d\fP"
 .IX Subsection "Without -d"
 \&\fBdupemap\fR will take action when it sees the same checksum repeated more than
-once, i.e. it simply finds duplicates recursively. The action depends on
+once, i.e. it simply finds duplicates recursively.  The action depends on
 \&\fIoperation\fR:
 .IP "\fBreport\fR" 7
 .IX Item "report"
@@ -153,25 +153,25 @@ Report what files are encountered more than once, printing their names to
 standard output.
 .IP "\fBdelete\fR[\fB,report\fR]" 7
 .IX Item "delete[,report]"
-Delete files that are encountered more than once. Print their names if
+Delete files that are encountered more than once.  Print their names if
 \&\fBreport\fR is also given.
 .Sh "With \fB\-d\fP"
 .IX Subsection "With -d"
 The \fIdatabase\fR argument to \fB\-d\fR will denote a database file (see the
-\&\*(L"\s-1DATABASE\s0\*(R" section in this manual for details) to read from or write to. In
+\&\*(L"\s-1DATABASE\s0\*(R" section in this manual for details) to read from or write to.  In
 this mode, the \fBscan\fR operation should be run on one \fIpath\fR, followed by the
 \&\fBreport\fR or \fBdelete\fR operation on another (\fInot the same!\fR) \fIpath\fR.
 .IP "\fBscan\fR" 7
 .IX Item "scan"
-Add the checksum of each file to \fIdatabase\fR. This operation must be run
-initially to create the database. To start over, the user must manually delete
-the database file.
+Add the checksum of each file to \fIdatabase\fR.  This operation must be run
+initially to create the database.  To start over, you must manually delete the
+database file(s) (see the \*(L"\s-1DATABASE\s0\*(R" section).
 .IP "\fBreport\fR" 7
 .IX Item "report"
 Print each file name if its checksum is found in \fIdatabase\fR.
 .IP "\fBdelete\fR[\fB,report\fR]" 7
 .IX Item "delete[,report]"
-Delete each file if its checksum is found in \fIdatabase\fR. If \fBreport\fR is also
+Delete each file if its checksum is found in \fIdatabase\fR.  If \fBreport\fR is also
 present, print the name of each deleted file.
 .Sp
 \&\fI\s-1WARNING:\s0\fR use the \fBreport\fR operation first to see what will be deleted.
@@ -183,7 +183,7 @@ to scan one \fIpath\fR and delete files in a second \fIpath\fR.
 .IX Header "OPTIONS"
 .IP "\fB\-d\fR \fIdatabase\fR" 7
 .IX Item "-d database"
-Use \fIdatabase\fR as an on-disk database to read from or write to. See the
+Use \fIdatabase\fR as an on-disk database to read from or write to.  See the
 \&\*(L"\s-1DESCRIPTION\s0\*(R" section above about how this influences the operation of
 \&\fBdupemap\fR.
 .IP "\fB\-m\fR \fIminsize\fR" 7
@@ -196,7 +196,7 @@ Ignore files above this size.
 .IX Header "USAGE"
 .Sh "General usage"
 .IX Subsection "General usage"
-The easiest operations to understand is when the \fB\-d\fR option is not given. To
+The easiest operations to understand is when the \fB\-d\fR option is not given.  To
 delete all duplicate files in \fI/tmp/recovered\-files\fR, do:
 .PP
 .Vb 1
@@ -204,8 +204,8 @@ delete all duplicate files in \fI/tmp/recovered\-files\fR, do:
 .Ve
 .PP
 Often, \fBdupemap scan\fR is run to produce a checksum database of all files in a
-directory tree. Then \fBdupemap delete\fR is run on another directory, possibly 
-following \fBdupemap report\fR. For example, to delete all files in
+directory tree.  Then \fBdupemap delete\fR is run on another directory, possibly 
+following \fBdupemap report\fR.  For example, to delete all files in
 \&\fI/tmp/recovered\-files\fR that already exist in \fI$HOME\fR, do this:
 .PP
 .Vb 2
@@ -215,18 +215,20 @@ following \fBdupemap report\fR. For example, to delete all files in
 .Sh "Usage with magicrescue"
 .IX Subsection "Usage with magicrescue"
 The main application for \fBdupemap\fR is to take some pain out of performing
-undelete operations with \fBmagicrescue\fR(1). The reason is that \fBmagicrescue\fR
+undelete operations with \fBmagicrescue\fR(1).  The reason is that \fBmagicrescue\fR
 will extract every single file of the specified type on the block device, so
 undeleting files requires you to find a few files out of hundreds, which can
-take a long time if done manually. What we want to do is to only extract the
+take a long time if done manually.  What we want to do is to only extract the
 documents that don't exist on the file system already.
 .PP
 In the following scenario, you have accidentally deleted some important Word
-documents in Windows. You boot into Linux and change to a directory with lots
-of space.
+documents in Windows.  If this were a real-world scenario, then by all means use
+The Sleuth Kit.  However, \fBmagicrescue\fR will work even when the directory
+entries were overwritten, i.e. more files were stored in the same folder later.
 .PP
-Mount the Windows partition, preferably read-only (especially with \s-1NTFS\s0), and
-create the directories we will use.
+You boot into Linux and change to a directory with lots of space.  Mount the
+Windows partition, preferably read-only (especially with \s-1NTFS\s0), and create the
+directories we will use.
 .PP
 .Vb 2
 \&    $ mount -o ro /dev/hda1 /mnt/windows
@@ -234,7 +236,7 @@ create the directories we will use.
 .Ve
 .PP
 Extract all the healthy Word documents with \fBmagicrescue\fR and build a database
-of their checksums. It may seem a little redundant to send all the documents
+of their checksums.  It may seem a little redundant to send all the documents
 through \fBmagicrescue\fR first, but the reason is that this process may modify
 them (e.g. stripping trailing garbage), and therefore their checksum will not
 be the same as the original documents.  That is quite rare with Word documents,
@@ -276,7 +278,7 @@ remove duplicates.
 \&    $ dupemap delete,report rescued_docs
 .Ve
 .PP
-The \fIrescued_docs\fR folder should now contain only a few files. This will be
+The \fIrescued_docs\fR folder should now contain only a few files.  This will be
 the undeleted files and some documents that were not stored in contiguous
 blocks (use that defragger ;\-)).
 .PP
@@ -293,11 +295,11 @@ can also be expressed with one pipeline.
 .IX Subsection "Usage with fsck"
 In this scenario (based on a true story), you have a hard disk that's gone bad.
 You have managed to \fIdd\fR about 80% of the contents into the file \fIdiskimage\fR,
-and you have an old backup from a few months ago. The disk is using reiserfs on
-Linux.
+and you have an old backup from a few months ago.  The disk is using reiserfs
+on Linux.
 .PP
-First, use fsck to make the file system usable again. It will find many
-nameless files and put them in \fIlost+found\fR. You need to make sure there is
+First, use fsck to make the file system usable again.  It will find many
+nameless files and put them in \fIlost+found\fR.  You need to make sure there is
 some free space on the disk image, so fsck has something to work with.
 .PP
 .Vb 6
@@ -311,7 +313,7 @@ some free space on the disk image, so fsck has something to work with.
 .PP
 Our strategy will be to restore the system with the old backup as a base and
 merge the two other sets of files (\fI/mnt/lost+found\fR and \fI/mnt\fR) into the
-backup after eliminating duplicates. Therefore we create a checksum database
+backup after eliminating duplicates.  Therefore we create a checksum database
 of the directory we have unpacked the backup in.
 .PP
 .Vb 1
@@ -335,12 +337,12 @@ any files that are also present in the other directories in \fI/mnt\fR.
 .Ve
 .PP
 This should leave only the files in \fI/mnt\fR that have changed since the last
-backup or got corrupted. Particularly, the contents of \fI/mnt/lost+found\fR
+backup or got corrupted.  Particularly, the contents of \fI/mnt/lost+found\fR
 should now be reduced enough to manually sort through them (or perhaps use
 \&\fBmagicsort\fR(1)).
 .Sh "Primitive intrusion detection"
 .IX Subsection "Primitive intrusion detection"
-You can use \fBdupemap\fR to see what files change on your system. This is one of
+You can use \fBdupemap\fR to see what files change on your system.  This is one of
 the more exotic uses, and it's only included for inspiration.
 .PP
 First, you map the whole file system.
@@ -349,10 +351,10 @@ First, you map the whole file system.
 \&    $ dupemap -d old.map scan /
 .Ve
 .PP
-Then you come back a few days/weeks later and run \fBdupemap report\fR. This will
-give you a view of what \fIhas not\fR changed. To see what \fIhas\fR changed, you
-need a list of the whole file system. You can get this list along with
-preparing a new map easily. Both lists need to be sorted to be compared.
+Then you come back a few days/weeks later and run \fBdupemap report\fR.  This will
+give you a view of what \fIhas not\fR changed.  To see what \fIhas\fR changed, you
+need a list of the whole file system.  You can get this list along with
+preparing a new map easily.  Both lists need to be sorted to be compared.
 .PP
 .Vb 2
 \&    $ dupemap -d old.map report /|sort > unchanged_files
@@ -368,9 +370,9 @@ This assumes that the dbm appends the \f(CW\*(C`.db\*(C'\fR extension to databas
 .Ve
 .Sh "Usage with find"
 .IX Subsection "Usage with find"
-Sometimes you want to index only files meeting certain criteria. Your system's
+Sometimes you want to index only files meeting certain criteria.  Your system's
 \&\fBfind\fR(1) and \fBxargs\fR(1) utilities can help with this, but usage varies with
-each \s-1UNIX\s0 implementation. The other examples in this manual are for the \s-1GNU\s0
+each \s-1UNIX\s0 implementation.  The other examples in this manual are for the \s-1GNU\s0
 system.
 .PP
 The basic command is:
@@ -380,13 +382,13 @@ The basic command is:
 .Ve
 .PP
 but this will fail when encountering a file with quotes or spaces in the file
-name. The \s-1GNU\s0 utilities have non-standard options to work around this:
+name.  The \s-1GNU\s0 utilities have non-standard options to work around this:
 .PP
 .Vb 1
 \&    $ find ARGS -print0|xargs -0 dupemap ARGS
 .Ve
 .PP
-If you are not on a \s-1GNU\s0 system, try escaping the output of find. This will work
+If you are not on a \s-1GNU\s0 system, try escaping the output of find.  This will work
 for everything except file names containing newlines, but it's not very
 readable.
 .PP
@@ -395,7 +397,7 @@ readable.
 .Ve
 .PP
 If you're lucky enough to be on a system where \fBfind\fR conforms to the latest
-\&\s-1POSIX\s0.1\-2001 standard, the solution is very simple. I haven't seen such a
+\&\s-1POSIX\s0.1\-2001 standard, the solution is very simple.  I haven't seen such a
 system, though.
 .PP
 .Vb 1
@@ -412,21 +414,21 @@ This assumes that the dbm appends the \f(CW\*(C`.db\*(C'\fR extension to databas
 .Ve
 .SH "DATABASE"
 .IX Header "DATABASE"
-The current checksum algorithm is the file's \s-1CRC32\s0 combined with its size. Both
-values are stored in native byte order, and because of varying type sizes the
-database is \fInot\fR portable across architectures, compilers and operating
-systems.
-.PP
-\&\fBdupecheck\fR depends on a database library for storing the checksums. It
-currently requires the POSIX-standardized \fBndbm\fR library, which must be
-present on XSI-compliant UNIXes. Implementations are not required to handle
-hash key collisions, and a faliure to do that could make \fBdupecheck\fR delete
-too many files. I haven't heard of such an implementation, though.
-.PP
 The actual database file(s) written by \fBdupecheck\fR will have some relation to
-the \fIdatabase\fR argument, but most implementations append an extension. For
+the \fIdatabase\fR argument, but most implementations append an extension.  For
 example, Berkeley \s-1DB\s0 names the files \fIdatabase\fR\fB.db\fR, while Solaris and \s-1GDBM\s0
 creates both a \fIdatabase\fR\fB.dir\fR and \fIdatabase\fR\fB.pag\fR file.
+.PP
+\&\fBdupecheck\fR depends on a database library for storing the checksums.  It
+currently requires the POSIX-standardized \fBndbm\fR library, which must be
+present on XSI-compliant UNIXes.  Implementations are not required to handle
+hash key collisions, and a faliure to do that could make \fBdupecheck\fR delete
+too many files.  I haven't heard of such an implementation, though.
+.PP
+The current checksum algorithm is the file's \s-1CRC32\s0 combined with its size.
+Both values are stored in native byte order, and because of varying type sizes
+the database is \fInot\fR portable across architectures, compilers and operating
+systems.
 .SH "SEE ALSO"
 .IX Header "SEE ALSO"
 \&\fBmagicrescue\fR(1), \fBweeder\fR(1)
@@ -436,19 +438,19 @@ to handle many files without crashing, and it has no largefile support.
 .SH "BUGS"
 .IX Header "BUGS"
 There is a tiny chance that two different files can have the same checksum and
-size. The probability of this happening is around 1 to 10^14, and since
+size.  The probability of this happening is around 1 to 10^14, and since
 \&\fBdupemap\fR is part of the Magic Rescue package, which deals with disaster
-recovery, that chance becomes an insignificant part of the game. You should
+recovery, that chance becomes an insignificant part of the game.  You should
 consider this if you apply \fBdupemap\fR to other applications, especially if they
 are security-related (see next paragraph).
 .PP
-It is possible to craft a file to have a known \s-1CRC32\s0. You need to keep this in
-mind if you use \fBdupemap\fR on untrusted data. A solution to this could be to
+It is possible to craft a file to have a known \s-1CRC32\s0.  You need to keep this in
+mind if you use \fBdupemap\fR on untrusted data.  A solution to this could be to
 implement an option for using \s-1MD5\s0 checksums instead.
 .SH "AUTHOR"
 .IX Header "AUTHOR"
 Jonas Jensen <jbj@knef.dk>
 .SH "LATEST VERSION"
 .IX Header "LATEST VERSION"
-This tools is part of Magic Rescue. You can find the latest version at
+This tools is part of Magic Rescue.  You can find the latest version at
 <http://jbj.rapanden.dk/magicrescue/>

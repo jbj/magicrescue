@@ -5,4 +5,4 @@
 6 string Exif
 0 int32 ffd80000 ffff0000
 extension jpg
-command jpegtran > "$1"
+command jpegtran -copy all -outfile "$1"

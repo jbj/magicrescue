@@ -6,9 +6,12 @@
 # things, but many weird OLE fragments will be pulled out as well. All known
 # formats are listed near the top of tools/ole_rename.pl.
 # This recipe will NOT recover Microsoft Access files, WordPerfect files,
-# OpenOffice files, or StarOffice >= 6.0 files.
+# OpenOffice.org files, or StarOffice >= 6.0 files.
 # It will try to guess the file type, but if it fails to guess something you
 # have identified manually, please send sample files to jbj@knef.dk.
+#
+# To recover files from OpenOffice.org or StarOffice >= 6.0, use the "zip"
+# recipe instead (these files are just zip files with some xml content)
 #
 # Depends on perl: http://perl.com
 

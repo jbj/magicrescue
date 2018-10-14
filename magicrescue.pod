@@ -10,53 +10,73 @@ B<magicrescue> [ I<options> ] I<devices>
 =head1 DESCRIPTION
 
 Magic Rescue opens I<devices> for reading, scans them for file types it knows
-how to recover and calls an external program to extract them. It looks at
+how to recover and calls an external program to extract them.  It looks at
 "magic bytes" in file contents, so it can be used both as an undelete utility
-and for recovering a corrupted drive or partition. It works on any file system,
+and for recovering a corrupted drive or partition.  It works on any file system,
 but on very fragmented file systems it can only recover the first chunk of
-each file. These chunks are sometimes as big as 50MB, however.
+each file.  These chunks are sometimes as big as 50MB, however.
 
 To invoke B<magicrescue>, you must specify at least one device and the B<-d>
-and B<-r> options. See the L</USAGE> section in this manual for getting
+and B<-r> options.  See the L</USAGE> section in this manual for getting
 started.
 
 =head1 OPTIONS
 
 =over 7
 
+=item B<-b> I<blocksize>
+
+Default: 1.  This will direct B<magicrescue> to only consider files that start
+at a multiple of the I<blocksize> argument.  The option applies only to the
+recipes following it, so by specifying it multiple times it can be used to get
+different behavior for different recipes.
+
+Using this option you can usually get better performance, but fewer files will
+be found.  In particular, files with leading garbage (e.g. many mp3 files) and
+files contained inside other files are likely to be skipped.  Also, some file
+systems don't align small files to block boundaries, so those won't be found
+this way either.
+
+If you don't know your file system's block size, just use the value 512, which
+is almost always the hardware sector size.
+
 =item B<-d> I<directory>
 
-Mandatory. Output directory for found files. Make sure you have plenty of free
+Mandatory.  Output directory for found files.  Make sure you have plenty of free
 space in this directory, especially when extracting very common file types such
-as jpeg or gzip files. Also make sure the file system is able to handle
+as jpeg or gzip files.  Also make sure the file system is able to handle
 thousands of files in a single directory, i.e. don't use FAT if you are
 extracting many files.
 
 You should not place the output directory on the same block device you are
-trying to rescue files from. This might add the same file to the block device
+trying to rescue files from.  This might add the same file to the block device
 ahead of the current reading position, causing B<magicrescue> to find the same
-file again later. In the worst theoretical case, this could cause an infinite
+file again later.  In the worst theoretical case, this could cause an infinite
 loop where the same file is extracted thousands of times until disk space is
-exhausted. You are also likely to overwrite the deleted files you were looking
+exhausted.  You are also likely to overwrite the deleted files you were looking
 for in the first place.
 
 =item B<-r> I<recipe>
 
-Mandatory. Recipe name or file. Specify this as either a plain name (e.g.
-C<jpeg-jfif>) or a path (e.g. F<recipes/jpeg-jfif>). If it doesn't find such a
-file in the current directory, it will look in F<./recipes> and
-F<PREFIX/share/magicrescue/recipes>, where I<PREFIX> is the path you
-installed to, e.g. F</usr/local>.
+Mandatory.  Recipe name, file, or directory.  Specify this as either a plain
+name (e.g.  C<jpeg-jfif>) or a path (e.g. F<recipes/jpeg-jfif>).  If it doesn't
+find such a file in the current directory, it will look in F<./recipes> and
+F<PREFIX/share/magicrescue/recipes>, where I<PREFIX> is the path you installed
+to, e.g. F</usr/local>.
+
+If I<recipe> is a directory, all files in that directory will be treated as
+recipes.
 
 Browse the F<PREFIX/share/magicrescue/recipes> directory to see what recipes
 are available.  A recipe is a text file, and you should read the comments
-inside it before using it.
+inside it before using it.  Either use the recipe as it is or copy it somewhere
+and modify it.
 
 For information on creating your own recipes, see the L</RECIPES> section.
 
 =item B<-M> I<output_mode>
 
-Produce machine-readable output to stdout. I<output_mode> can be:
+Produce machine-readable output to stdout.  I<output_mode> can be:
 
 =over
 
@@ -70,8 +90,8 @@ Print each output file name after processing
 
 =item B<io>
 
-Print both input and output file names. Input file names will be prefixed by
-C<i> and a space. Output file names will be prefixed by C<o> and a space.
+Print both input and output file names.  Input file names will be prefixed by
+C<i> and a space.  Output file names will be prefixed by C<o> and a space.
 
 =back
 
@@ -82,11 +102,11 @@ Nothing else will be written to standard output in this mode.
 =head1 USAGE
 
 Say you have destroyed the file system on /dev/hdb1 and you want to extract
-all the jpeg files you lost. This guide assumes you have installed Magic Rescue
-in F</usr/local>, which is the default.
+all the jpeg files you lost.  This guide assumes you have installed Magic
+Rescue in F</usr/local>, which is the default.
 
 Make sure DMA and other optimizations are enabled on your disk, or it will take
-hours. In Linux, use hdparm to set these options:
+hours.  In Linux, use hdparm to set these options:
 
     $ hdparm -d 1 -c 1 -u 1 /dev/hdb
 
@@ -95,26 +115,26 @@ Choose your output directory, somewhere with lots of disk space.
     $ mkdir ~/output
 
 Look in the F</usr/local/share/magicrescue/recipes> directory for the recipes
-you want. Magic Rescue somes with recipes for some common file types, and you
-can make your own too (see the next section).
-Open the recipes you want to use in a text editor and read their comments. Most
-recipes require 3rd party software to work, and you may want to modify some
-parameters (such as B<min_output_file>) to suit your needs.
+you want.  Magic Rescue somes with recipes for some common file types, and you
+can make your own too (see the next section).  Open the recipes you want to use
+in a text editor and read their comments.  Most recipes require 3rd party
+software to work, and you may want to modify some parameters (such as
+B<min_output_file>) to suit your needs.
 
 Then invoke B<magicrescue>
 
     $ magicrescue -r jpeg-jfif -r jpeg-exif -d ~/output /dev/hdb1
 
-It will scan through your entire hard disk, so it may take a while. You can
-stop it and resume later of you want to. Interrupt it (with CTRL+C) and note
-the progress information saying what address it got to. Then restart it later
+It will scan through your entire hard disk, so it may take a while.  You can
+stop it and resume later of you want to.  Interrupt it (with CTRL+C) and note
+the progress information saying what address it got to.  Then restart it later
 with:
 
     $ /usr/local/share/magicrescue/tools/inputseek 0x2F3A94BE0 \
       magicrescue -r jpeg-jfif -r jpeg-exif -d ~/output - < /dev/hdb1
 
 When it has finished you will probably find thousands of .jpg files in
-F<~/output>, including things you never knew was in your browser cache. Sorting
+F<~/output>, including things you never knew was in your browser cache.  Sorting
 through all those files can be a huge task, so you may want to use software or
 scripts to do it.
 
@@ -124,7 +144,7 @@ package.
     $ dupemap delete,report ~/output
 
 If you are performing an undelete operation you will want to get rid
-of all the rescued files that also appear on the live file system. See the
+of all the rescued files that also appear on the live file system.  See the
 B<dupemap>(1) manual for instructions on doing this.
 
 If that's not enough, you can use use B<magicsort> to get a better overview:
@@ -135,11 +155,11 @@ If that's not enough, you can use use B<magicsort> to get a better overview:
 
 =head2 Creating recipe files
 
-A recipe file is a relatively simple file of 3-5 lines of text. It describes
+A recipe file is a relatively simple file of 3-5 lines of text.  It describes
 how to recognise the beginning of the file and what to do when a file is
-recognised. For example, all jfif images start with the bytes C<0xff 0xd8>. At
-the 6th byte will be the string C<JFIF>. Look at F<recipes/jpeg-jfif> in the
-source distribution to follow this example.
+recognised.  For example, all jfif images start with the bytes C<0xff 0xd8>.
+At the 6th byte will be the string C<JFIF>.  Look at F<recipes/jpeg-jfif> in
+the source distribution to follow this example.
 
 Matching magic data is done with a "match operation" that looks like this:
 
@@ -153,14 +173,14 @@ operation in B<magicrescue>, and I<parameter> is specific to that operation.
 
 =item *
 
-The B<string> operation matches a string of any length. In the jfif example
-this is four bytes. You can use escape characters, like C<\n> or C<\xA7>.
+The B<string> operation matches a string of any length.  In the jfif example
+this is four bytes.  You can use escape characters, like C<\n> or C<\xA7>.
 
 =item *
 
-The B<int32> operation matches 4 bytes ANDed with a bit mask. To match all four
-bytes, use the bit mask C<FFFFFFFF>. If you have no idea what a bit mask is,
-just use the B<string> operation instead. The mask C<FFFF0000> in the jfif
+The B<int32> operation matches 4 bytes ANDed with a bit mask.  To match all
+four bytes, use the bit mask C<FFFFFFFF>.  If you have no idea what a bit mask
+is, just use the B<string> operation instead.  The mask C<FFFF0000> in the jfif
 example matches the first two bytes.
 
 =item *
@@ -171,41 +191,41 @@ character.
 =back
 
 To learn these patterns for a given file type, look at files of the desired
-type in a hex editor, search through the resource files for the "file" utility
-(L<http://freshmeat.net/projects/file>) and/or search the Internet for a
-reference on the format.
+type in a hex editor, search through the resource files for the B<file>(1)
+utility (L<http://freshmeat.net/projects/file>) and/or search the Internet for
+a reference on the format.
 
-If all the operations match, we have found the start of the file. Finding the
+If all the operations match, we have found the start of the file.  Finding the
 end of the file is a much harder problem, and therefore it is delegated to an
-external shell command, which is named by the B<command> directive. This
+external shell command, which is named by the B<command> directive.  This
 command receives the block device's file descriptor on stdin and must write to
-the file given to it in the C<$1> variable. Apart from that, the command can do
+the file given to it in the C<$1> variable.  Apart from that, the command can do
 anything it wants to try and extract the file.
 
 For some file types (such as jpeg), a tool already exists that can do this.
 However, many programs misbehave when told to read from the middle of a huge
-block device. Some seek to byte 0 before reading (can be fixed by prefixing
-cat|, but some refuse to work on a file they can't seek in). Others try to read
-the whole file into memory before doing anything, which will of course fail on
-a muti-gigabyte block device. And some fail completely to parse a partially
-corrupted file.
+block device.  Some seek to byte 0 before reading (can be fixed by prefixing
+cat|, but some refuse to work on a file they can't seek in).  Others try to
+read the whole file into memory before doing anything, which will of course
+fail on a muti-gigabyte block device.  And some fail completely to parse a
+partially corrupted file.
 
 This means that you may have to write your own tool or wrap an existing program
-in some scripts that make it behave better. For example, this could be to
+in some scripts that make it behave better.  For example, this could be to
 extract the first 10MB into a temporary file and let the program work on that.
 Or perhaps you can use F<tools/safecat> if the file may be very large.
 
 =head2 Recipe format reference
 
-Empty lines and lines starting with C<#> will be skipped. A recipe contains a
+Empty lines and lines starting with C<#> will be skipped.  A recipe contains a
 series of match operations to find the content and a series of directives to
 specify what to do with it.
 
 Lines of the format I<offset> I<operation> I<parameter> will add a match
-operation to the list. Match operations will be tried in the order they appear
-in the recipe, and they must all match for the recipe to succeed. The I<offset>
-describes what offset this data will be found at, counting from the beginning
-of the file. I<operation> can have the following values:
+operation to the list.  Match operations will be tried in the order they appear
+in the recipe, and they must all match for the recipe to succeed.  The
+I<offset> describes what offset this data will be found at, counting from the
+beginning of the file.  I<operation> can have the following values:
 
 =over 7
 
@@ -222,51 +242,52 @@ The parameter is a single character (byte), or an escape sequence.
 
 Both I<value> and I<bitmask> are expressed as 8-character hex strings.
 I<bitmask> will be ANDed with the data, and the result will be compared
-to I<value>. The byte order is as you see it in the hex editor, i.e.
-big-endian.
+to I<value>.  The byte order is as you see it in the hex editor,
+i.e. big-endian.
 
 =back
 
 The first match operation in a recipe is special, it will be used to scan
-through the file. Only the B<char> and B<string> operations can be used there.
+through the file.  Only the B<char> and B<string> operations can be used there. 
 To add more operation types, look at the instructions in F<magicrescue.c>.
 
-A line that doesn't start with an integer is a directive. This can be:
+A line that doesn't start with an integer is a directive.  This can be:
 
 =over 7
 
 =item B<extension> I<ext>
 
-Mandatory. I<ext> names the file extension for this type, such as "jpg".
+Mandatory.  I<ext> names the file extension for this type, such as C<jpg>.
 
 =item B<command> I<command>
 
-Mandatory. When all the match operations succeed, this I<command> will be
-executed to extract the file from the block device. I<command> is passed to the
-shell with the block device's file descriptor (seeked to the right byte) on
+Mandatory.  When all the match operations succeed, this I<command> will be
+executed to extract the file from the block device.  I<command> is passed to
+the shell with the block device's file descriptor (seeked to the right byte) on
 stdin.  The shell variable C<$1> will contain the file its output should be
 written to, and it must respect this.  Otherwise B<magicrescue> cannot tell
 whether it succeeded.
 
 =item B<rename> I<command>
 
-Optional. After a successful extraction this command will be run. Its purpose
+Optional.  After a successful extraction this command will be run.  Its purpose
 is to gather enough information about the file to rename it to something more
-meaningful. The script must not perform the rename command itself, but it
+meaningful.  The script must not perform the rename command itself, but it
 should write to standard output the string C<RENAME>, followed by a space,
-followed by the new file name. Nothing else must be written to standard output.
-If the file should not be renamed, nothing should be written to standard
-output. Standard input and C<$1> will work like with the B<command> directive.
+followed by the new file name.  Nothing else must be written to standard
+output.  If the file should not be renamed, nothing should be written to
+standard output.  Standard input and C<$1> will work like with the B<command>
+directive.
 
 =item B<min_output_file> I<size>
 
-Default: 100. Output files less than this size will be deleted.
+Default: 100.  Output files less than this size will be deleted.
 
 =item B<allow_overlap>
 
-By default, recipes will not match on overlapping byte ranges. B<allow_overlap>
-disables this, and it should always be used for recipes where the extracted
-file may be larger than it was on disk.
+By default, recipes will not match on overlapping byte ranges.
+B<allow_overlap> disables this, and it should always be used for recipes where
+the extracted file may be larger than it was on disk.
 
 =back
 
@@ -276,6 +297,100 @@ but don't.
 
 If you have created a recipe that works, please mail it to me at jbj@knef.dk so
 I can include it in the distribution.
+
+=head1 WHEN TO NOT USE MAGIC RESCUE
+
+Magic Rescue is not meant to be a universal application for file recovery.  It
+will give good results when you are extracting known file types from an
+unusable file system, but for many other cases there are better tools
+available.
+
+=over
+
+=item *
+
+If there are intact partitions present somewhere, use B<gpart> to find them.
+
+=item *
+
+If file system's internal data structures are more or less undamaged, use
+B<The Sleuth Kit>.  At the time of writing, it only supports NTFS, FAT, ext[23]
+and FFS, though.
+
+=item *
+
+If Magic Rescue does not have a recipe for the file type you are trying to
+recover, try B<foremost> instead.  It recognizes more file types, but in most
+cases it extracts them simply by copying out a fixed number of bytes after it
+has found the start of the file.  This makes postprocessing the output files
+more difficult.
+
+=back
+
+In many cases you will want to use Magic Rescue in addition to the tools
+mentioned above.  They are not mutually exclusive, e.g. combining
+B<magicrescue> with B<dls> from The Sleuth Kit could give good results.  In
+many cases you'll want to use B<magicrescue> to extract its known file types
+and another utility to extract the rest.
+
+=head1 SEE ALSO
+
+=over
+
+=item Similar programs
+
+=over
+
+=item B<gpart>(8)
+
+L<http://www.stud.uni-hannover.de/user/76201/gpart/>.  Tries to rebuild the
+partition table by scanning the disk for lost partitions.
+
+=item B<foremost>(1)
+
+L<http://foremost.sourceforge.net>.  Does the same thing as B<magicrescue>,
+except that its "recipes" are less complex.  Finding the end of the file must
+happen by either matching an EOF string or just extracting a fixed number of
+bytes every time.  It supports more file types than Magic Rescue, but extracted
+files usually have lots of trailing garbage, so removal of duplicates and
+sorting by size is not possible.
+
+=item B<The Sleuth Kit>
+
+L<http://www.sleuthkit.org/sleuthkit/>.  This popular package of utilities is
+extremely useful for undeleting files from a FAT/NTFS/ext2/ext3/FFS file system
+that's not completely corrupted.  Most of the utilities are not very useful if
+the file system has been corrupted or overwritten.  It is based on
+The Coroner's Toolkit (L<http://www.porcupine.org/forensics/tct.html>).
+
+=item JPEG recovery tools
+
+This seems to be the file type most people are trying to recover.  Available
+utilities include L<http://www.cgsecurity.org/?photorec.html>,
+L<http://codesink.org/recover.html>, and
+L<http://www.vanheusden.com/findfile/>.
+
+=back
+
+=item Getting disk images from failed disks
+
+B<dd>(1), B<dd_rescue>, B<dd_rhelp>, L<http://vanheusden.com/recoverdm/>,
+L<http://myrescue.sourceforge.net>
+
+=item Processing B<magicrescue>'s output
+
+B<dupemap>(1), B<file>(1), B<magicsort>, L<http://ccorr.sourceforge.net>
+
+=item Authoring recipes
+
+B<magic>(4), B<hexedit>(1), L<http://wotsit.org>
+
+=item Filesystem-specific undelete utilities
+
+There are too many to count them, especially for ext2 and FAT.  Find them on
+Google and Freshmeat.
+
+=back
 
 =head1 AUTHOR
 
