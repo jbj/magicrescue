@@ -1,0 +1,6 @@
+# Extracts RAR archives.
+# Requires the proprietary "rar" tool, available from http://www.rarlab.com.
+# Recipe contributed by Cesar Cid Mendez <skypce@gmail.com>.
+0 string \x52\x61\x72\x21\x1a\x07\x00
+extension rar
+command dd bs=1024k count=50 of="$1" 2>/dev/null; rar rr -inul "$1"
