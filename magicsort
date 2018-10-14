@@ -1,0 +1,33 @@
+#!/usr/bin/perl -w
+use strict;
+
+my $dir = shift;
+if (!$dir or !chdir($dir)) {
+    print "Usage: magicsort DIRECTORY\n",
+"Will invoke your system's file(1) utility to categorize all the files found\n",
+"by magicrescue.\n";
+    exit 1;
+}
+
+opendir DH, "." or die "opening $dir: $!\n";
+while (defined(my $file = readdir DH)) {
+    if ($file !~ /^\d{8}\./ or !-f $file) {
+	next;
+    }
+
+    open FILE, "-|", "file", $file or die "Executing file: $!\n";
+    my $idstring = <FILE>;
+    close FILE;
+
+    chomp $idstring;
+    $idstring =~ s{[/\0]}{_};
+
+    if (length($idstring) - 3 < length($file)) {
+	print STDERR "Invalid idstring: $idstring";
+	next;
+    }
+    my $dir = substr($idstring, length($file) + 2);
+    mkdir $dir;
+    rename $file, "$dir/$file" or warn "Cannot move $file: $!\n";
+}
+

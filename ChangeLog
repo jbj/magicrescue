@@ -1,6 +1,214 @@
 For less detailed change information, see the NEWS file
 
 ------------------------------------------------------------------------
+r77 | jbj | 2004-03-15 12:17:21 +0100 (Mon, 15 Mar 2004) | 2 lines
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+
+int -> long for variables that may be > 16bit
+
+------------------------------------------------------------------------
+r76 | jbj | 2004-03-15 12:01:15 +0100 (Mon, 15 Mar 2004) | 3 lines
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+
+- Don't use libc to parse hex numbers
+- define _XOPEN_SOURCE for portability
+
+------------------------------------------------------------------------
+r75 | jbj | 2004-03-15 11:35:40 +0100 (Mon, 15 Mar 2004) | 3 lines
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+   M /magicrescue/trunk/recipes/mp3-id3v2
+
+- Change -O to only affect first device
+- Readability improvement for mp3-id3v2 recipe
+
+------------------------------------------------------------------------
+r74 | jbj | 2004-03-15 11:23:42 +0100 (Mon, 15 Mar 2004) | 4 lines
+Changed paths:
+   M /magicrescue/trunk/commands/mp3extract.pl
+   M /magicrescue/trunk/magicrescue.c
+   M /magicrescue/trunk/new_NEWS
+
+- Use setrlimit to prevent core files
+- Rename -o to -O
+- Change mp3 extractor for use with checkrecipe
+
+------------------------------------------------------------------------
+r73 | jbj | 2004-03-15 01:10:56 +0100 (Mon, 15 Mar 2004) | 1 line
+Changed paths:
+   D /magicrescue/trunk/recipes/mp3-id3
+   A /magicrescue/trunk/recipes/mp3-id3v1 (from /magicrescue/trunk/recipes/mp3-noid3:72)
+   A /magicrescue/trunk/recipes/mp3-id3v2 (from /magicrescue/trunk/recipes/mp3-id3:70)
+   D /magicrescue/trunk/recipes/mp3-noid3
+
+More correct mp3 recipe names
+------------------------------------------------------------------------
+r72 | jbj | 2004-03-15 01:09:03 +0100 (Mon, 15 Mar 2004) | 4 lines
+Changed paths:
+   M /magicrescue/trunk/README
+   M /magicrescue/trunk/README.recipes
+   M /magicrescue/trunk/commands/mp3extract.pl
+   M /magicrescue/trunk/magicrescue.c
+   M /magicrescue/trunk/new_NEWS
+   M /magicrescue/trunk/recipes/gzip
+   M /magicrescue/trunk/recipes/mp3-noid3
+
+- Anti-overlap code
+- mp3 extractor is fast enough to actually be used now
+- Update READMEs to describe the new scanner code
+
+------------------------------------------------------------------------
+r71 | jbj | 2004-03-14 12:23:17 +0100 (Sun, 14 Mar 2004) | 3 lines
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+
+- Cleanups
+- Set LC_ALL=C on startup
+
+------------------------------------------------------------------------
+r70 | jbj | 2004-03-14 11:55:08 +0100 (Sun, 14 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/README
+   M /magicrescue/trunk/commands/mp3extract.pl
+   M /magicrescue/trunk/magicrescue.c
+   M /magicrescue/trunk/magicsort
+   M /magicrescue/trunk/recipes/avi
+   M /magicrescue/trunk/recipes/gzip
+   M /magicrescue/trunk/recipes/jpeg-exif
+   M /magicrescue/trunk/recipes/jpeg-jfif
+   M /magicrescue/trunk/recipes/mp3-id3
+   M /magicrescue/trunk/recipes/mp3-noid3
+   M /magicrescue/trunk/recipes/png
+
+Merge changes from the tbm-scan branch
+------------------------------------------------------------------------
+r61 | jbj | 2004-03-07 20:30:50 +0100 (Sun, 07 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+
+Oops, remove debug printf
+------------------------------------------------------------------------
+r60 | jbj | 2004-03-07 20:11:50 +0100 (Sun, 07 Mar 2004) | 5 lines
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+   M /magicrescue/trunk/new_NEWS
+
+- Fixed a bug causing around 8 bytes for every 100KB to be ignored
+- Better memory handling for the list of operations
+- Handle invalid match operation names
+- Handle EOF nicer
+
+------------------------------------------------------------------------
+r59 | jbj | 2004-03-07 20:05:41 +0100 (Sun, 07 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/Makefile.in
+   M /magicrescue/trunk/configure
+
+configure now supports environment variables, like autoconf
+------------------------------------------------------------------------
+r58 | jbj | 2004-03-07 03:16:00 +0100 (Sun, 07 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/configure
+
+More auto*-compatible configure script
+------------------------------------------------------------------------
+r57 | jbj | 2004-03-06 00:47:41 +0100 (Sat, 06 Mar 2004) | 4 lines
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+
+- Simplified some code for clarification
+- Reduced number of lseek() calls
+- Added source code comments for the hairy parts
+
+------------------------------------------------------------------------
+r56 | jbj | 2004-03-05 23:10:52 +0100 (Fri, 05 Mar 2004) | 1 line
+Changed paths:
+   D /magicrescue/trunk/Makefile
+   A /magicrescue/trunk/Makefile.in (from /magicrescue/trunk/Makefile:55)
+   M /magicrescue/trunk/README
+   A /magicrescue/trunk/configure
+   M /magicrescue/trunk/magicrescue.c
+   M /magicrescue/trunk/new_NEWS
+
+Add an autoconf-like (but not autoconf!) build system
+------------------------------------------------------------------------
+r55 | jbj | 2004-03-05 22:34:16 +0100 (Fri, 05 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/Makefile
+
+make install target
+------------------------------------------------------------------------
+r54 | jbj | 2004-03-05 21:49:29 +0100 (Fri, 05 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+   M /magicrescue/trunk/recipes/avi
+   M /magicrescue/trunk/recipes/mp3-id3
+   M /magicrescue/trunk/recipes/mp3-noid3
+   M /magicrescue/trunk/recipes/png
+
+search path for commands
+------------------------------------------------------------------------
+r53 | jbj | 2004-03-05 19:50:10 +0100 (Fri, 05 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/README
+   M /magicrescue/trunk/checkrecipe
+   M /magicrescue/trunk/magicrescue.c
+
+Add search path for recipe files
+------------------------------------------------------------------------
+r52 | jbj | 2004-03-05 17:40:27 +0100 (Fri, 05 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+
+add char operation for completeness
+------------------------------------------------------------------------
+r51 | jbj | 2004-03-05 15:57:00 +0100 (Fri, 05 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/NEWS
+   M /magicrescue/trunk/new_NEWS
+
+news
+------------------------------------------------------------------------
+r50 | jbj | 2004-03-05 15:55:05 +0100 (Fri, 05 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/README
+   A /magicrescue/trunk/magicsort
+
+Add magicsort
+------------------------------------------------------------------------
+r49 | jbj | 2004-03-05 15:08:27 +0100 (Fri, 05 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/README.recipes
+   A /magicrescue/trunk/checkrecipe (from /magicrescue/trunk/recipetest:48)
+   D /magicrescue/trunk/recipetest
+
+recipetest -> checkrecipe
+------------------------------------------------------------------------
+r48 | jbj | 2004-03-05 15:03:40 +0100 (Fri, 05 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/README.recipes
+   D /magicrescue/trunk/provemewrong.pl
+   A /magicrescue/trunk/recipetest (from /magicrescue/trunk/provemewrong.pl:41)
+
+provemewrong.pl -> recipetest
+------------------------------------------------------------------------
+r47 | jbj | 2004-03-05 14:16:36 +0100 (Fri, 05 Mar 2004) | 3 lines
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+
+convert -> extract
+f -> fd
+
+------------------------------------------------------------------------
+r46 | jbj | 2004-03-05 11:25:03 +0100 (Fri, 05 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/NEWS
+   M /magicrescue/trunk/new_NEWS
+
+Release 1.0.1
+------------------------------------------------------------------------
 r45 | jbj | 2004-03-05 11:10:21 +0100 (Fri, 05 Mar 2004) | 1 line
 Changed paths:
    M /magicrescue/trunk/recipes/gzip

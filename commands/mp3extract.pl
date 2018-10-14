@@ -6,12 +6,16 @@ use strict;
 # I could also use mp3_check, perhaps it is more correct. However, users are
 # not likely to have it installed.
 
-# TODO: Test for mp3 validity by playing it back after extracting?
-
-my $max_megabytes = 40;
+my $max_bytes     = 40*1024*1024;
 my $min_bytes     = 1024;
+my $min_pcm       = 11000;
 
 my $ofile = $ARGV[0] or die;
+
+if (-f "$ofile.pcm" and (-s _) < $min_pcm) {
+    unlink $ofile;
+    exit 1;
+}
 
 copy_out_file();
 my $size = find_size();
@@ -29,8 +33,8 @@ if ($size) {
 sub copy_out_file {
     my ($read_now, $read_total) = (0, 0);
 
-    open my $fd, ">", $ofile or die;
-    while ($read_total < 1024*1024*$max_megabytes
+    open my $fd, ">>", $ofile or die;
+    while ($read_total < $max_bytes
 	    and $read_now = read STDIN, my $buf, 10240) {
 	$read_total += $read_now;
 	print {$fd} $buf or die;
@@ -48,11 +52,12 @@ sub find_size {
 	    close $mpg123;
 
 	    my $offset = oct $1;
-	    return ($offset < $min_bytes or $offset > 1024*1024*$max_megabytes)
+	    return ($offset < $min_bytes or $offset > $max_bytes)
 		?  0 : $offset;
 	}
     }
-    return 0;
+
+    return (-s $ofile < $max_bytes ? (-s _) - 128 : 0);
 }
 
 sub mpg123 {

@@ -16,9 +16,10 @@ Find the latest version at http://jbj.rapanden.dk/magicrescue/
 Building
 --------
 
-Just type "make". You will need a CPU/compiler that can do 64-bit arithmetic if
-you want to recover from devices over 2GB.
-Don't install it, just run it from the source directory.
+./configure && make
+
+You can also do "make install" if you want, or you can just run it from the
+source directory.
 
 Using
 -----
@@ -37,22 +38,25 @@ Look in the recipes/ directory of the source for the recipes you want. Magic
 Rescue somes with recipes for some common file types, and you can make your own
 too (see the next section).
 Then invoke magicrescue
-$ ./magicrescue -r recipes/jpeg-jfif -r recipes/jpeg-exif -d ~/output /dev/hdb1
+$ ./magicrescue -r jpeg-jfif -r jpeg-exif -d ~/output /dev/hdb1
 
 It will scan through your entire hard disk, so it may take a while. When it has
 finished you will probably find thousands of .jpg files in ~/output, including
-things you never knew was in your browser cache. Sorting through all those
-files can be a huge task, so you may want to write software or scripts to do
-it.
+things you never knew was in your browser cache.
+
+Sorting through all those files can be a huge task, so you may want to use
+software or scripts to do it. You can use use magicsort to get a better
+overview:
+$ ./magicsort ~/output
 
 Extending
 ---------
 
 A recipe file is a relatively simple file of 3-5 lines of text. It describes
 how to recognise the beginning of the file and what to do when a file is
-recognised. For example, all PNG images start with the byte 0x89 followed by
-the letters PNG, followed by the bytes 0D 0A 1A 0A. Look at recipes/png in the
-source distribution to follow this example.
+recognised. For example, all jfif images start with the bytes 0xff 0xd8. At the
+6th byte will be the string "JFIF". Look at recipes/jpeg-jfif in the source
+distribution to follow this example.
 
 Matching magic data is done with a "match operation" that looks like this:
 <offset> <operation> <parameter>
@@ -60,26 +64,23 @@ where <offset> is a decimal integer saying how many bytes from the beginning of
 the file this data is located, <operation> refers to a built-in match operation
 in magicrescue, and <parameter> is specific to that operation.
 
-The first non-comment line of a recipe must be of the form
-<offset> char <character>
-The "char" operation matches a single character. In the PNG example, we first
-look for the character 0x89 (written as \x89). When that character is found,
-magicrescue proceeds to the next match operation.
-
-The "string" operation matches a string of any length. In the PNG example this
-is four bytes.
+The "string" operation matches a string of any length. In the jfif example this
+is four bytes. You can use escape characters, like \n or \xA7.
 The "int32" operation matches 4 bytes ANDed with a bit mask. To match all four
 bytes, use the bit mask ffffffff. If you have no idea what a bit mask is, just
-use the "string" operation instead.
+use the "string" operation instead. The mask ffff0000 in the jfif example
+matches the first two bytes.
+The "char" operation is like "string", except it only matches a single
+character.
 
-To learn these patterns, look at files of the desired type in a hex editor,
-search through the resource files for the "file" utility
-(http://freshmeat.net/projects/file) and/or search google for a reference on
+To learn these patterns for a given file type, look at files of the desired
+type in a hex editor, search through the resource files for the "file" utility
+(http://freshmeat.net/projects/file) and/or search Google for a reference on
 the format.
 
 If all the operations match, we have found the start of the file. Finding the
 end of the file is a much harder problem, and therefore it is delegated to an
-external command, which is named by the "command" directive. This command
+external shell command, which is named by the "command" directive. This command
 receives the block device's file descriptor on stdin and must write to the file
 given to it in the $0 variable. Apart from that, the command can do anything it
 wants to try and extract the file.

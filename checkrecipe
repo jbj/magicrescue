@@ -8,17 +8,17 @@ if your recipe is good enough. It can be very useful when creating or modifying
 a recipe.
 
 Usage:
-./provemewrong.pl ./magicrescue -M [options] [files]
+./checkrecipe ./magicrescue -M [options] [files]
 
 Usage examples:
 
 find / -name \*.png -print0 |\
-xargs -0 ./provemewrong.pl ./magicrescue -M -r recipes/png -d /tmp/test-output
+xargs -0 ./checkrecipe ./magicrescue -M -r png -d /tmp/test-output
 
   or
 
 slocate \*.png|grep -v "['\"]"|\
-xargs ./provemewrong.pl ./magicrescue -M -r recipes/png -d /tmp/test-output
+xargs ./checkrecipe ./magicrescue -M -r png -d /tmp/test-output
 );
 }
 

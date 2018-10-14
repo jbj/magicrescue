@@ -19,17 +19,23 @@
 #define _FILE_OFFSET_BITS 64
 #define _LARGEFILE_SOURCE
 
+#define _XOPEN_SOURCE 600
+
 #include <errno.h>
 #include <fcntl.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
+#include <sys/resource.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+
+#include "config.h"
 
 struct string {
 	unsigned char *s;
@@ -44,7 +50,19 @@ union param {
 	} int32;
 };
 
+union scan_param {
+	char c;
+	struct {
+		struct string string;
+		char magicchar;
+		int magicoff;
+	} scanstring;
+};
+
 typedef int (*op_function)(unsigned char *, union param *);
+
+typedef unsigned char *(*scan_function)(unsigned char *, size_t,
+		union scan_param *);
 
 struct operation {
 	op_function func;
@@ -52,20 +70,27 @@ struct operation {
 	int offset;
 };
 
-struct recipe {
-	struct operation *ops;
-	int ops_count;
+struct scanner {
+	scan_function func;
+	union scan_param param;
 	int offset;
-	char extension[64];
-	char *command;
-	int min_output_file;
-	char *name;
+	int extra_len;
 };
 
-struct recipe *recipes[256];
-int recipes_count[256];
-unsigned char char_list[256];
-int char_list_count = 0;
+struct recipe {
+	struct scanner scanner;
+	struct operation *ops;
+	int ops_count;
+	char extension[64];
+	char *command;
+	long min_output_file;
+	char *name;
+	int allow_overlap;
+	off_t skip_bytes;
+};
+
+struct recipe *recipes;
+int recipe_count;
 
 char *output_dir = NULL;
 int machine_output = 0;
@@ -73,13 +98,7 @@ int machine_output = 0;
 size_t overlap = 0;
 const size_t blocksize = 102400;
 unsigned char *buf;
-int file_index = 0;
-
-
-void string_destroy(struct string *string)
-{
-	free(string->s);
-}
+long file_index = 0;
 
 int op_string(unsigned char *s, union param *p)
 {
@@ -92,6 +111,12 @@ int op_int32(unsigned char *s, union param *p)
 		== p->int32.val;
 }
 
+
+void string_destroy(struct string *string)
+{
+	free(string->s);
+}
+
 void op_destroy(struct operation *op)
 {
 	/* Primitive multi-dispatch.
@@ -101,12 +126,61 @@ void op_destroy(struct operation *op)
 	}
 }
 
-#define HEX2NUM(c) ( \
-        ((c) >= '0' && (c) <= '9' ? (c)-'0' : \
-        ((c) >= 'a' && (c) <= 'f' ? (c)-'a'+10 : \
-        ((c) >= 'A' && (c) <= 'F' ? (c)-'A'+10 : -1))) \
-)
 
+unsigned char *scanner_char(unsigned char *scanbuf, size_t scanbuf_len,
+		union scan_param *param)
+{
+	return memchr(scanbuf, param->c, scanbuf_len);
+}
+
+unsigned char *scanner_string(unsigned char *scanbuf, size_t scanbuf_len,
+		union scan_param *param)
+{
+	unsigned char *p = scanbuf + param->scanstring.magicoff;
+	struct string string = param->scanstring.string;
+	unsigned char magicchar = param->scanstring.magicchar;
+
+	while (p - scanbuf < scanbuf_len &&
+			(p = memchr(p, magicchar, scanbuf_len - (p-scanbuf)))) {
+		p -= param->scanstring.magicoff;
+		if (memcmp(p, string.s, string.l) == 0) {
+			return p;
+		}
+		p += param->scanstring.magicoff + 1;
+	}
+	return NULL;
+}
+
+void scanner_destroy(struct scanner *scanner)
+{
+	/* Primitive multi-dispatch.
+	 * Add a case here for every operation type that requires destruction */
+	if (scanner->func == scanner_string) {
+		string_destroy(&scanner->param.scanstring.string);
+	}
+}
+
+/** Returns the value (0-15) of a single hex digit. Returns 0 on error. */
+int hex2num(unsigned char c)
+{
+	return  (c >= '0' && c <= '9' ? c-'0' :
+			(c >= 'a' && c <= 'f' ? c-'a'+10 :
+			(c >= 'A' && c <= 'F' ? c-'A'+10 : 0)));
+}
+
+long long hextoll(const unsigned char *str)
+{
+	long long result = 0;
+	size_t i, len = strlen(str);
+
+	for (i = 0; i < len; i++) {
+		result |= (long long)hex2num(str[i]) << 4*((len-1) - i);
+	}
+	return result;
+}
+
+/** Initializes a struct string from a 0-terminated string, parsing escape
+ * sequences. The struct string will not be 0-terminated. */
 void string_new(struct string *dst, const unsigned char *src)
 {
 	const size_t slen = strlen(src);
@@ -117,7 +191,7 @@ void string_new(struct string *dst, const unsigned char *src)
 	for (i = 0; i < slen; i++) {
 		if (src[i] == '\\') {
 			if (src[i+1] == 'x' && i + 3 < slen) {
-				dst->s[dst->l++] = (HEX2NUM(src[i+2])<<4) | HEX2NUM(src[i+3]);
+				dst->s[dst->l++] = (hex2num(src[i+2])<<4) | hex2num(src[i+3]);
 				i += 3;
 
 			} else {
@@ -141,16 +215,17 @@ void string_new(struct string *dst, const unsigned char *src)
 	/* dst->s = realloc(dst->s, dst->l); // who cares? */
 }
 
-void convert(int f, int prefix, struct recipe *r)
+/** Calls an external program to extract a file from fd */
+off_t extract(int fd, long prefix, struct recipe *r)
 {
 	pid_t pid;
 	char outfile[64];
-	snprintf(outfile, sizeof outfile, "%s/%08d.%s", 
+	snprintf(outfile, sizeof outfile, "%s/%08ld.%s", 
 			output_dir, prefix, r->extension);
 
 	pid = fork();
 	if (pid == 0) {
-		dup2(f, 0);
+		dup2(fd, 0);
 		if (machine_output)
 			dup2(2, 1); /* send program's stdout to stderr */
 		
@@ -167,137 +242,214 @@ void convert(int f, int prefix, struct recipe *r)
 				fprintf(stderr, "Output too small, removing\n");
 				unlink(outfile);
 
-			} else if (sizeof(off_t) == sizeof(long long int)) {
+			} else {
 				if (machine_output)
-					printf("o %lld %s\n", st.st_size, outfile);
+					printf("o %lld %s\n", (long long int)st.st_size, outfile);
 				else
-					fprintf(stderr, "%s: %lld bytes\n", outfile, st.st_size);
+					fprintf(stderr, "%s: %lld bytes\n", outfile, 
+							(long long int)st.st_size);
+
+				return st.st_size;
 			}
 
 		} else {
 			fprintf(stderr, "No output file\n");
 		}
 	}
+
+	return 0;
 }
 
-int scan_buf(int f, unsigned char *scanbuf, ssize_t got, off_t store_offset)
+void scanner_string_init(union scan_param *param)
 {
-	int i, j, ok;
-	struct operation *op;
+	unsigned char winner = '\0', c;
+	int i, winner_off = 0;
 
-	for (i = 0; i < char_list_count; i++) {
-		unsigned char magic_char = char_list[i];
-		unsigned char *p = scanbuf;
+	/* This table represents the number of million occurrences of each character
+	 * on my 9GB sample partition. We want to select the character that has the
+	 * smallest score. */
+	static const int scoretable[] = {
+1747, 126, 57, 39, 66, 30, 26, 25, 63, 45, 91, 20, 35, 22, 22, 36, 33, 20, 21,
+17, 25, 17, 16, 15, 23, 18, 16, 15, 21, 15, 15, 15, 318, 18, 40, 27, 86, 21, 23,
+22, 36, 33, 28, 21, 38, 40, 50, 50, 94, 63, 45, 39, 43, 35, 34, 31, 44, 34, 30,
+29, 43, 35, 41, 18, 29, 69, 32, 40, 59, 63, 39, 32, 27, 40, 20, 23, 41, 34, 38,
+32, 44, 24, 40, 47, 47, 31, 26, 23, 24, 20, 25, 20, 25, 21, 16, 79, 18, 123, 45,
+83, 79, 182, 130, 49, 54, 115, 24, 33, 86, 61, 107, 106, 63, 20, 111, 103, 151,
+64, 36, 32, 37, 35, 20, 18, 21, 22, 15, 15, 29, 20, 15, 40, 21, 28, 15, 14, 17,
+74, 14, 67, 16, 33, 14, 13, 28, 15, 14, 15, 16, 15, 13, 12, 14, 13, 14, 13, 15,
+13, 14, 13, 17, 14, 13, 15, 16, 13, 13, 14, 15, 13, 14, 13, 14, 13, 13, 13, 15,
+13, 12, 13, 16, 14, 18, 14, 18, 14, 14, 13, 15, 15, 14, 14, 28, 19, 16, 21, 22,
+13, 17, 23, 15, 16, 13, 13, 14, 13, 14, 13, 19, 14, 16, 14, 14, 13, 13, 13, 17,
+16, 13, 14, 14, 16, 14, 14, 18, 14, 14, 14, 15, 16, 13, 14, 39, 21, 13, 17, 20,
+14, 14, 15, 18, 13, 13, 14, 16, 14, 17, 16, 19, 15, 16, 17, 21, 20, 24, 179 };
 
-		while (p - scanbuf < got - overlap &&
-				(p = memchr(p, magic_char, got - (p-scanbuf) - overlap))) {
+	for (i = 0; i < param->scanstring.string.l; i++) {
+		c = param->scanstring.string.s[i];
+		
+		if (scoretable[c] < scoretable[winner]) {
+			winner = c;
+			winner_off = i;
+		}
+	}
 
-			for (j = 0; j < recipes_count[*p]; j++) {
-				struct recipe *r = &recipes[*p][j];
+	param->scanstring.magicchar = winner;
+	param->scanstring.magicoff  = winner_off;
+}
 
-				if (r->offset > (p-scanbuf))
-					continue;
+/** Runs all recipes on scanbuf, one after the other. Returns 1 if an
+ * external program has been called, which means the file position has changed.
+ * Returns -1 on fatal error. */
+int scan_buf(unsigned char *scanbuf, ssize_t scanbuf_len,
+		int fd, off_t scanbuf_filepos)
+{
+	int i, j, has_matched = 0;
 
-				p -= r->offset;
-				ok = 1;
-				for (op = r->ops; op->func; op++) {
-					if (!op->func(p + op->offset, &op->param)) {
-						ok = 0;
+	for (i = 0; i < recipe_count; i++) {
+		struct recipe *r = &recipes[i];
+		unsigned char *p = scanbuf + r->scanner.offset;
+		struct operation *op;
+
+		if (r->skip_bytes > scanbuf_len) {
+			r->skip_bytes -= scanbuf_len;
+			continue;
+		} else if (r->skip_bytes > 0) {
+			p += r->skip_bytes;
+		}
+
+		while (p - scanbuf < scanbuf_len &&
+				(p = r->scanner.func(p, scanbuf_len - (p-scanbuf) +
+									 r->scanner.extra_len,
+									 &r->scanner.param))) {
+
+			p -= r->scanner.offset;
+			for (j = 0; j < r->ops_count; j++) {
+				op = &r->ops[j];
+				if (!op->func(p + op->offset, &op->param)) {
+					break;
+				}
+			}
+
+			if (j == r->ops_count) {
+				off_t output_size;
+
+				fprintf(stderr, "Found %s at 0x%llX\n",
+						r->name, scanbuf_filepos + (p-scanbuf));
+
+				if (lseek(fd, scanbuf_filepos + (p-scanbuf), SEEK_SET)
+						== (off_t)-1) {
+					perror("lseek()");
+					return -1;
+				}
+
+				output_size = extract(fd, file_index++, r);
+				has_matched = 1;
+
+				if (output_size && !r->allow_overlap) {
+					r->skip_bytes = output_size - (scanbuf_len - (p-scanbuf));
+					if (r->skip_bytes < 0) {
+						p += output_size - 1;
+					} else {
 						break;
 					}
 				}
-
-				if (ok) {
-					fprintf(stderr, "Found %s at 0x%llX\n",
-							r->name, store_offset+(p-buf)-overlap);
-
-					if (lseek(f, store_offset+(p-buf)-overlap, SEEK_SET)
-							== (off_t)-1) {
-						perror("lseek()");
-						return 0;
-					}
-
-					convert(f, file_index++, r);
-
-					if (lseek(f, store_offset + got, SEEK_SET) == (off_t)-1) {
-						perror("lseek()");
-						return 0;
-					}
-
-				}
-
-				p += r->offset;
 			}
 
-			p++;
+			p += r->scanner.offset + 1;
 		}
 	}
-	return 1;
+
+	return has_matched;
 }
 
-void scan_disk(char *device)
+/** Opens and scans an entire device for matches with the selected recipes. */
+void scan_disk(char *device, off_t start_offset)
 {
 	ssize_t got;
-	int f = open(device, O_RDONLY);
-	int firsttime = 1;
+	int fd = open(device, O_RDONLY);
+	int result, firsttime = 1;
 
-	unsigned char *readbuf  = buf + overlap, *scanbuf  = buf + overlap;
-	size_t readsize = blocksize - overlap;
+	unsigned char *readbuf = buf, *scanbuf = buf;
+	size_t readsize = blocksize;
+	off_t offset_before_read;
 	
-	if (f == -1) {
+	if (fd == -1) {
 		fprintf(stderr, "opening %s: %s\n", device, strerror(errno));
 		return;
 	}
+
+	offset_before_read = lseek(fd, start_offset, SEEK_CUR);
+	if (offset_before_read == (off_t)-1) {
+		fprintf(stderr, "lseek to %lld failed on %s: %s\n",
+				(long long int)start_offset, device, strerror(errno));
+		return;
+	}
+
 	if (machine_output)
 		printf("i %s\n", device);
 
-	while (1) {
-		off_t store_offset = lseek(f, 0, SEEK_CUR);
-		if (store_offset == (off_t)-1) {
-			fprintf(stderr, "lseek failed on %s: %s\n",
-					device, strerror(errno));
+	/* In the first iteration, the scan buffer and read buffer overlap like
+	 * this:
+	 * SSSSSSSSSSSSSSSSS
+	 * RRRRRRRRRRRRRRRRRRRRR
+	 *
+	 * For the rest of the iterations they overlap like this:
+	 * SSSSSSSSSSSSSSSSS
+	 *     RRRRRRRRRRRRRRRRR
+	 *
+	 * After each iteration the unscanned part of readbuf will be copied to the
+	 * start of scanbuf, and new data will be read into readbuf */
+
+	while ((got = read(fd, readbuf, readsize)) > overlap) {
+
+		result = scan_buf(scanbuf, got + (readbuf - scanbuf) - overlap,
+				fd, offset_before_read - (readbuf - scanbuf));
+		if (result == -1)
 			return;
+		else if (result) {
+			if (lseek(fd, offset_before_read + got, SEEK_SET) == (off_t)-1) {
+				perror("lseek()");
+				return;
+			}
 		}
 
-		got = read(f, readbuf, readsize);
-		if (got == -1) {
-			fprintf(stderr, "Read error %s at %lld bytes: %s\n",
-					device, store_offset, strerror(errno));
-			if (errno == EIO)
-				fprintf(stderr,
-"Note that on some block devices this just means end of file.\n");
-
-			return;
-		}
-		if (got < overlap)
-			break;
-
-		if (!scan_buf(f, scanbuf, got, store_offset))
-			return;
-
-		if (got == readsize) {
-			/* copy the last part of the buffer to the first part of the buffer,
-			 * except on the very last iteration */
-			memcpy(buf, buf + (blocksize-overlap), overlap);
-		}
+		memcpy(scanbuf, readbuf + got - overlap, overlap);
 
 		if (firsttime) {
 			firsttime = 0;
-			scanbuf  -= overlap;
+			readbuf  += overlap;
+			readsize -= overlap;
 		}
-	};
 
+		offset_before_read += got;
+	}
+
+	if (got == -1) {
+		fprintf(stderr, "Read error on %s at %lld bytes: %s\n",
+				device, (long long int)offset_before_read, strerror(errno));
+
+		if (errno == EIO) {
+			fprintf(stderr, "Note that on some block devices this just "
+					"means end of file.\n");
+		}
+	} else {
+		fprintf(stderr, "Scanning %s finished at %lldMB\n",
+				device, (long long int)(offset_before_read >> 20));
+	}
 }
 
 void recipe_new(struct recipe *r)
 {
-	r->ops = malloc(sizeof(struct operation));
-	r->ops_count = 0;
-	r->offset = -1;
-	r->extension[0] = '\0';
-	r->command = NULL;
-	r->min_output_file = 100;
-	r->name = NULL;
+	r->scanner.func      = NULL;
+	r->scanner.offset    = 0;
+	r->scanner.extra_len = 0;
+	r->ops               = NULL;
+	r->ops_count         = 0;
+	r->extension[0]      = '\0';
+	r->command           = NULL;
+	r->min_output_file   = 100;
+	r->name              = NULL;
+	r->allow_overlap     = 0;
+	r->skip_bytes        = 0;
 }
 
 void recipe_destroy(struct recipe *r)
@@ -306,6 +458,7 @@ void recipe_destroy(struct recipe *r)
 	for (i = 0; i < r->ops_count; i++) {
 		op_destroy(&r->ops[i]);
 	}
+	scanner_destroy(&r->scanner);
 	free(r->ops);
 	free(r->command);
 	free(r->name);
@@ -313,27 +466,41 @@ void recipe_destroy(struct recipe *r)
 
 void recipes_free()
 {
-	int i, j;
+	int i;
 
-	for (i = 0; i < char_list_count; i++) {
-		unsigned char c = char_list[i];
-
-		for (j = 0; j < recipes_count[c]; j++) {
-			recipe_destroy(&recipes[c][j]);
-		}
-		free(recipes[c]);
+	for (i = 0; i < recipe_count; i++) {
+		recipe_destroy(&recipes[i]);
 	}
+	free(recipes);
 }
 
 int parse_recipe(char *recipefile)
 {
-	int i = 0;
-	struct recipe *r = NULL;
-	FILE *fd = fopen(recipefile, "r");
+	struct recipe *r;
+	FILE *fd = NULL; 
+	char **sp, *search_path[] = { ".", "recipes", NULL, NULL };
+
+#ifdef RECIPE_PATH
+	search_path[2] = RECIPE_PATH;
+#endif
+	for (sp = search_path; !fd && *sp; sp++) {
+		char path[PATH_MAX];
+		snprintf(path, sizeof path, "%s/%s", *sp, recipefile);
+		fd = fopen(path, "r");
+	}
 	
 	if (!fd) {
 		fprintf(stderr, "Opening %s: %s\n", recipefile, strerror(errno));
 		return 0;
+	}
+
+	recipes = realloc(recipes, ++recipe_count * sizeof(*recipes));
+	r = &recipes[recipe_count - 1];
+	recipe_new(r);
+
+	{
+		char *basename = strrchr(recipefile, '/');
+		r->name = strdup(basename ? basename + 1 : recipefile);
 	}
 
 	while (fgets(buf, blocksize, fd)) {
@@ -343,64 +510,61 @@ int parse_recipe(char *recipefile)
 
 		if (sscanf(buf, "%d %63s %n",
 					&magic_offset, opname, &param_offset) >= 2) {
+			size_t len = 0;
+			char *param = buf + param_offset;
 			
-			/*fprintf(stderr, "offset %d, op '%s'\n", magic_offset,
-					opname);*/
-			if (!r && strcmp(opname, "char") == 0) {
-				struct string string;
-				unsigned char c;
-				char *basename;
-
-				string_new(&string, buf + param_offset);
-				c = string.s[0];
-				string_destroy(&string);
-
-				if (recipes_count[c] == 0)
-					char_list[char_list_count++] = c;
-
-				recipes[c] = realloc(recipes[c], ++recipes_count[c] *
-						sizeof(struct recipe));
-
-				r = &recipes[c][recipes_count[c]-1];
-				recipe_new(r);
-				r->offset = magic_offset;
-
-				basename = strrchr(recipefile, '/');
-				r->name = strdup(basename ? basename + 1 : recipefile);
-
-				/*fprintf(stderr, "char: '%c'\n", magic_char);*/
-			
-			} else {
-				size_t len = 0;
-				char *param = buf + param_offset;
-				struct operation *op = &r->ops[i];
-
-				if (!r) {
-					fprintf(stderr,
-							"The first recipe line must be a char line\n");
-					return 0;
-				}
+			if (!r->scanner.func) {
+				/* Try to make it the scanner function */
 				
+				if (strcmp(opname, "string") == 0
+						|| strcmp(opname, "char") == 0) {
+					struct string string;
+					string_new(&string, buf + param_offset);
+					r->scanner.offset = magic_offset;
+
+					if (string.l == 1) {
+						r->scanner.func = scanner_char;
+						r->scanner.param.c = string.s[0];
+						string_destroy(&string);
+						len = 1;
+					} else if (string.l > 1) {
+						r->scanner.func = scanner_string;
+						r->scanner.param.scanstring.string = string;
+						scanner_string_init(&r->scanner.param);
+						len = string.l;
+					} else
+						return 0;
+				}
+
+				if (len) {
+					r->scanner.extra_len = len - 1;
+				}
+			}
+
+			if (len <= 0) {
+				/* If it did not become a scanner function it will become an
+				 * operation */
+				struct operation *op;
+
+				r->ops = realloc(r->ops, ++r->ops_count * sizeof(*r->ops));
+				op = &r->ops[r->ops_count - 1];
+
 				op->offset = magic_offset;
 
-				if (strcmp(opname, "string") == 0) {
+				if (strcmp(opname, "string") == 0
+						|| strcmp(opname, "char") == 0) {
 					op->func = op_string;
 					string_new(&op->param.string, param);
 					len = op->param.string.l;
-					/*fprintf(stderr, "string: %*s\n",
-							op->param.string.l, op->param.string.s);*/
 
 				} else if (strcmp(opname, "int32") == 0) {
+					char buf_val[16], buf_mask[16];
 					op->func = op_int32;
-					if (sizeof(unsigned int) == 4) {
-						/*TODO: parse it myself*/
-						sscanf(param, "%x %x", &op->param.int32.val,
-								&op->param.int32.mask);
-						op->param.int32.val &= op->param.int32.mask;
-					} else {
-						fprintf(stderr, "Sorry, unsupported CPU\n");
+					if (sscanf(param, "%15s %15s", buf_val, buf_mask) != 2)
 						return 0;
-					}
+					op->param.int32.val  = hextoll(buf_val);
+					op->param.int32.mask = hextoll(buf_mask);
+					op->param.int32.val &= op->param.int32.mask;
 					len = 4;
 
 				} /*
@@ -413,38 +577,35 @@ int parse_recipe(char *recipefile)
 					 - The value assigned to len should be the maximum number of
 					   bytes your test function might read. Never read more
 					   bytes than this.
+					 - Add a case to op_destroy of cleanup is needed
 					 The test functions you add should be general and reusable,
 					 such as string, int, md5, regexp. To make them specific
 					 they should take a parameter.
 				*/
 
-				if (len <= 0) {
-					fprintf(stderr, "Internal error: no length\n");
-					return 0;
-				}
-				len += magic_offset;
-				if (overlap < len)
-					overlap = len;
-
-				i++;
-				r->ops = realloc(r->ops, (i+1) * sizeof(struct operation));
 			}
 
-		} else if (buf[0] != '#' && buf[0] != '\0') {
-			if (!r) {
-				fprintf(stderr, "The first recipe line must be a char line\n");
+			if (len <= 0) {
+				fprintf(stderr, "Invalid operation '%s'\n", opname);
 				return 0;
 			}
-				
+			len += magic_offset;
+			if (overlap < len)
+				overlap = len;
+
+		} else if (buf[0] != '#' && buf[0] != '\0') {
+
 			if (sscanf(buf, "extension %63s", r->extension) == 1) {
 				/* do nothing */
 
 			} else if (strncmp(buf, "command ", 8) == 0) {
 				r->command = strdup(buf + 8);
 
-			} else if (sscanf(buf, "min_output_file %d", &r->min_output_file)
+			} else if (sscanf(buf, "min_output_file %ld", &r->min_output_file)
 					== 1) {
 				/* do nothing */
+			} else if (strcmp(buf, "allow_overlap") == 0) {
+				r->allow_overlap = 1;
 			} else {
 				fprintf(stderr, "Invalid line in %s: %s\n", recipefile, buf);
 				return 0;
@@ -453,14 +614,19 @@ int parse_recipe(char *recipefile)
 		}
 	}
 
-	r->ops[i].func = NULL;
-
-	if (r->offset == -1 || !r->command || i == 0) {
+	if (!r->scanner.func || !r->command) {
 		fprintf(stderr, 
-"Invalid recipe file. It must contain one char directive, one output\n"
+"Invalid recipe file. It must contain one scanner directive, one output\n"
 "directive and at least one match directive\n");
 		return 0;
 	}
+
+	/* Round overlap to machine word boundary, for faster memcpy */
+	if (overlap %  sizeof(long)) {
+		overlap &= sizeof(long) - 1;
+		overlap += sizeof(long);
+	}
+
 	return 1;
 }
 
@@ -471,25 +637,38 @@ void usage()
 "       [-M] DEVICE1 [DEVICE2 [...]]\n"
 "\n"
 "  -d  Output directory for found files. Mandatory.\n"
-"  -r  Recipe file. At least one must be specified.\n"
+"  -r  Recipe name or file. At least one must be specified.\n"
 "  -M  Produce machine-readable output to stdout\n"
+"  -O  Resume from this offset (hex or decimal) in the first device\n"
 "\n");
 }
 
 int main(int argc, char **argv)
 {
-	int c, i;
+	int c;
+	off_t start_offset = 0;
+
+	/* Some recipes depend on parsing error messages from various programs */
+	setenv("LC_ALL", "C", 1);
+
+	/* Some helper programs will segfault on malformed input. This should
+	 * prevent core files from piling up */
+	{
+		struct rlimit rlp;
+		rlp.rlim_cur = rlp.rlim_max = 0;
+		setrlimit(RLIMIT_CORE, &rlp);
+	}
 
 	buf = malloc(blocksize);
 
-	/* hm, do I need to initialize static arrays manually, or is every element
-	 * guaranteed to be 0? */
-	memset(recipes_count, 0, sizeof recipes_count);
-	for (i = 0; i < sizeof(recipes)/sizeof(*recipes); i++) {
-		recipes[i] = NULL;
-	}
+	sprintf(buf, "%s:%s", getenv("PATH"), "commands");
+#ifdef COMMAND_PATH
+	strcat(buf, ":");
+	strcat(buf, COMMAND_PATH);
+#endif
+	setenv("PATH", buf, 1);
 
-	while ((c = getopt(argc, argv, "d:r:M")) >= 0) {
+	while ((c = getopt(argc, argv, "O:d:r:M")) >= 0) {
 		switch (c) {
 		case 'd': {
 			struct stat dirstat;
@@ -508,6 +687,14 @@ int main(int argc, char **argv)
 
 		break; case 'M':
 			machine_output = 1;
+			setvbuf(stdout, NULL, _IOLBF, 0);
+
+		break; case 'O':
+			if (optarg[0] == '0' && optarg[1] == 'x') {
+				start_offset = (off_t)hextoll(optarg + 2);
+			} else {
+				start_offset = (off_t)atoll(optarg);
+			}
 
 		break; default:
 			fprintf(stderr, "Error parsing options.\n");
@@ -516,13 +703,14 @@ int main(int argc, char **argv)
 		}
 	}
 
-	if (char_list_count == 0 || !output_dir) {
+	if (recipe_count == 0 || !output_dir) {
 		usage();
 		return 1;
 	}
 
 	while (optind < argc) {
-		scan_disk(argv[optind++]);
+		scan_disk(argv[optind++], start_offset);
+		start_offset = 0;
 	}
 
 	recipes_free();

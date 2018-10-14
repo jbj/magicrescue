@@ -1,0 +1,45 @@
+
+all: magicrescue subdirs
+ 
+magicrescue: magicrescue.c
+	$(CC) $(CPPFLAGS) $(CFLAGS) -o $@ $(LDFLAGS) $<
+
+subdirs:
+	@make -k -C commands
+
+clean:
+	rm -f magicrescue
+	@make -C commands clean
+
+distclean: clean
+	rm -f Makefile config.h
+
+install: all
+	[ -d $(PREFIX) ]
+	cp magicrescue checkrecipe magicsort $(PREFIX)/bin/
+	
+	mkdir $(PREFIX)/share 2>/dev/null; true
+	mkdir $(PREFIX)/share/magicrescue 2>/dev/null; true
+	mkdir $(PREFIX)/share/magicrescue/commands 2>/dev/null; true
+	mkdir $(PREFIX)/share/magicrescue/recipes 2>/dev/null; true
+	
+	cp recipes/* $(PREFIX)/share/magicrescue/recipes
+	
+	for f in commands/*; do \
+	  if [ -x "$$f" ]; then \
+	    cp -f "$$f" $(PREFIX)/share/magicrescue/commands; \
+	  fi; \
+	done
+
+uninstall:
+	[ -d $(PREFIX) ]
+	rm -f $(PREFIX)/bin/magicrescue
+	rm -f $(PREFIX)/bin/magicsort
+	rm -f $(PREFIX)/bin/checkrecipe
+	rm -rf $(PREFIX)/share/magicrescue/commands
+	rm -rf $(PREFIX)/share/magicrescue/recipes
+	-rmdir $(PREFIX)/share/magicrescue
+
+.PHONY: subdirs clean distclean install uninstall all
+
+.POSIX:

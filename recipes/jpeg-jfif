@@ -2,7 +2,6 @@
 # graphics manipulation programs.
 # Depends on jpegtran from libjpeg: http://freshmeat.net/projects/libjpeg/
 # See also jpeg-exif
-6 char J
 6 string JFIF
 0 int32 ffd80000 ffff0000
 extension jpg

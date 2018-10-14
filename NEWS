@@ -1,3 +1,12 @@
+Version 1.0.2: Mon Mar 15 13:17:48 CET 2004
+- Much improved mp3 recipe
+- Anti-overlapping prevents the same recipe from extracting part of the same
+  file twice
+- Added magicsort for categorizing the output files
+- Magic Rescue now has a "normal" build system (./configure, make, make install)
+- Bugfixes in the buffer overlapping code
+- Prevents helper programs from leaving core files
+
 Version 1.0.1: Fri Mar  5 11:15:04 CET 2004
 - Nicer memory management
 - Improved .avi recipe
@@ -7,5 +16,4 @@ Version 1.0.1: Fri Mar  5 11:15:04 CET 2004
 Version 1.0.0: Mon Mar  1 21:56:45 CET 2004
 - Initial public release
 - Has recipe parser and comes with recipes for avi, jpeg and png
-
 

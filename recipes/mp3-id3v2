@@ -1,15 +1,14 @@
 # Extracts mp3 files.
 # Depends on perl and mpg123 from http://www.mpg123.de/ 
-0 char I
 # From http://www.id3.org/id3v2.4.0-structure.txt:
 #   An ID3v2 tag can be detected with the following pattern:
 #   49 44 33 yy yy xx zz zz zz zz
 # where yy is the version, xx are flags (only bit 4-7 used) and zz are integers
 # less than 0x80
 # We assume that ID3v2 versions only come as 2.x.y, where x and y is less than 7
-0 int32 49443300 FFffFFf8
-4 int32 00000000 F80f8080
-8 int32 00000000 80800000
+0 string ID3
+2 int32 00000000 00f8F80f
+6 int32 00000000 80808080
 extension mp3
-command commands/mp3extract.pl $0
-min_output_file 10240
+command mp3extract.pl $0
+min_output_file 51200
