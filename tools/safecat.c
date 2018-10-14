@@ -18,13 +18,15 @@
  */
 #include "config.h"
 
+#include <sys/stat.h>
+#include <sys/types.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 
-#include <sys/stat.h>
-#include <sys/types.h>
+#include "util.h"
 
 static void usage(void)
 {
@@ -43,29 +45,11 @@ static void usage(void)
 );
 }
 
-static ssize_t atoi_calc(const char *str)
-{
-    if (str[0] != '\0') {
-	ssize_t result = atoi(str);
-
-	switch (str[strlen(str)-1]) {
-	    case 'G': result *= 1024;
-	    case 'M': result *= 1024;
-	    case 'k':
-	    case 'K': result *= 1024;
-	}
-    	return result;
-
-    } else {
-	return 0;
-    }
-}
-
 int main(int argc, char **argv)
 {
-    ssize_t max_diff      =  5*1024*1024;
-    ssize_t max_unchanged =  1*1024*1024;
-    ssize_t max_total     = 50*1024*1024;
+    long max_diff      =  5*1024*1024;
+    long max_unchanged =  1*1024*1024;
+    long max_total     = 50*1024*1024;
 
     char *ofile;
     const size_t bufsize = 102400;
@@ -75,11 +59,11 @@ int main(int argc, char **argv)
     while ((c = getopt(argc, argv, "d:u:t:")) >= 0) {
 	switch (c) {
 	case 'd':
-	    max_diff      = atoi_calc(optarg);
+	    max_diff      = atol_calc(optarg);
 	break; case 'u':
-	    max_unchanged = atoi_calc(optarg);
+	    max_unchanged = atol_calc(optarg);
 	break; case 't':
-	    max_total     = atoi_calc(optarg);
+	    max_total     = atol_calc(optarg);
 
 	break; default:
 	    fprintf(stderr, "Error parsing options.\n");

@@ -62,7 +62,7 @@ void rm_rf(const char *dir)
     rmdir(dir);
 }
 
-void parentdir(char *s)
+static void parentdir(char *s)
 {
     char *p;
     

@@ -188,7 +188,9 @@ static int scan_buf(const unsigned char *scanbuf, ssize_t scanbuf_len,
 		    if (output_size < 0)
 			return -1;
 
-		    if (output_size > 0 && !r->allow_overlap) {
+		    if (r->allow_overlap >= 0
+			    && output_size > r->allow_overlap) {
+
 			struct range *tmp;
 			range = NULL;
 			
@@ -202,7 +204,7 @@ static int scan_buf(const unsigned char *scanbuf, ssize_t scanbuf_len,
 			    range = array_add(&skip_ranges, NULL);
 
 			range->begin = filepos;
-			range->end   = filepos + output_size;
+			range->end   = filepos + output_size - r->allow_overlap;
 
 			break; /* try no more recipes */
 		    }
@@ -387,7 +389,7 @@ static int parse_recipe(const char *recipefile,
 		}
 
 		if (scanner) {
-		    scanner->extra_len = len - 1;
+		    scanner->extra_len = scanner->offset + len - 1;
 		}
 	    }
 
@@ -462,8 +464,8 @@ static int parse_recipe(const char *recipefile,
 	    } else if (sscanf(buf, "min_output_file %ld", &r.min_output_file)
 		    == 1) {
 		/* do nothing */
-	    } else if (strcmp(buf, "allow_overlap") == 0) {
-		r.allow_overlap = 1;
+	    } else if (sscanf(buf, "allow_overlap %d", &r.allow_overlap) == 1) {
+		/* do nothing */
 	    } else {
 		fprintf(stderr, "Invalid line in %s: %s\n", recipefile, buf);
 		fclose(fh);
@@ -493,8 +495,11 @@ static int parse_recipe(const char *recipefile,
     array_add(&scanner->recipes, &r);
 
     /* Round overlap to machine word boundary, for faster memcpy */
+    /*
+     * Temporarily removed, it's causing the GPL recipe to fail the testsuite
     overlap +=   sizeof(long) - 1;
     overlap &= ~(sizeof(long) - 1);
+     */
 
     return 0;
 }
@@ -633,7 +638,7 @@ int main(int argc, char **argv)
 	return 1;
     }
 
-    name_mode = argc-optind > 5 || file_names_from ? MODE_FILES : MODE_DEVICE;
+    name_mode = (argc-optind>5 || file_names_from) ? MODE_FILES : MODE_DEVICE;
 
     signal(SIGINT,  signal_beforedeath);
     signal(SIGTERM, signal_beforedeath);

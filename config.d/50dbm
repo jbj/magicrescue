@@ -38,6 +38,7 @@ try_dbm() {
 
 find_ndbm() {
     try_dbm DBM_H_GDBM "gdbm gdbm_compat"             && return 0
+    try_dbm DBM_H_DEB  "gdbm gdbm_compat"             && return 0
     try_dbm DBM_H_UNIX "db db1 gdbm gdbm_compat ndbm" && return 0
     try_dbm DBM_H_DB_H "db db1 ndbm gdbm gdbm_compat" && return 0
     try_dbm DBM_H_DB   "db db1 gdbm gdbm_compat ndbm" && return 0

@@ -32,6 +32,11 @@ standard output.
 Delete files that are encountered more than once.  Print their names if
 B<report> is also given.
 
+I<WARNING:> use the B<report> operation first to see what will be deleted.
+
+I<WARNING:> You are advised to make a backup of the target first, e.g. with
+C<cp -al> (for GNU cp) to create hard links recursively.
+
 =back
 
 =head2 With B<-d>
@@ -58,11 +63,14 @@ Print each file name if its checksum is found in I<database>.
 Delete each file if its checksum is found in I<database>.  If B<report> is also
 present, print the name of each deleted file.
 
-I<WARNING:> use the B<report> operation first to see what will be deleted.
-
 I<WARNING:> if you run B<dupemap delete> on the same I<path> you just ran
 B<dupemap scan> on, it will I<delete every file!> The idea of these options is
 to scan one I<path> and delete files in a second I<path>.
+
+I<WARNING:> use the B<report> operation first to see what will be deleted.
+
+I<WARNING:> You are advised to make a backup of the target first, e.g. with
+C<cp -al> (for GNU cp) to create hard links recursively.
 
 =back
 
@@ -138,11 +146,11 @@ Extract all the healthy Word documents with B<magicrescue> and build a database
 of their checksums.  It may seem a little redundant to send all the documents
 through B<magicrescue> first, but the reason is that this process may modify
 them (e.g. stripping trailing garbage), and therefore their checksum will not
-be the same as the original documents.  That is quite rare with Word documents,
-but this step is critical for formats like mp3, gzip and jpeg, which will often
-look very different after passing through magicrescue.
+be the same as the original documents.  Also, it will find documents embedded
+inside other files, such as uncompressed zip archives or files with the wrong
+extension.
 
-    $ find /mnt/windows -type f -iname "*.doc" \
+    $ find /mnt/windows -type f \
       |magicrescue -I- -r msoffice -d healthy_docs
     $ dupemap -d healthy_docs.map scan healthy_docs
     $ rm -rf healthy_docs

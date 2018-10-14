@@ -52,11 +52,16 @@ void compose_name(char *name, off_t offset, const char *extension)
 }
 
 int run_shell(int fd, off_t offset, const char *command,
-	const char *argument, int stdout_fd)
+	const char *argument, int *stdout_pipe)
 {
     pid_t pid;
     int status = -1;
+    int pipes[2];
 
+    if (stdout_pipe && pipe(pipes) != 0) {
+	perror("pipe()");
+	return -1;
+    }
     if (lseek(fd, offset, SEEK_SET) == (off_t)-1) {
 	perror("lseek()");
 	return -1;
@@ -66,8 +71,11 @@ int run_shell(int fd, off_t offset, const char *command,
     if (pid == 0) {
 
 	dup2(fd, 0);
-	if (stdout_fd >= 0)
-	    dup2(stdout_fd, 1);
+	if (stdout_pipe) {
+	    dup2(pipes[1], 1);
+	    close(pipes[0]);
+	    close(pipes[1]);
+	}
 	else if (machine_output)
 	    dup2(2, 1); /* send program's stdout to stderr */
 	
@@ -75,7 +83,9 @@ int run_shell(int fd, off_t offset, const char *command,
 	perror("Executing /bin/sh");
 	exit(1);
 
-    } else if (stdout_fd >= 0) {
+    } else if (stdout_pipe) {
+	close(pipes[1]);
+	*stdout_pipe = pipes[0];
 	return 0;
     } else if (pid > 0) {
 	wait(&status);
@@ -86,20 +96,18 @@ int run_shell(int fd, off_t offset, const char *command,
 void rename_output(int fd, off_t offset, const char *command,
 	char *origname)
 {
-    int pipes[2];
+    int outfd;
     char mvbuf[2*PATH_MAX]; /* it has to be semi-large */
     ssize_t got, has = 0;
     char *rename_pos = mvbuf;
 
-    if (pipe(pipes) != 0 ||
-	   run_shell(fd, offset, command, origname, pipes[1]) != 0)
+    if (run_shell(fd, offset, command, origname, &outfd) != 0)
 	return;
 
-    close(pipes[1]);
-    while ((got = read(pipes[0], mvbuf + has, sizeof(mvbuf)-has - 1)) > 0) {
+    while ((got = read(outfd, mvbuf + has, sizeof(mvbuf)-has - 1)) > 0) {
 	has += got;
     }
-    close(pipes[0]);
+    close(outfd);
     wait(NULL);
 
     mvbuf[has] = '\0';
@@ -133,7 +141,7 @@ off_t extract(int fd, struct recipe *r, off_t offset)
 
     compose_name(outfile, offset, r->extension);
 
-    if (run_shell(fd, offset, r->command, outfile, -1) == -1)
+    if (run_shell(fd, offset, r->command, outfile, NULL) == -1)
 	return -1;
 
     if (stat(outfile, &st) == 0) {
@@ -147,7 +155,7 @@ off_t extract(int fd, struct recipe *r, off_t offset)
 	    }
 
 	    if (r->postextract) {
-		run_shell(fd, offset, r->postextract, outfile, -1);
+		run_shell(fd, offset, r->postextract, outfile, NULL);
 	    }
 
 	    if ((machine_output & OUT_IO) == OUT_IO)

@@ -18,7 +18,7 @@ while (defined(my $file = readdir DH)) {
     close FILE;
 
     chomp $idstring;
-    $idstring =~ s{[/\x00-\x1F]}{_};
+    $idstring =~ s{[/\x00-\x1F]}{_}g;
 
     if (length($idstring) - 3 < length($file)) {
 	print STDERR "Invalid idstring: $idstring";

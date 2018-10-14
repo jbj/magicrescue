@@ -1,27 +1,38 @@
 SHELL = /bin/sh
-PROGRAMS = src/magicrescue src/dupemap tools/inputseek tools/safecat
+PROGRAMS = magicrescue dupemap tools/inputseek tools/safecat \
+	   tools/textextract
 DOCS = doc/magicrescue.1 doc/dupemap.1 doc/magicsort.1
 
+# object file lists
 MAGICRESCUE_OBJS = src/magicrescue.o src/array.o src/extract.o src/recipe.o \
 		   src/scanner.o src/util.o
 
 DUPEMAP_OBJS = src/dupemap.o src/recur.o
 
-INPUTSEEK_OBJS = tools/inputseek.o src/util.o
+INPUTSEEK_OBJS   = tools/inputseek.o   src/util.o
+SAFECAT_OBJS     = tools/safecat.o     src/util.o
+TEXTEXTRACT_OBJS = tools/textextract.o src/util.o
 
+# default target
 all: $(PROGRAMS) docs
 
-docs: $(DOCS)
-
-src/magicrescue: $(MAGICRESCUE_OBJS)
+# program targets
+magicrescue: $(MAGICRESCUE_OBJS)
 	$(CC) -o $@ $(LDFLAGS) $(MAGICRESCUE_OBJS)
 
-src/dupemap: $(DUPEMAP_OBJS)
+dupemap: $(DUPEMAP_OBJS)
 	$(CC) -o $@ $(LDFLAGS) $(DBM_LDFLAGS) $(DUPEMAP_OBJS)
  
 tools/inputseek: $(INPUTSEEK_OBJS)
 	$(CC) -o $@ $(LDFLAGS) $(INPUTSEEK_OBJS)
 
+tools/safecat: $(SAFECAT_OBJS)
+	$(CC) -o $@ $(LDFLAGS) $(SAFECAT_OBJS)
+
+tools/textextract: $(TEXTEXTRACT_OBJS)
+	$(CC) -o $@ $(LDFLAGS) $(TEXTEXTRACT_OBJS)
+
+# implicit targets
 .c.o:
 	$(CC) -c $(CPPFLAGS) $(CFLAGS) -o $@ $<
 
@@ -30,6 +41,9 @@ tools/inputseek: $(INPUTSEEK_OBJS)
 
 .pod.1:
 	pod2man --release "$(RELEASE)" --center "Magic Rescue" $< $@
+
+# phony targets
+docs: $(DOCS)
 
 clean:
 	rm -f src/*.o tools/*.o
@@ -50,7 +64,7 @@ install: all
 	    $(PREFIX)/man/man1 \
 	    $(PREFIX)/bin
 	
-	cp src/magicrescue$(EXE) src/dupemap$(EXE) src/magicsort $(PREFIX)/bin/
+	cp magicrescue$(EXE) dupemap$(EXE) magicsort $(PREFIX)/bin/
 	cp recipes/* $(PREFIX)/share/magicrescue/recipes/
 	cp $(DOCS) $(PREFIX)/man/man1
 	
@@ -63,8 +77,8 @@ install: all
 uninstall:
 	[ -d $(PREFIX) ]
 	rm -f $(PREFIX)/bin/magicrescue$(EXE)
-	rm -f $(PREFIX)/bin/magicsort
 	rm -f $(PREFIX)/bin/dupemap$(EXE)
+	rm -f $(PREFIX)/bin/magicsort
 	for f in $(DOCS); do \
 	   rm -f "$(PREFIX)/man/man1/`basename $$f`"; \
 	done

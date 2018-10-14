@@ -1,7 +1,7 @@
 # Extracts mp3 files.
 # Depends on perl and mpg123 from http://www.mpg123.de/ 
 #
-# If you use this together with the mp3-id3v1 recipe, specify this recipe
+# If you use this together with the mp3-id3v2 recipe, specify this recipe
 # AFTER the other. Otherwise files will be extracted twice.
 #
 # Currently this recipe is very slow because the header to match against is

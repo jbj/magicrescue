@@ -1,0 +1,21 @@
+# Extracts perl scripts.
+#
+# Depends on perl to do renames.
+
+0 string #!/usr/bin/perl
+
+extension pl
+
+# Max file size (-M) is 600K. The reference is latex2html, which is 580K. No
+# perl script could be bigger than that monster...
+# You might want to lower this value if your files are smaller. A smaller value
+# here will prevent different scripts from being mixed into the same output
+# file.
+# Max line length (-l) is 5*80 bytes. You may want to increase this, depending
+# on your coding style.
+command textextract -l 400 -M 600K "$1"
+
+# If the file seems to be a module, rename it to .pm
+rename perl -ne 'if (($name) = /^package\s+([A-Z][A-Za-z_0-9:]*);/) { $name =~ s/:+/-/g; print "RENAME $name.pm\n"; exit; }' "$1"
+
+# vim: wm=0

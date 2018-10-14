@@ -12,7 +12,10 @@
 # values 2 and 4 are used by deflate)
 7 int32 00000000 80F90000
 extension unzipped
-allow_overlap
+
+# Allow infinite overlap because the expanded file may be much larger than the
+# compressed one.
+allow_overlap -1
 
 command gzip -d > "$1"
 rename gzip_rename.pl "$1"

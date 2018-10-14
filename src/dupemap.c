@@ -255,7 +255,7 @@ static void signal_beforedeath(int signo)
 static enum mode parse_mode(char *str, int hasdb) {
     char *tok;
     enum operation op = 0;
-    int i;
+    unsigned int i;
 
     struct { char *opname; int opval; } opnames[] = {
 	{ "scan",   SCAN    },

@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "MAGICRESCUE 1"
-.TH MAGICRESCUE 1 "2004-05-06" "1.1.2" "Magic Rescue"
+.TH MAGICRESCUE 1 "2004-07-11" "1.1.3" "Magic Rescue"
 .SH "NAME"
 magicrescue \- Scans a block device and extracts known file types by looking at
 magic bytes.
@@ -405,11 +405,15 @@ directive.
 .IP "\fBmin_output_file\fR \fIsize\fR" 7
 .IX Item "min_output_file size"
 Default: 100.  Output files less than this size will be deleted.
-.IP "\fBallow_overlap\fR" 7
-.IX Item "allow_overlap"
+.IP "\fBallow_overlap\fR \fIbytes\fR" 7
+.IX Item "allow_overlap bytes"
 By default, recipes will not match on overlapping byte ranges.
 \&\fBallow_overlap\fR disables this, and it should always be used for recipes where
-the extracted file may be larger than it was on disk.
+the extracted file may be larger than it was on disk.  If \fIbytes\fR is negative,
+overlap checking will be completely disabled.  Otherwise, overlap checking will
+be in effect for everything but the last \fIbytes\fR of the output.  For example,
+if the output may be up to 512 bytes bigger than the input, \fBallow_overlap\fR
+should be set to 512.
 .PP
 To test whether your recipe actually works, either just run it on your hard
 disk or use the \fItools/checkrecipe\fR script to pick out files that should match
@@ -441,6 +445,9 @@ mentioned above.  They are not mutually exclusive, e.g. combining
 \&\fBmagicrescue\fR with \fBdls\fR from The Sleuth Kit could give good results.  In
 many cases you'll want to use \fBmagicrescue\fR to extract its known file types
 and another utility to extract the rest.
+.PP
+When combining the results of more than one tool, \fBdupemap\fR(1) can be used to
+eliminate duplicates.
 .SH "SEE ALSO"
 .IX Header "SEE ALSO"
 .IP "Similar programs" 4
@@ -478,7 +485,7 @@ utilities include <http://www.cgsecurity.org/?photorec.html>,
 .RE
 .IP "Getting disk images from failed disks" 4
 .IX Item "Getting disk images from failed disks"
-\&\fBdd\fR(1),
+\&\fBdd\fR(1), \fBrescuept\fR(1),
 <http://www.garloff.de/kurt/linux/ddrescue/>,
 <http://www.kalysto.org/utilities/dd_rhelp/>,
 <http://vanheusden.com/recoverdm/>,

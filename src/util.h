@@ -14,6 +14,7 @@ struct string {
 
 int hex2num(unsigned char c);
 long long hextoll(const unsigned char *str);
+long atol_calc(const char *str);
 off_t rich_seek(int fd, const char *string);
 
 void string_init(struct string *dst, const unsigned char *src);

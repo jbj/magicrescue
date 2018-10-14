@@ -309,11 +309,15 @@ directive.
 
 Default: 100.  Output files less than this size will be deleted.
 
-=item B<allow_overlap>
+=item B<allow_overlap> I<bytes>
 
 By default, recipes will not match on overlapping byte ranges.
 B<allow_overlap> disables this, and it should always be used for recipes where
-the extracted file may be larger than it was on disk.
+the extracted file may be larger than it was on disk.  If I<bytes> is negative,
+overlap checking will be completely disabled.  Otherwise, overlap checking will
+be in effect for everything but the last I<bytes> of the output.  For example,
+if the output may be up to 512 bytes bigger than the input, B<allow_overlap>
+should be set to 512.
 
 =back
 
@@ -359,6 +363,9 @@ B<magicrescue> with B<dls> from The Sleuth Kit could give good results.  In
 many cases you'll want to use B<magicrescue> to extract its known file types
 and another utility to extract the rest.
 
+When combining the results of more than one tool, B<dupemap>(1) can be used to
+eliminate duplicates.
+
 =head1 SEE ALSO
 
 =over
@@ -400,7 +407,7 @@ L<http://www.vanheusden.com/findfile/>.
 
 =item Getting disk images from failed disks
 
-B<dd>(1),
+B<dd>(1), B<rescuept>(1),
 L<http://www.garloff.de/kurt/linux/ddrescue/>,
 L<http://www.kalysto.org/utilities/dd_rhelp/>,
 L<http://vanheusden.com/recoverdm/>,

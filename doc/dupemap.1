@@ -129,7 +129,7 @@
 .\" ========================================================================
 .\"
 .IX Title "DUPEMAP 1"
-.TH DUPEMAP 1 "2004-05-03" "1.1.2" "Magic Rescue"
+.TH DUPEMAP 1 "2004-07-11" "1.1.3" "Magic Rescue"
 .SH "NAME"
 dupemap \- Creates a database of file checksums and uses it to eliminate
 duplicates
@@ -155,6 +155,11 @@ standard output.
 .IX Item "delete[,report]"
 Delete files that are encountered more than once.  Print their names if
 \&\fBreport\fR is also given.
+.Sp
+\&\fI\s-1WARNING:\s0\fR use the \fBreport\fR operation first to see what will be deleted.
+.Sp
+\&\fI\s-1WARNING:\s0\fR You are advised to make a backup of the target first, e.g. with
+\&\f(CW\*(C`cp \-al\*(C'\fR (for \s-1GNU\s0 cp) to create hard links recursively.
 .Sh "With \fB\-d\fP"
 .IX Subsection "With -d"
 The \fIdatabase\fR argument to \fB\-d\fR will denote a database file (see the
@@ -174,11 +179,14 @@ Print each file name if its checksum is found in \fIdatabase\fR.
 Delete each file if its checksum is found in \fIdatabase\fR.  If \fBreport\fR is also
 present, print the name of each deleted file.
 .Sp
-\&\fI\s-1WARNING:\s0\fR use the \fBreport\fR operation first to see what will be deleted.
-.Sp
 \&\fI\s-1WARNING:\s0\fR if you run \fBdupemap delete\fR on the same \fIpath\fR you just ran
 \&\fBdupemap scan\fR on, it will \fIdelete every file!\fR The idea of these options is
 to scan one \fIpath\fR and delete files in a second \fIpath\fR.
+.Sp
+\&\fI\s-1WARNING:\s0\fR use the \fBreport\fR operation first to see what will be deleted.
+.Sp
+\&\fI\s-1WARNING:\s0\fR You are advised to make a backup of the target first, e.g. with
+\&\f(CW\*(C`cp \-al\*(C'\fR (for \s-1GNU\s0 cp) to create hard links recursively.
 .SH "OPTIONS"
 .IX Header "OPTIONS"
 .IP "\fB\-d\fR \fIdatabase\fR" 7
@@ -247,12 +255,12 @@ Extract all the healthy Word documents with \fBmagicrescue\fR and build a databa
 of their checksums.  It may seem a little redundant to send all the documents
 through \fBmagicrescue\fR first, but the reason is that this process may modify
 them (e.g. stripping trailing garbage), and therefore their checksum will not
-be the same as the original documents.  That is quite rare with Word documents,
-but this step is critical for formats like mp3, gzip and jpeg, which will often
-look very different after passing through magicrescue.
+be the same as the original documents.  Also, it will find documents embedded
+inside other files, such as uncompressed zip archives or files with the wrong
+extension.
 .PP
 .Vb 4
-\&    $ find /mnt/windows -type f -iname "*.doc" \e
+\&    $ find /mnt/windows -type f \e
 \&      |magicrescue -I- -r msoffice -d healthy_docs
 \&    $ dupemap -d healthy_docs.map scan healthy_docs
 \&    $ rm -rf healthy_docs

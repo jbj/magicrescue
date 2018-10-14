@@ -6,11 +6,12 @@ use strict;
 # "big block depots", as they seem to be sufficient for finding the length of
 # the file.
 
-use Data::Dumper;
 use Fcntl qw(:seek);
 
 my $buf;
-read STDIN, $buf, 512;
+
+# We use sysread/sysseek here to work around problems on cygwin
+sysread STDIN, $buf, 512;
 
 if (substr($buf, 0, 8) ne "\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1") {
     die "Not an MS OLE file\n";
@@ -34,10 +35,9 @@ foreach my $block (@bbds) {
 	die "Corrupted file, bbd block number out of bounds\n";
     }
 
-    
-    seek STDIN, 512*($block - $prevblock - 1), SEEK_CUR
-	or die "seek failed: $!\n";
-    512 == read STDIN, $buf, 512
+    sysseek STDIN, 512*($block - $prevblock - 1), SEEK_CUR
+	or die "sysseek failed: $!\n";
+    512 == sysread STDIN, $buf, 512
 	or die "read failed: $!\n";
     my @blockmap = unpack("V128", $buf);
 
@@ -57,10 +57,10 @@ foreach my $block (@bbds) {
 }
 
 if ($block_count > 0) {
-    seek STDIN, -512*($bbds[@bbds - 1] + 2), SEEK_CUR # seek to first block
+    sysseek STDIN, -512*($bbds[@bbds - 1] + 2), SEEK_CUR # seek to first block
 	or die "seek failed: $!\n";
     for (1 .. $block_count) {
-	512 == read STDIN, $buf, 512
+	512 == sysread STDIN, $buf, 512
 	    or die "read failed: $!\n";
 	print $buf
 	    or die "write failed: $!\n";

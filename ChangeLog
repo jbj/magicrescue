@@ -1,6 +1,311 @@
 For less detailed change information, see the NEWS file
 
 ------------------------------------------------------------------------
+r323 | jbj | 2004-08-10 22:04:25 +0200 (Tue, 10 Aug 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/new_NEWS
+   M /magicrescue/trunk/tools/oleextract.pl
+
+Work around cygwin problem with msoffice
+------------------------------------------------------------------------
+r322 | jbj | 2004-08-10 20:37:26 +0200 (Tue, 10 Aug 2004) | 2 lines
+Changed paths:
+   M /magicrescue/trunk/src/dupemap.c
+   M /magicrescue/trunk/src/recur.c
+   M /magicrescue/trunk/src/scanner.c
+   M /magicrescue/trunk/tools/textextract.c
+
+silence warnings from ./configure --strict
+
+------------------------------------------------------------------------
+r321 | jbj | 2004-08-10 20:24:12 +0200 (Tue, 10 Aug 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/new_NEWS
+
+news
+------------------------------------------------------------------------
+r320 | jbj | 2004-08-10 20:22:18 +0200 (Tue, 10 Aug 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/src/magicrescue.c
+
+Temporary fix to make it pass the testsuite
+------------------------------------------------------------------------
+r312 | jbj | 2004-07-12 21:01:11 +0200 (Mon, 12 Jul 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/tests/tests.pl
+
+magicrescue -b doesn't work with textextract -r
+------------------------------------------------------------------------
+r311 | jbj | 2004-07-11 01:42:15 +0200 (Sun, 11 Jul 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/src/magicrescue.c
+
+oops
+------------------------------------------------------------------------
+r310 | jbj | 2004-07-11 01:31:54 +0200 (Sun, 11 Jul 2004) | 1 line
+Changed paths:
+   A /magicrescue/trunk/tests/samples/gimp-xcf (from /magicrescue/trunk/tests/samples/xcf:309)
+   A /magicrescue/trunk/tests/samples/gpl
+   D /magicrescue/trunk/tests/samples/xcf
+
+New samples in test suite
+------------------------------------------------------------------------
+r309 | jbj | 2004-07-11 00:53:00 +0200 (Sun, 11 Jul 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/doc/magicrescue.pod
+   M /magicrescue/trunk/recipes/gpl
+   M /magicrescue/trunk/recipes/gzip
+   M /magicrescue/trunk/recipes/perl
+   M /magicrescue/trunk/src/magicrescue.c
+   M /magicrescue/trunk/tools/textextract.c
+
+Make allow_overlap and textextract -r take an argument in bytes
+------------------------------------------------------------------------
+r308 | jbj | 2004-07-10 15:04:11 +0200 (Sat, 10 Jul 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/new_NEWS
+
+news
+------------------------------------------------------------------------
+r307 | jbj | 2004-07-10 15:03:56 +0200 (Sat, 10 Jul 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/tools/textextract.c
+
+Better textextract
+------------------------------------------------------------------------
+r306 | jbj | 2004-07-08 23:12:12 +0200 (Thu, 08 Jul 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/new_NEWS
+   A /magicrescue/trunk/recipes/gimp-xcf
+   A /magicrescue/trunk/tests/samples/xcf
+   A /magicrescue/trunk/tools/gimp-resave.pl
+
+Add GIMP xcf file support
+------------------------------------------------------------------------
+r305 | jbj | 2004-07-07 18:26:45 +0200 (Wed, 07 Jul 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/config.d/50dbm
+   M /magicrescue/trunk/src/find_dbm.h
+
+Support debian's gdbm-ndbm.h
+------------------------------------------------------------------------
+r304 | jbj | 2004-07-06 21:37:48 +0200 (Tue, 06 Jul 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/src/util.c
+
+cosmetics
+------------------------------------------------------------------------
+r303 | jbj | 2004-06-16 16:39:40 +0200 (Wed, 16 Jun 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/doc/dupemap.pod
+
+Change dupemap docs for better results
+------------------------------------------------------------------------
+r302 | jbj | 2004-06-14 21:11:29 +0200 (Mon, 14 Jun 2004) | 1 line
+Changed paths:
+   A /magicrescue/trunk/recipes/gpl
+   A /magicrescue/trunk/tools/script_rename.pl
+
+First attempt at GPL recipe
+------------------------------------------------------------------------
+r301 | jbj | 2004-06-14 21:09:33 +0200 (Mon, 14 Jun 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/tools/textextract.c
+
+More TODO
+------------------------------------------------------------------------
+r300 | jbj | 2004-06-14 00:28:50 +0200 (Mon, 14 Jun 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/tools/textextract.c
+
+More plans for textextract
+------------------------------------------------------------------------
+r299 | jbj | 2004-06-14 00:07:29 +0200 (Mon, 14 Jun 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicsort
+
+bugfix: don't change only the first invalid character to _
+------------------------------------------------------------------------
+r298 | jbj | 2004-06-13 23:41:23 +0200 (Sun, 13 Jun 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/tools/textextract.c
+
+Replace textextract's goto-flow with function-flow. Rename var output to outfd
+------------------------------------------------------------------------
+r297 | jbj | 2004-06-13 23:37:20 +0200 (Sun, 13 Jun 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/recipes/perl
+
+Write more info
+------------------------------------------------------------------------
+r296 | jbj | 2004-06-13 20:58:36 +0200 (Sun, 13 Jun 2004) | 4 lines
+Changed paths:
+   M /magicrescue/trunk/tools/textextract.c
+
+tools/textextract:
+- Added -r option to search for BOF as well as EOF
+- Set last_letter to NULL when uninitialized
+
+------------------------------------------------------------------------
+r295 | jbj | 2004-06-12 21:08:52 +0200 (Sat, 12 Jun 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/tests/tests.pl
+
+Test -b argument in some of the iterations
+------------------------------------------------------------------------
+r294 | jbj | 2004-06-07 23:06:47 +0200 (Mon, 07 Jun 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/tools/textextract.c
+
+Restructuring of textextract.c
+------------------------------------------------------------------------
+r293 | jbj | 2004-06-07 22:08:13 +0200 (Mon, 07 Jun 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/doc/magicrescue.pod
+
+More pointers to other tools
+------------------------------------------------------------------------
+r292 | jbj | 2004-06-07 21:10:48 +0200 (Mon, 07 Jun 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/tests/tests.pl
+
+oops
+------------------------------------------------------------------------
+r291 | jbj | 2004-06-06 23:04:12 +0200 (Sun, 06 Jun 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/tests/tests.pl
+
+Proper exception handling in tests.pl
+------------------------------------------------------------------------
+r290 | jbj | 2004-06-06 22:44:20 +0200 (Sun, 06 Jun 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/tests/tests.pl
+
+update tests.pl to new binary location
+------------------------------------------------------------------------
+r289 | jbj | 2004-06-06 20:47:52 +0200 (Sun, 06 Jun 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk
+   M /magicrescue/trunk/Makefile.in
+   A /magicrescue/trunk/magicsort (from /magicrescue/trunk/src/magicsort:286)
+   M /magicrescue/trunk/src
+   D /magicrescue/trunk/src/magicsort
+
+Move to-be-installed programs to the root source directory
+------------------------------------------------------------------------
+r288 | jbj | 2004-06-06 20:41:08 +0200 (Sun, 06 Jun 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/tools/textextract.c
+
+textextract: max line length
+------------------------------------------------------------------------
+r287 | jbj | 2004-06-04 21:29:37 +0200 (Fri, 04 Jun 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/tools/textextract.c
+
+remove tailfile option, add options for score thresholds
+------------------------------------------------------------------------
+r284 | jbj | 2004-06-04 21:08:19 +0200 (Fri, 04 Jun 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/src/extract.c
+   M /magicrescue/trunk/src/magicrescue.h
+
+Close unused file descriptor when executing external command with pipe
+------------------------------------------------------------------------
+r283 | jbj | 2004-05-30 23:02:20 +0200 (Sun, 30 May 2004) | 5 lines
+Changed paths:
+   M /magicrescue/trunk/Makefile.in
+   M /magicrescue/trunk/recipes/perl
+   M /magicrescue/trunk/src/util.c
+   M /magicrescue/trunk/src/util.h
+   M /magicrescue/trunk/tools/safecat.c
+   M /magicrescue/trunk/tools/textextract.c
+
+- textextract -M option for max file size
+- textextract takes output file argument instead of writing to stdout
+- atol_calc moved to util.c
+- comments in Makefile.in
+
+------------------------------------------------------------------------
+r282 | jbj | 2004-05-30 21:44:15 +0200 (Sun, 30 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/tests/tests.pl
+
+Two bugs in test script
+------------------------------------------------------------------------
+r281 | jbj | 2004-05-30 17:14:13 +0200 (Sun, 30 May 2004) | 1 line
+Changed paths:
+   A /magicrescue/trunk/tests/samples/perl
+   M /magicrescue/trunk/tests/tests.pl
+
+Better test suite
+------------------------------------------------------------------------
+r280 | jbj | 2004-05-30 01:38:47 +0200 (Sun, 30 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/Makefile.in
+   A /magicrescue/trunk/recipes/perl
+   M /magicrescue/trunk/tools
+   A /magicrescue/trunk/tools/textextract.c
+
+Add preliminary ASCII text extraction
+------------------------------------------------------------------------
+r279 | jbj | 2004-05-30 01:36:34 +0200 (Sun, 30 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/doc/dupemap.pod
+
+More warnings for delete commands
+------------------------------------------------------------------------
+r278 | jbj | 2004-05-17 21:54:12 +0200 (Mon, 17 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/new_NEWS
+
+news
+------------------------------------------------------------------------
+r277 | jbj | 2004-05-17 21:52:48 +0200 (Mon, 17 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/release.sh
+   A /magicrescue/trunk/tests
+   A /magicrescue/trunk/tests/samples
+   A /magicrescue/trunk/tests/samples/avi
+   A /magicrescue/trunk/tests/samples/elf
+   A /magicrescue/trunk/tests/samples/gzip
+   A /magicrescue/trunk/tests/samples/jpeg-exif
+   A /magicrescue/trunk/tests/samples/jpeg-jfif
+   A /magicrescue/trunk/tests/samples/mp3-id3v1
+   A /magicrescue/trunk/tests/samples/mp3-id3v2
+   A /magicrescue/trunk/tests/samples/msoffice
+   A /magicrescue/trunk/tests/samples/png
+   A /magicrescue/trunk/tests/samples/zip
+   A /magicrescue/trunk/tests/tests.pl
+
+Add test suite
+------------------------------------------------------------------------
+r276 | jbj | 2004-05-17 21:39:02 +0200 (Mon, 17 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/new_NEWS
+   M /magicrescue/trunk/src/magicrescue.c
+
+Fixed minor buffer-overlap bug discovered by the new test suite (which will be committed Real Soon Now)
+------------------------------------------------------------------------
+r275 | jbj | 2004-05-11 23:18:34 +0200 (Tue, 11 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/src/magicrescue.c
+
+paranthesis for clarity
+------------------------------------------------------------------------
+r274 | jbj | 2004-05-07 23:53:25 +0200 (Fri, 07 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/recipes/mp3-id3v1
+
+typo in comment
+------------------------------------------------------------------------
+r272 | jbj | 2004-05-06 22:49:50 +0200 (Thu, 06 May 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/NEWS
+   M /magicrescue/trunk/new_NEWS
+
+Release 1.1.2
+------------------------------------------------------------------------
 r271 | jbj | 2004-05-06 22:43:22 +0200 (Thu, 06 May 2004) | 1 line
 Changed paths:
    M /magicrescue/trunk/recipes/zip

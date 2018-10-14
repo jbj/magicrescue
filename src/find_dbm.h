@@ -15,6 +15,11 @@
 # define DBM_KEY_LEN 0
 #endif
 
+#ifdef DBM_H_DEB
+# include <gdbm-ndbm.h>
+# define DBM_KEY_LEN 0
+#endif
+
 #ifdef DBM_H_DB_H
 # include <db.h>
 # define DBM_KEY_LEN 1

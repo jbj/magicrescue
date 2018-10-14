@@ -50,6 +50,24 @@ long long hextoll(const unsigned char *str)
     return result;
 }
 
+long atol_calc(const char *str)
+{
+    if (str[0] != '\0') {
+	long result = atol(str);
+
+	switch (str[strlen(str)-1]) {
+	    case 'G': result *= 1024;
+	    case 'M': result *= 1024;
+	    case 'k':
+	    case 'K': result *= 1024;
+	}
+    	return result;
+
+    } else {
+	return 0;
+    }
+}
+
 off_t rich_seek(int fd, const char *string)
 {
     off_t offset;
@@ -105,16 +123,16 @@ void string_init(struct string *dst, const unsigned char *src)
 		i += 3;
 
 	    } else {
-		dst->s[dst->l++] = (
-			src[i+1] == 'a' ? '\a' : (
-			src[i+1] == 'b' ? '\b' : (
-			src[i+1] == 'f' ? '\f' : (
-			src[i+1] == 'n' ? '\n' : (
-			src[i+1] == 'r' ? '\r' : (
-			src[i+1] == 't' ? '\t' : (
-			src[i+1] == 'v' ? '\v' : (
-			src[i+1] ))))))));
 		i++;
+		dst->s[dst->l++] = (
+			src[i] == 'a' ? '\a' : (
+			src[i] == 'b' ? '\b' : (
+			src[i] == 'f' ? '\f' : (
+			src[i] == 'n' ? '\n' : (
+			src[i] == 'r' ? '\r' : (
+			src[i] == 't' ? '\t' : (
+			src[i] == 'v' ? '\v' : (
+			src[i] ))))))));
 	    }
 
 	} else {

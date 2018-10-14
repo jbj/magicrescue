@@ -1,0 +1,24 @@
+# Extracts Gimp's XCF file format
+# 
+# Requires: The GIMP, perl, and the Gimp perl module. Only tested on GIMP 2.x.
+#
+# You will find the "Gimp" module on CPAN or in your Linux/UNIX distribution.
+# In GIMP 1.2 it's included with the gimp source.
+#
+# If your distribution doesn't include it, fire up the CPAN shell as root:
+# $ perl -MCPAN -e shell
+# You can probably skip the manual configuration.  In the CPAN shell, type:
+# $ install Gimp
+# This will install version 2 of the module, to match The GIMP version 2.
+
+# To use this recipe you need to start the GIMP Perl Server.  Start up The GIMP
+# and run it from the Xtns->Perl->Server menu (nothing will happen visually
+# when clicking).  If that menu is not present, the plugin/module is probably
+# not correctly installed. You can also start it from the command line:
+# $ gimp --batch '(extension-perl-server 0 0 0)'
+
+0 string gimp xcf\x20
+
+extension xcf
+
+command dd of="$1" bs=1024k count=40; gimp-resave.pl "$1" || rm -f "$1"

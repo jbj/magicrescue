@@ -1,0 +1,22 @@
+# Extracts source code with the GPL header in it
+#
+# Depends on perl for renaming
+
+0 string This program is free software; you can redistribute it and/or
+
+extension gpl
+
+# Max file size is 200K.
+# You might want to lower this value if your files are smaller. A smaller value
+# here will prevent different files from being mixed into the same output file.
+
+# Delete the file if it doesn't seem to be the GPL header statement, or if it
+# seems to be the GPL itself.
+command textextract -r 1024 -M 200K "$1"; if grep "General Public License" "$1" >/dev/null; then if grep "signature of Ty Coon" "$1" >/dev/null; then rm -f "$1"; fi; else rm -f "$1"; fi
+
+rename script_rename.pl "$1"
+
+# Because of the -r option to textextract
+allow_overlap 1024
+
+# vim: wm=0

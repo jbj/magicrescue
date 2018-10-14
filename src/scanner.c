@@ -39,7 +39,7 @@ const unsigned char *scanner_block(const unsigned char *scanbuf,
 {
     long extrabytes = (long)offset & (param->block-1);
     if (extrabytes) {
-	if (param->block - extrabytes < scanbuf_len)
+	if ((size_t)(param->block - extrabytes) < scanbuf_len)
 	    return scanbuf + param->block - extrabytes;
 	else
 	    return NULL;
@@ -54,7 +54,7 @@ const unsigned char *scanner_string(const unsigned char *scanbuf,
     struct string string = param->scanstring.string;
     unsigned char magicchar = param->scanstring.magicchar;
 
-    while (p - scanbuf < scanbuf_len &&
+    while ((size_t)(p - scanbuf) < scanbuf_len &&
 	    (p = memchr(p, magicchar, scanbuf_len - (p-scanbuf)))) {
 	p -= param->scanstring.magicoff;
 	if (memcmp(p, string.s, string.l) == 0) {
