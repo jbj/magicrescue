@@ -1,6 +1,39 @@
 For less detailed change information, see the NEWS file
 
 ------------------------------------------------------------------------
+r820 | jbj | 2009-09-04 22:22:31 +0200 (Fri, 04 Sep 2009) | 1 line
+Changed paths:
+   M /magicrescue/trunk/recipes/zip
+
+fix a small oops in release
+------------------------------------------------------------------------
+r818 | jbj | 2009-09-04 19:48:26 +0200 (Fri, 04 Sep 2009) | 1 line
+Changed paths:
+   M /magicrescue/trunk/NEWS
+   M /magicrescue/trunk/new_NEWS
+
+Release 1.1.7
+------------------------------------------------------------------------
+r817 | jbj | 2009-09-04 19:44:36 +0200 (Fri, 04 Sep 2009) | 1 line
+Changed paths:
+   M /magicrescue/trunk/new_NEWS
+   M /magicrescue/trunk/recipes/zip
+
+Apply patch to fix problems in zip recipe
+------------------------------------------------------------------------
+r794 | jbj | 2009-02-15 22:20:29 +0100 (Sun, 15 Feb 2009) | 1 line
+Changed paths:
+   M /magicrescue/trunk/release.sh
+
+Update release script to point to new server
+------------------------------------------------------------------------
+r792 | jbj | 2009-02-15 22:14:04 +0100 (Sun, 15 Feb 2009) | 1 line
+Changed paths:
+   M /magicrescue/trunk/NEWS
+   M /magicrescue/trunk/new_NEWS
+
+Release 1.1.6
+------------------------------------------------------------------------
 r791 | jbj | 2009-02-15 21:58:09 +0100 (Sun, 15 Feb 2009) | 1 line
 Changed paths:
    M /magicrescue/trunk/new_NEWS

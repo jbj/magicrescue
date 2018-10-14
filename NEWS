@@ -1,3 +1,10 @@
+Version 1.1.7: Fri Sep  4 22:23:35 CEST 2009
+- Fix small oops
+
+Version 1.1.7: Fri Sep  4 19:48:14 CEST 2009
+- Update zip recipe to work with latest version of Zip and latest
+  OpenOffice.org file formats (thanks to Fernando)
+
 Version 1.1.6: Sun Feb 15 22:13:54 CET 2009
 - Recipe for Nikon raw photos
 - Recipe for large PPM files

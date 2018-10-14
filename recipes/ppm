@@ -1,0 +1,8 @@
+# Extract (at most 36 MB) 8-bit PPM image file. Assumes dimensions greater
+# or equal to 1000 by 1000 pixels. May not match PPM files that contain
+# comments in the header or unusual whitespace.
+# Contributed by Daniel J Blueman
+0 string P6\n
+13 string 255\n
+extension ppm
+command dd bs=1024k count=36 of="$1" 2>/dev/null
