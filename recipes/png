@@ -1,0 +1,8 @@
+# Extracts png images.
+# Depends on perl: http://perl.com
+0 char \x89
+0 string \x89PNG
+4 int32 0d0a1a0a ffffffff
+extension png
+command perl commands/pngextract.pl > $0
+min_output_file 20

@@ -1,0 +1,50 @@
+This file describes the recipe file format in detail. For an introduction, see
+the README file.
+
+
+Empty lines and lines starting with # will be skipped. A recipe contains a
+series of match operations to find the content and a series of directives to
+specify what to do with it.
+
+Lines of the format <offset> <operation> <parameter> will add a match operation
+to the list. Match operations will be tried in the order they appear in the
+recipe, and they must all match for the recipe to succeed. The <offset>
+describes what offset this data will be found at, counting from the beginning
+of the file. <operation> can have the following values:
+
+char <character>
+	The parameter is a single character (byte), or an escape sequence (such
+	as \xFF) that is matched against all bytes on the device. Don't use
+	\x00, or it will match all the time and use a lot of CPU.
+
+string <string>
+	The parameter is a character sequence that may contain escape
+	sequences.
+
+int32 <value> <bitmask>
+	Both <value> and <bitmask> are expressed as 8-character hex strings.
+	<bitmask> will be ANDed with the data, and the result will be compared
+	to <value>.
+
+The first match operation in a recipe must be "char". To add more operations,
+look at the instructions in magicrescue.c. 
+
+A line that doesn't start with an integer is a directive. This can be:
+
+extension <ext>
+	Mandatory. This names the file extension for this type, such as "jpg".
+
+command <expression>
+	Mandatory. When all the match operations succeed, this command will be
+	executed to extract the file from the block device. <expression> is
+	passed to the shell with the block device's file descriptor (seeked to
+	the right byte) on stdin. The shell variable $0 will contain the file
+	its output should be written to, and it must respect this. Otherwise
+	magicrescue cannot tell whether it succeeded.
+
+min_output_file <size>
+	Default: 100. Output files less than this size will be deleted.
+
+To test whether your recipe actually works, either just run it on your hard
+disk or use the provemewrong.pl script to pick out files that should match but
+don't.

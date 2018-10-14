@@ -1,0 +1,12 @@
+# Extracts avi files.
+# Depends on MPlayer's mencoder: http://www.mplayerhq.hu/
+0 char R
+0 string RIFF
+# note the trailing space on the next line
+8 string AVI 
+# mencoder will keep reading after the avi ends, so we chop off the first 40MB
+# A better solution is probably to parse the RIFF ourselves, as in
+# commands/pngextract.pl
+# http://msdn.microsoft.com/library/default.asp?url=/library/en-us/directx9_c/directx/htm/avirifffilereference.asp
+extension avi
+command dd bs=1M count=40|mencoder -o $0 -ovc copy -oac copy -

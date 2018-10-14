@@ -1,0 +1,145 @@
+For less detailed change information, see the NEWS file
+
+------------------------------------------------------------------------
+r27 | jbj | 2004-03-01 21:55:40 +0100 (Mon, 01 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/README.recipes
+
+describe provemewrong.pl
+------------------------------------------------------------------------
+r26 | jbj | 2004-03-01 21:53:36 +0100 (Mon, 01 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/provemewrong.pl
+
+wording: magic config -> recipe
+------------------------------------------------------------------------
+r25 | jbj | 2004-03-01 21:48:22 +0100 (Mon, 01 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/release.sh
+
+verbose changelog
+------------------------------------------------------------------------
+r24 | jbj | 2004-03-01 21:44:45 +0100 (Mon, 01 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/README
+
+README wording
+------------------------------------------------------------------------
+r23 | jbj | 2004-03-01 21:34:11 +0100 (Mon, 01 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/README
+   A /magicrescue/trunk/README.recipes
+   M /magicrescue/trunk/magicrescue.c
+
+Description of recipe format
+------------------------------------------------------------------------
+r22 | jbj | 2004-03-01 20:45:15 +0100 (Mon, 01 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+   M /magicrescue/trunk/recipes/avi
+   M /magicrescue/trunk/recipes/jpeg-exif
+   M /magicrescue/trunk/recipes/jpeg-jfif
+   M /magicrescue/trunk/recipes/png
+
+Add 'extension' keyword in recipes
+------------------------------------------------------------------------
+r21 | jbj | 2004-03-01 19:43:25 +0100 (Mon, 01 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/README
+   M /magicrescue/trunk/magicrescue.c
+   M /magicrescue/trunk/new_NEWS
+
+Change the term 'magic config' to 'recipe'
+------------------------------------------------------------------------
+r20 | jbj | 2004-03-01 19:21:29 +0100 (Mon, 01 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/README
+   D /magicrescue/trunk/magic
+   A /magicrescue/trunk/recipes (from /magicrescue/trunk/magic:10)
+   R /magicrescue/trunk/recipes/avi (from /magicrescue/trunk/magic/avi:13)
+   R /magicrescue/trunk/recipes/jpeg-exif (from /magicrescue/trunk/magic/jpeg-exif:13)
+   R /magicrescue/trunk/recipes/jpeg-jfif (from /magicrescue/trunk/magic/jpeg-jfif:13)
+   R /magicrescue/trunk/recipes/png (from /magicrescue/trunk/magic/png:15)
+
+magic -> recipes
+------------------------------------------------------------------------
+r19 | jbj | 2004-03-01 14:27:19 +0100 (Mon, 01 Mar 2004) | 1 line
+Changed paths:
+   A /magicrescue/trunk/release
+   A /magicrescue/trunk/release.sh
+
+Add release.sh
+------------------------------------------------------------------------
+r18 | jbj | 2004-03-01 14:01:28 +0100 (Mon, 01 Mar 2004) | 1 line
+Changed paths:
+   A /magicrescue/trunk/NEWS
+   A /magicrescue/trunk/new_NEWS
+
+add NEWS files
+------------------------------------------------------------------------
+r17 | jbj | 2004-03-01 13:40:53 +0100 (Mon, 01 Mar 2004) | 1 line
+Changed paths:
+   A /magicrescue/trunk/COPYING
+   M /magicrescue/trunk/magicrescue.c
+
+Add GPL license
+------------------------------------------------------------------------
+r16 | jbj | 2004-03-01 12:50:55 +0100 (Mon, 01 Mar 2004) | 1 line
+Changed paths:
+   A /magicrescue/trunk/provemewrong.pl
+
+Added provemewrong.pl for testing
+------------------------------------------------------------------------
+r15 | jbj | 2004-03-01 12:47:31 +0100 (Mon, 01 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/commands/pngextract.pl
+   M /magicrescue/trunk/magic/png
+
+png files can be small
+------------------------------------------------------------------------
+r14 | jbj | 2004-03-01 11:36:24 +0100 (Mon, 01 Mar 2004) | 2 lines
+Changed paths:
+   A /magicrescue/trunk/README
+
+Add a short readme
+
+------------------------------------------------------------------------
+r13 | jbj | 2004-03-01 10:56:30 +0100 (Mon, 01 Mar 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magic/avi
+   M /magicrescue/trunk/magic/jpeg-exif
+   M /magicrescue/trunk/magic/jpeg-jfif
+   M /magicrescue/trunk/magic/png
+   M /magicrescue/trunk/magicrescue.c
+
+Comments in magic files
+------------------------------------------------------------------------
+r12 | jbj | 2004-02-29 23:33:41 +0100 (Sun, 29 Feb 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/Makefile
+
+gcc -> cc
+------------------------------------------------------------------------
+r11 | jbj | 2004-02-29 23:27:29 +0100 (Sun, 29 Feb 2004) | 1 line
+Changed paths:
+   M /magicrescue/trunk/magicrescue.c
+
+handle lseek() errors
+------------------------------------------------------------------------
+r10 | jbj | 2004-02-29 22:55:51 +0100 (Sun, 29 Feb 2004) | 2 lines
+Changed paths:
+   A /magicrescue
+   A /magicrescue/trunk
+   A /magicrescue/trunk/Makefile
+   A /magicrescue/trunk/commands
+   A /magicrescue/trunk/commands/pngextract.pl
+   A /magicrescue/trunk/magic
+   A /magicrescue/trunk/magic/avi
+   A /magicrescue/trunk/magic/jpeg-exif
+   A /magicrescue/trunk/magic/jpeg-jfif
+   A /magicrescue/trunk/magic/png
+   A /magicrescue/trunk/magicrescue.c
+
+Initial import of magicrescue
+
+------------------------------------------------------------------------
