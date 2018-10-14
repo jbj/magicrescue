@@ -1,0 +1,40 @@
+# Extracts mozilla specific mbox files. ...(c)GPL: jeffery bucove Oct 2009
+
+# find the class specific "mbox" identifier string
+# at offset zero, find six char string "From -"
+
+# 0d find mbox identifier string "From -"
+0 string From -
+
+# at offset 56d, find the inbox identifier string "X-UIDL"
+56 string X-UIDL
+
+# the extension may be removed as you see fit
+# it is only for human file management convenience
+# and is added to the filename by magicrescue at runtime
+
+extension mozin
+
+command sed '/\x00\x00\x00/q' >"$1"
+
+# sed streams throughput to $1 and matches three null bytes for a termination
+# condition. On an undamaged mbox file, you could use a single null byte
+# pattern match; however for the purposes of my particulat data recovery
+# situation, I found three nulls to be useful for a recovery which satisfied my
+# whim for larger and fewer recovered files.
+
+# it will include non-printable chars which will result in a non-text file
+
+# Other useful termination conditions may involve the use of non-printable
+# chars which are illegal in mbox files, and may provide for a text file output
+# if the data you are working from is undamaged: examples may include 
+# command sed '/[\x00-\x09]/q' >"$1"
+# command sed '/[\x0b-\x19]/q' >"$1"
+# command sed '/[\x7f-\xff]/q' >"$1"
+
+
+# I am using generic Ubuntu 9.04 on a Asus EeePC 1000 Netbook. Backup kiddies!!
+# This whole exersize is an aftermath of discovery of the disastrous failure
+# mode of SSD 
+
+
