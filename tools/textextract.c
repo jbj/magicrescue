@@ -364,7 +364,7 @@ int main(int argc, char **argv)
 	bufsize = max_reverse;
     buf = malloc(bufsize);
     if (!buf) {
-	fprintf(stderr, "Failed to allocate %u bytes of memory\n", bufsize);
+	fprintf(stderr, "Failed to allocate %zu bytes of memory\n", bufsize);
 	return 1;
     }
 

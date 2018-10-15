@@ -19,7 +19,6 @@ extern struct progress progress;
 /*
  * Extraction
  */
-void compose_name(char *name, off_t offset, const char *extension);
 int run_shell(int fd, off_t offset, const char *command,
 	const char *argument, int *stdout_pipe);
 void rename_output(int fd, off_t offset, const char *command,
