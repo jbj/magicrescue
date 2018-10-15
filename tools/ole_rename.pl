@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/perl
 use strict;
 
 # Attempts to guess the file type of an OLE container file and rename it

@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/perl
 use strict;
 #
 # This script loosely follows the LAOLA file system described at

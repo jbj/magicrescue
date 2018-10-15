@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/perl
 use strict;
 
 my $file = shift or die "Usage: script_rename.pl FILE\n";

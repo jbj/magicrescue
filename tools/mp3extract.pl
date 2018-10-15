@@ -1,4 +1,4 @@
-#!/usr/bin/env perl
+#!/usr/bin/perl
 use strict;
 
 # This script tries to decode the first part of the mp3 with mpg123, and if
