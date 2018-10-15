@@ -33,6 +33,19 @@
 #include "recur.h"
 #include "util.h"
 
+#define RECUR_MAXDEPTH 100
+
+struct dirstack {
+    DIR *dirs[RECUR_MAXDEPTH];
+    DIR **pos;
+    char prefix[PATH_MAX];
+};
+
+struct recur {
+    char **list;
+    struct dirstack *stack;
+};
+
 void rm_rf(const char *dir)
 {
     struct dirent *dirent;

@@ -1,20 +1,9 @@
 #ifndef _RECUR_H
 
 #include <sys/stat.h>
-#include <dirent.h>
 
-#define RECUR_MAXDEPTH 100
-
-struct dirstack {
-    DIR *dirs[RECUR_MAXDEPTH];
-    DIR **pos;
-    char prefix[PATH_MAX];
-};
-
-struct recur {
-    char **list;
-    struct dirstack *stack;
-};
+struct dirstack;
+struct recur;
 
 void rm_rf(const char *dir);
 struct dirstack *dirstack_open(const char *path);
