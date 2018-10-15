@@ -36,9 +36,6 @@ tools/textextract: $(TEXTEXTRACT_OBJS)
 .c.o:
 	$(CC) -c $(CPPFLAGS) $(CFLAGS) -o $@ $<
 
-.o:
-	$(CC) -o $@ $(LDFLAGS) $<
-
 .pod.1:
 	pod2man --release "$(RELEASE)" --center "Magic Rescue" $< $@
 
