@@ -34,22 +34,28 @@
 #include "recipe.h"
 #include "magicrescue.h"
 
-static void compose_name(
+static int compose_name(
 	char *name, size_t name_len, off_t offset, const char *extension)
 {
     struct stat st;
     long i = 0;
 
     do {
+	int snprintf_retval;
 	if (name_mode == MODE_DEVICE) {
-	    snprintf(name, name_len, "%s/%012llX-%ld.%s",
+	    snprintf_retval = snprintf(name, name_len, "%s/%012llX-%ld.%s",
 		    output_dir, (long long)offset, i++, extension);
 
 	} else /*if (name_mode == MODE_FILES)*/ {
-	    snprintf(name, name_len, "%s/%s-%ld.%s",
+	    snprintf_retval = snprintf(name, name_len, "%s/%s-%ld.%s",
 		    output_dir, progress.device_basename, i++, extension);
 	}
+	if (snprintf_retval < 0 || (size_t)snprintf_retval >= name_len) {
+	    return 0;
+	}
     } while (lstat(name, &st) == 0);
+
+    return 1;
 }
 
 int run_shell(int fd, off_t offset, const char *command,
@@ -126,7 +132,10 @@ void rename_output(int fd, off_t offset, const char *command,
 
 	if (strlen(rename_pos) < 128) {
 	    char newname[PATH_MAX];
-	    compose_name(newname, sizeof newname, offset, rename_pos);
+	    if (!compose_name(newname, sizeof newname, offset, rename_pos)) {
+		fprintf(stderr, "Warning: Renamed file name too long\n");
+		return;
+	    }
 
 	    rename(origname, newname);
 	    strcpy(origname, newname);
@@ -140,7 +149,10 @@ off_t extract(int fd, struct recipe *r, off_t offset)
     char outfile[PATH_MAX];
     struct stat st;
 
-    compose_name(outfile, sizeof outfile, offset, r->extension);
+    if (!compose_name(outfile, sizeof outfile, offset, r->extension)) {
+	fprintf(stderr, "Output file name too long, skipping\n");
+	return -1;
+    }
 
     if (run_shell(fd, offset, r->command, outfile, NULL) == -1)
 	return -1;
