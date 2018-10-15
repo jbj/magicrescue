@@ -1,0 +1,11 @@
+# Extracts sqlite databases
+# Author: Eric Pozharski <whynot@pozharski.name>
+# See #730007
+#
+0 string SQLite format 3\x00
+extension sqlite
+
+# Result will be "CREATE TABLE"'s and "INSERT INTO"'s
+allow_overlap -1
+#min_output_file 1024
+command dd bs=1M count=16 of="$1.with-trash" 2>/dev/null; sqlite3 -init /dev/null "$1.with-trash" .dump >"$1" ; rm -f "$1.with-trash"
