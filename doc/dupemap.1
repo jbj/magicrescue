@@ -371,7 +371,7 @@ creates both a \fIdatabase\fR\fB.dir\fR and \fIdatabase\fR\fB.pag\fR file.
 \&\fBdupecheck\fR depends on a database library for storing the checksums.  It
 currently requires the POSIX-standardized \fBndbm\fR library, which must be
 present on XSI-compliant UNIXes.  Implementations are not required to handle
-hash key collisions, and a faliure to do that could make \fBdupecheck\fR delete
+hash key collisions, and a failure to do that could make \fBdupecheck\fR delete
 too many files.  I haven't heard of such an implementation, though.
 .PP
 The current checksum algorithm is the file's \s-1CRC32\s0 combined with its size.

@@ -2,7 +2,7 @@
 use strict;
 
 # This script tries to decode the first part of the mp3 with mpg123, and if
-# that fails it will truncate the mp3 at that faliure point.
+# that fails it will truncate the mp3 at that failure point.
 # I could also use mp3_check, perhaps it is more correct. However, users are
 # not likely to have it installed.
 

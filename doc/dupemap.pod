@@ -246,7 +246,7 @@ creates both a I<database>B<.dir> and I<database>B<.pag> file.
 B<dupecheck> depends on a database library for storing the checksums.  It
 currently requires the POSIX-standardized B<ndbm> library, which must be
 present on XSI-compliant UNIXes.  Implementations are not required to handle
-hash key collisions, and a faliure to do that could make B<dupecheck> delete
+hash key collisions, and a failure to do that could make B<dupecheck> delete
 too many files.  I haven't heard of such an implementation, though.
 
 The current checksum algorithm is the file's CRC32 combined with its size.

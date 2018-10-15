@@ -424,7 +424,7 @@ static int parse_recipe(const char *recipefile,
 		     To add more operations:
 		     - Add another type to union param if you have to.
 		     - Define a test function like op_string that returns 1 on
-		       success and 0 on faliure.
+		       success and 0 on failure.
 		     - Add another "else if" clause here.  It must assign to
 		       op->func and to len.
 		     - The value assigned to len should be the maximum number of
