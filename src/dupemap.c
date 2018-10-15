@@ -204,7 +204,8 @@ static int checksum_calc(checksum_t *checksum, const char *file)
     long _crc = 0;
     FILE *fp;
 
-    memset(checksum, 0, sizeof checksum);
+    // Clear any padding between the fields
+    memset(checksum, 0, sizeof(checksum_t));
 
     fp = fopen (file, "rb");
     if (fp == NULL) {
