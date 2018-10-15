@@ -89,7 +89,7 @@ static int csdb_open_tempdb(dbhandle *db)
     return 0;
 }
 
-static int csdb_open(dbhandle *db, const char *file, enum mode mode)
+static int csdb_open(dbhandle *db, char *file, enum mode mode)
 {
     int openmode = mode & MODE_READDB ? O_RDONLY : O_RDWR | O_CREAT;
 
