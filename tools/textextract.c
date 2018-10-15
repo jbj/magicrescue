@@ -226,7 +226,7 @@ static int read_backward(struct scores *s, int outfd)
 	return 0;
 
     read_count = bufsize;
-    if (s->offset < bufsize)
+    if (s->offset < (off_t)bufsize)
 	read_count = (ssize_t)s->offset;
     if (max_reverse < read_count)
 	read_count = max_reverse;
