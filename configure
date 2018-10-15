@@ -63,9 +63,9 @@ EOF
 }
 
 conftest_link() {
-    echo "$CC -o conftest $LDFLAGS conftest.o" >&5
+    echo "$CC -o conftest conftest.o $LDFLAGS" >&5
     echo >&5
-    $CC -o conftest $LDFLAGS conftest.o >&5 2>&5 \
+    $CC -o conftest conftest.o $LDFLAGS >&5 2>&5 \
 	&& [ -x conftest ] && ./conftest 2>&5
 }
 

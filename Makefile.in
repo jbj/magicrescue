@@ -20,19 +20,19 @@ all: $(PROGRAMS) docs
 
 # program targets
 magicrescue: $(MAGICRESCUE_OBJS)
-	$(CC) -o $@ $(LDFLAGS) $(MAGICRESCUE_OBJS)
+	$(CC) -o $@ $(MAGICRESCUE_OBJS) $(LDFLAGS)
 
 dupemap: $(DUPEMAP_OBJS)
-	$(CC) -o $@ $(LDFLAGS) $(DBM_LDFLAGS) $(DUPEMAP_OBJS)
+	$(CC) -o $@ $(DUPEMAP_OBJS) $(LDFLAGS) $(DBM_LDFLAGS)
  
 tools/inputseek: $(INPUTSEEK_OBJS)
-	$(CC) -o $@ $(LDFLAGS) $(INPUTSEEK_OBJS)
+	$(CC) -o $@ $(INPUTSEEK_OBJS) $(LDFLAGS)
 
 tools/safecat: $(SAFECAT_OBJS)
-	$(CC) -o $@ $(LDFLAGS) $(SAFECAT_OBJS)
+	$(CC) -o $@ $(SAFECAT_OBJS) $(LDFLAGS)
 
 tools/textextract: $(TEXTEXTRACT_OBJS)
-	$(CC) -o $@ $(LDFLAGS) $(TEXTEXTRACT_OBJS)
+	$(CC) -o $@ $(TEXTEXTRACT_OBJS) $(LDFLAGS)
 
 # implicit targets
 .c.o:
