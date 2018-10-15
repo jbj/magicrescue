@@ -3,6 +3,8 @@ PROGRAMS = magicrescue dupemap tools/inputseek tools/safecat \
 	   tools/textextract
 DOCS = doc/magicrescue.1 doc/dupemap.1 doc/magicsort.1
 
+INSTALLDIR = $(DESTDIR)$(PREFIX)
+
 # object file lists
 MAGICRESCUE_OBJS = src/magicrescue.o src/array.o src/extract.o src/recipe.o \
 		   src/scanner.o src/util.o
@@ -54,34 +56,31 @@ docs-clean:
 maintainer-clean: distclean docs-clean
 
 install: all
-	[ -d $(PREFIX) ]
+	mkdir -p $(INSTALLDIR)/share/magicrescue/tools \
+	    $(INSTALLDIR)/share/magicrescue/recipes \
+	    $(INSTALLDIR)/man/man1 \
+	    $(INSTALLDIR)/bin
 	
-	mkdir -p $(PREFIX)/share/magicrescue/tools \
-	    $(PREFIX)/share/magicrescue/recipes \
-	    $(PREFIX)/man/man1 \
-	    $(PREFIX)/bin
-	
-	cp magicrescue$(EXE) dupemap$(EXE) magicsort $(PREFIX)/bin/
-	cp recipes/* $(PREFIX)/share/magicrescue/recipes/
-	cp $(DOCS) $(PREFIX)/man/man1
+	cp magicrescue$(EXE) dupemap$(EXE) magicsort $(INSTALLDIR)/bin/
+	cp recipes/* $(INSTALLDIR)/share/magicrescue/recipes/
+	cp $(DOCS) $(INSTALLDIR)/man/man1
 	
 	for f in tools/*; do \
 	  if [ -x "$$f" ]; then \
-	    cp -f "$$f" $(PREFIX)/share/magicrescue/tools/; \
+	    cp -f "$$f" $(INSTALLDIR)/share/magicrescue/tools/; \
 	  fi; \
 	done
 
 uninstall:
-	[ -d $(PREFIX) ]
-	rm -f $(PREFIX)/bin/magicrescue$(EXE)
-	rm -f $(PREFIX)/bin/dupemap$(EXE)
-	rm -f $(PREFIX)/bin/magicsort
+	rm -f $(INSTALLDIR)/bin/magicrescue$(EXE)
+	rm -f $(INSTALLDIR)/bin/dupemap$(EXE)
+	rm -f $(INSTALLDIR)/bin/magicsort
 	for f in $(DOCS); do \
-	   rm -f "$(PREFIX)/man/man1/`basename $$f`"; \
+	   rm -f "$(INSTALLDIR)/man/man1/`basename $$f`"; \
 	done
-	rm -rf $(PREFIX)/share/magicrescue/tools
-	rm -rf $(PREFIX)/share/magicrescue/recipes
-	-rmdir $(PREFIX)/share/magicrescue
+	rm -rf $(INSTALLDIR)/share/magicrescue/tools
+	rm -rf $(INSTALLDIR)/share/magicrescue/recipes
+	-rmdir $(INSTALLDIR)/share/magicrescue
 
 .PHONY: all clean distclean docs-clean maintainer-clean install uninstall docs
 
