@@ -23,5 +23,5 @@ Jonas Jensen <jbj@knef.dk>
 =head1 LATEST VERSION
 
 This tool is part of Magic Rescue.  You can find the latest version at
-L<http://jbj.rapanden.dk/magicrescue/>
+L<https://github.com/jbj/magicrescue>
 

@@ -31,7 +31,7 @@ It works on any file system, but on very fragmented file systems it can only
 recover the first chunk of each file.  Practical experience (this program was
 not written for fun) shows, however, that chunks of 30-50MB are not uncommon.
 
-Find the latest version at http://jbj.rapanden.dk/magicrescue/
+Find the latest version at https://github.com/jbj/magicrescue
 
 Building
 --------

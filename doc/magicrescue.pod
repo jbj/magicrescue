@@ -434,5 +434,5 @@ Jonas Jensen <jbj@knef.dk>
 
 =head1 LATEST VERSION
 
-You can find the latest version at L<http://jbj.rapanden.dk/magicrescue/>
+You can find the latest version at L<https://github.com/jbj/magicrescue>
 
