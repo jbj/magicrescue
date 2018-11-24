@@ -1,80 +1,42 @@
 #!/bin/bash
 
-if [ "x$1" = "x--devel" ]; then 
-    DEVEL=1
-    VERSION=`date +%Y%m%d`
-    cp new_NEWS new_NEWS~
-    cp NEWS NEWS~
-else
-    DEVEL=
-    VERSION="$1"
-fi
+set -e
 
-APP=magicrescue
-RELEASE=$APP-$VERSION
+VERSION="$1"
 
 if [ "" = "$VERSION" ] || [ "x${VERSION#[0-9]}" = "x$VERSION" ]; then
     cat << EOF
-Usage: $0 [ VERSION | --devel ]"
+Usage: $0 VERSION
 
-Remember to update new_NEWS first. This script is only meant to be run by the
+Remember to update NEWS first. This script is only meant to be run by the
 maintainer.
 EOF
     exit 1
 fi
 
-./configure
-make docs-clean
-make docs RELEASE=$VERSION || exit 1
-
-if grep -q . new_NEWS; then
-    mv NEWS old_NEWS
-
-    if [ "$DEVEL" ]; then
-	echo -n "Nightly build: " > NEWS
-    else
-	echo -n "Version $VERSION: " > NEWS
-    fi
-
-    date         >> NEWS
-    cat new_NEWS >> NEWS
-    echo         >> NEWS
-    cat old_NEWS >> NEWS
-
-    rm -f old_NEWS
-    echo > new_NEWS
-
-else
-    if [ -z "$DEVEL" ]; then 
-	echo "$0: no new_NEWS entries"
-	exit 1
-    fi
+if ! head -n1 NEWS | grep -q '^-'; then
+    echo "$0: no entries at the top of NEWS"
+    exit 1
 fi
 
 
-echo "For less detailed change information, see the NEWS file" > ChangeLog
-echo               >> ChangeLog
-svn log -vr HEAD:1 >> ChangeLog
+./configure
+make docs-clean
+make docs RELEASE="$VERSION" || exit 1
 
-ln -s . $RELEASE
+mv NEWS old_NEWS
+echo -n "Version $VERSION: " > NEWS
+date         >> NEWS
+cat old_NEWS >> NEWS
+rm -f old_NEWS
 
-(echo ChangeLog; ls doc/*.1; svn ls -R) \
-    |sed "s%^%$RELEASE/%"|egrep -v 'new_NEWS|release.sh|tests/'|grep -v '/$' \
-    |tar -T- -czvf release/$RELEASE.tar.gz
+git add NEWS doc
 
-rm -f ChangeLog $RELEASE
-
-if [ "$DEVEL" ]; then
-    mv new_NEWS~ new_NEWS
-    mv NEWS~ NEWS
-else
-    url=`svn info|grep URL:|cut -d" " -f2-`
-    cat << EOF
+cat << EOF
 
 All done, now run:
 
-svn commit -m "Release $VERSION"
-svn cp -m "Tag $VERSION" . ${url%/trunk}/release/$VERSION
-scp release/$RELEASE.tar.gz itu:public_html/magicrescue/release/
+git commit -m "Release $VERSION"
+git tag v$VERSION
+git push origin v$VERSION
 EOF
-fi

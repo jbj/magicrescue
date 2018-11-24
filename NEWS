@@ -1,3 +1,10 @@
+- Recipe for FLV (Flash Video) files
+- Recipe for Empathy chat message history files
+- Recipe for SQLite files
+- Include or reomve the need for several patches that were previously
+  carried by Debian
+- Fix dupemap to work with modern compilers
+
 Version 1.1.9: Mon Apr 12 20:21:16 CEST 2010
 - Recipe for rar archives
 
