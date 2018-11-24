@@ -1,4 +1,5 @@
-#ifndef _RECIPE_H
+#ifndef MAGICRESCUE_RECIPE_H
+#define MAGICRESCUE_RECIPE_H
 
 #include "array.h"
 
@@ -37,5 +38,4 @@ void recipe_init(struct recipe *r);
 void recipe_destroy(struct recipe *r);
 
 
-#define _RECIPE_H
-#endif /* _RECIPE_H */
+#endif /* MAGICRESCUE_RECIPE_H */

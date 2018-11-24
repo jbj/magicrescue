@@ -1,4 +1,5 @@
-#ifndef _MAGICRESCUE_H
+#ifndef MAGICRESCUE_MAGICRESCUE_H
+#define MAGICRESCUE_MAGICRESCUE_H
 
 #include "util.h"
 
@@ -25,5 +26,4 @@ void rename_output(int fd, off_t offset, const char *command,
 	char *origname);
 off_t extract(int fd, struct recipe *r, off_t offset);
 
-# define _MAGICRESCUE_H
-#endif /* _MAGICRESCUE_H */
+#endif /* MAGICRESCUE_MAGICRESCUE_H */

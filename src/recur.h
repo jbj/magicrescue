@@ -1,4 +1,5 @@
-#ifndef _RECUR_H
+#ifndef MAGICRESCUE_RECUR_H
+#define MAGICRESCUE_RECUR_H
 
 #include <sys/stat.h>
 
@@ -13,5 +14,4 @@ struct recur *recur_open(char **paths);
 void recur_close(struct recur *recur);
 int recur_next(struct recur *recur, char *name, struct stat *st_arg);
 
-# define _RECUR_H
-#endif
+#endif /* MAGICRESCUE_RECUR_H */

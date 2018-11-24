@@ -1,4 +1,5 @@
-#ifndef _UTIL_H
+#ifndef MAGICRESCUE_UTIL_H
+#define MAGICRESCUE_UTIL_H
 
 #include <sys/types.h>
 #include <limits.h>
@@ -20,5 +21,4 @@ off_t rich_seek(int fd, const char *string);
 void string_init(struct string *dst, const char *src);
 void string_destroy(struct string *string);
 
-#define _UTIL_H
-#endif /* _UTIL_H */
+#endif /* MAGICRESCUE_UTIL_H */

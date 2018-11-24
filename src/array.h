@@ -1,4 +1,5 @@
-#ifndef _ARRAY_H
+#ifndef MAGICRESCUE_ARRAY_H
+#define MAGICRESCUE_ARRAY_H
 
 #include <stdlib.h>
 
@@ -20,5 +21,4 @@ void *array_add(struct array *array, void *el);
 		(array)->elements*(array)->el_len; \
 	    (el) = (void *)((char *)(el) + (array)->el_len))
 
-#define _ARRAY_H
-#endif /* _ARRAY_H */
+#endif /* MAGICRESCUE_ARRAY_H */

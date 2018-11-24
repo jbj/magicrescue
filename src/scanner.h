@@ -1,4 +1,5 @@
-#ifndef _SCANNER_H
+#ifndef MAGICRESCUE_SCANNER_H
+#define MAGICRESCUE_SCANNER_H
 
 #include <stdlib.h>
 
@@ -39,5 +40,4 @@ struct scanner *scanner_new(void);
 int scanner_compare(const struct scanner *a, const struct scanner *b);
 void scanner_destroy(struct scanner *scanner);
 
-#define _SCANNER_H
-#endif /* _SCANNER_H */
+#endif /* MAGICRESCUE_SCANNER_H */
