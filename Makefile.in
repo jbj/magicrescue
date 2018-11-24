@@ -70,6 +70,7 @@ install: all
 	    cp -f "$$f" $(INSTALLDIR)/share/magicrescue/tools/; \
 	  fi; \
 	done
+	cp -f tools/laola.pl $(INSTALLDIR)/share/magicrescue/tools/
 
 uninstall:
 	rm -f $(INSTALLDIR)/bin/magicrescue$(EXE)
