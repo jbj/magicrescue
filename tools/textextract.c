@@ -317,11 +317,6 @@ int main(int argc, char **argv)
     
     int c, outfd;
 
-    if (argc < 2 || strcmp(argv[1], "--help") == 0) {
-	usage();
-	return 1;
-    }
-
     while ((c = getopt(argc, argv, "M:s:b:l:r:")) >= 0) {
 	switch (c) {
 	case 'M':
@@ -349,6 +344,11 @@ int main(int argc, char **argv)
 	    usage();
 	    return 1;
 	}
+    }
+
+    if (argc - optind != 1) {
+	usage();
+	return 1;
     }
 
     if (strcmp(argv[optind], "-") == 0) {

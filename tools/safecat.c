@@ -72,7 +72,7 @@ int main(int argc, char **argv)
 	}
     }
 
-    if (argc - optind != 1 || strcmp(argv[optind], "--help") == 0) {
+    if (argc - optind != 1) {
 	usage();
 	return 1;
     }
