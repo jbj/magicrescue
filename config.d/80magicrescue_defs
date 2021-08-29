@@ -1,7 +1,7 @@
 #!/bin/sh
 
 cat >> config.h << EOF
-#define COMMAND_PATH "$prefix/share/magicrescue/tools"
+#define COMMAND_PATH "$prefix/libexec/magicrescue/tools"
 #define RECIPE_PATH  "$prefix/share/magicrescue/recipes"
 #include "largefile.h"
 EOF
