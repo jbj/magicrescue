@@ -1,0 +1,19 @@
+name: Run test suite
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+jobs:
+  run-test-suite:
+    name: Build and test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 1
+      - run: ./configure
+      - run: make
+      - run: sudo apt-get update -y
+      - run: sudo apt-get install -y --no-install-recommends libfile-slurp-perl libjpeg-turbo-progs mencoder
+      - run: tests/tests.pl
